@@ -1,0 +1,38 @@
+# Automatically generated files
+*/cfa*.*
+*/small_tree*.*
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+*.d
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# Compiled executables
+*.exe
+
+# Generated source files
+bin/*
+
+# emacs backups
+*~
+*#
+.#*
+
+# Other
+*.root
+*.log
+*.pdf
+*.eps
+*.tex
+gmon.out
+out
+archive

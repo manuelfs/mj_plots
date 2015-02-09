@@ -1,0 +1,71 @@
+[General]
+    nFont	    = 132
+    nDivisions	    = 708
+
+[Standard]
+    CanvasW	    = 1000
+    CanvasH	    = 600
+    TextSize	    = 0.069     
+    TitleSize	    = 0.052    
+    LabelSize	    = 0.052     
+    PadRightMargin  = 0.038
+    PadTopMargin    = 0.035
+    PadBottomMargin = 0.12
+    xTitleOffset    = 0.977     
+    PadLeftMargin   = 0.1 
+    yTitleOffset    = 0.82
+
+[Standard_Digits_2]
+    PadLeftMargin   = 0.09 
+    yTitleOffset    = 0.65 
+[Standard_Digits_3]
+    PadLeftMargin   = 0.1 
+    yTitleOffset    = 0.71 
+[Standard_Digits_4]
+    PadLeftMargin   = 0.11 
+    yTitleOffset    = 0.85 
+[Standard_Digits_5]
+    PadLeftMargin   = 0.13 
+    yTitleOffset    = 1. 
+
+[1Dtitle]
+    CanvasW	    = 1000
+    CanvasH	    = 600
+    TextSize	    = 0.069     
+    TitleSize	    = 0.052    
+    LabelSize	    = 0.052     
+    PadRightMargin  = 0.038
+    PadTopMargin    = 0.1
+    PadBottomMargin = 0.12
+    xTitleOffset    = 0.977     
+    PadLeftMargin   = 0.1 
+    yTitleOffset    = 0.82
+
+[2D]
+    CanvasW	    = 1000
+    CanvasH	    = 600
+    TextSize	    = 0.069     
+    TitleSize	    = 0.05    
+    LabelSize	    = 0.05     
+    PadRightMargin  = 0.1
+    PadTopMargin    = 0.08
+    PadBottomMargin = 0.12
+    xTitleOffset    = 0.977     
+    PadLeftMargin   = 0.1 
+    yTitleOffset    = 0.82
+    zTitleOffset    = 0.82
+
+[2Dtitle]
+    CanvasW	    = 1000
+    CanvasH	    = 600
+    TextSize	    = 0.069     
+    TitleSize	    = 0.05    
+    LabelSize	    = 0.05     
+    PadRightMargin  = 0.15
+    PadTopMargin    = 0.1
+    PadBottomMargin = 0.12
+    xTitleOffset    = 0.977     
+    PadLeftMargin   = 0.1 
+    yTitleOffset    = 0.82
+    zTitleOffset    = 0.82
+
