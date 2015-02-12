@@ -17,7 +17,7 @@
 using namespace std;
 
 int main(){
-  styles style("1Dtitle"); style.setDefaultStyle();
+  styles style("Paper"); style.setDefaultStyle();
 
   TString folder="/afs/cern.ch/user/m/manuelf/work/ucsb/15-01-30_skim/";
 
@@ -97,48 +97,58 @@ int main(){
 
 
   ///////////////////// VARIABLES for each ROC /////////////////////
+  int mj_style(8); float mj_size(2);
+  vector<marker_class> mj_points, ht_points, met_points;
+  mj_points.push_back(marker_class(200,  mj_size, 4, mj_style));
+  mj_points.push_back(marker_class(400,  mj_size, 4, mj_style));
+  mj_points.push_back(marker_class(600,  mj_size, 4, mj_style));
+  mj_points.push_back(marker_class(800,  mj_size, 4, mj_style));
+  mj_points.push_back(marker_class(1000,  mj_size, 4, mj_style));
+  ht_points.push_back(marker_class(800,   mj_size, 8, mj_style));
+  ht_points.push_back(marker_class(1200,  mj_size, 8, mj_style));
+  ht_points.push_back(marker_class(1600,  mj_size, 8, mj_style));
+  met_points.push_back(marker_class(400,  mj_size, 2, mj_style));
+  met_points.push_back(marker_class(600,  mj_size, 2, mj_style));
+  met_points.push_back(marker_class(800,  mj_size, 2, mj_style));
+
   vector<var_class> mj_general;
-  mj_general.push_back(var_class("ht",4000,0,"H_{T}^{40}",8,1));
-  mj_general.push_back(var_class("met",1500,0,"MET",2,1));
-  mj_general.push_back(var_class("mj_30",2000,0,"M_{J}",4,1));
+  mj_general.push_back(var_class("ht",4000,0,"H_{T}^{40}",8,1,ht_points));
+  mj_general.push_back(var_class("met",1500,0,"MET",2,1,met_points));
+  mj_general.push_back(var_class("mj_30",2000,0,"M_{J}",4,1,mj_points));
 
   vector<var_class> mj_cands;
   //mj_cands.push_back(var_class("ht",4000,0,"H_{T}^{40}",2,1));
   mj_cands.push_back(var_class("mj_cands",2200,0,"M_{J} pfcands",2,1));
   mj_cands.push_back(var_class("mj_cands_trim",2200,0,"M_{J} pfcands trimmed",28,1));
-  mj_cands.push_back(var_class("mj_30", 2200,0,"M_{J} 30 GeV jets",4,1));
+  mj_cands.push_back(var_class("mj_30", 2200,0,"M_{J} 30 GeV jets",4,1,mj_points));
 
   vector<var_class> mj_sizes;
   //mj_sizes.push_back(var_class("ht",4000,0,"H_{T}^{40}",2,1));
   mj_sizes.push_back(var_class("mj_r08",2200,0,"M_{J} R=0.8",2,1));
   mj_sizes.push_back(var_class("mj_r10",2200,0,"M_{J} R=1.0",28,1));
-  mj_sizes.push_back(var_class("mj_30", 2200,0,"M_{J} R=1.2",4,1));
+  mj_sizes.push_back(var_class("mj_30", 2200,0,"M_{J} R=1.2",4,1,mj_points));
   mj_sizes.push_back(var_class("mj_r14",2200,0,"M_{J} R=1.4",kMagenta+2,1));
 
   vector<var_class> mj_pt;
   //mj_pt.push_back(var_class("ht",4000,0,"H_{T}^{40}",2,1));
-  mj_pt.push_back(var_class("mj_10",2200,0,"M_{J} 10 GeV jets",2,1));
-  mj_pt.push_back(var_class("mj_20",2200,0,"M_{J} 20 GeV jets",28,1));
-  mj_pt.push_back(var_class("mj_30", 2200,0,"M_{J} 30 GeV jets",4,1));
-  mj_pt.push_back(var_class("mj_40",2200,0,"M_{J} 40 GeV jets",kMagenta+2,1));
-
-  vector<var_class> mj_eta;
-  //mj_eta.push_back(var_class("ht",4000,0,"H_{T}^{40}",2,1));
-  mj_eta.push_back(var_class("mj_eta25",2200,0,"M_{J} |#eta| < 2.5",2,1));
-  mj_eta.push_back(var_class("mj_30", 2200,0,"M_{J} |#eta| < 5",4,1));
+  mj_pt.push_back(var_class("mj_10",2200,0,"M_{J} 10 GeV jets, |#eta| < 5",2,1));
+  mj_pt.push_back(var_class("mj_20",2200,0,"M_{J} 20 GeV jets, |#eta| < 5",28,1));
+  mj_pt.push_back(var_class("mj_30", 2200,0,"M_{J} 30 GeV jets, |#eta| < 5",4,1,mj_points));
+  mj_pt.push_back(var_class("mj_eta25",2200,0,"M_{J} 30 GeV jets, |#eta| < 2.5",1,1));
+  mj_pt.push_back(var_class("mj_40",2200,0,"M_{J} 40 GeV jets, |#eta| < 5",kMagenta+2,1));
 
   vector<var_class> mj_ptfat;
   //mj_ptfat.push_back(var_class("ht",4000,0,"H_{T}^{40}",2,1));
-  mj_ptfat.push_back(var_class("Sum$(fjets_30_m*(fjets_30_pt>=30))",2200,0,"M_{J} 30 GeV large-R jets",2,1));
-  mj_ptfat.push_back(var_class("mj_30", 2200,0,"M_{J} 50 GeV large-R jets",4,1));
-  mj_ptfat.push_back(var_class("Sum$(fjets_30_m*(fjets_30_pt>=70))",2200,0,"M_{J} 70 GeV large-R jets",28,1));
-  mj_ptfat.push_back(var_class("Sum$(fjets_30_m*(fjets_30_pt>=100))",2200,0,"M_{J} 100 GeV large-R jets",kMagenta+2,1));
+  mj_ptfat.push_back(var_class("Sum$(fjets_30_m*(fjets_30_pt>=30))",2200,0,"M_{J} from p_{T}#geq30 GeV large-R jets",2,1));
+  mj_ptfat.push_back(var_class("mj_30", 2200,0,"M_{J} from p_{T}#geq50 GeV large-R jets",4,1,mj_points));
+  mj_ptfat.push_back(var_class("Sum$(fjets_30_m*(fjets_30_pt>=80))",2200,0,"M_{J} from p_{T}#geq80 GeV large-R jets",28,1));
+  mj_ptfat.push_back(var_class("Sum$(fjets_30_m*(fjets_30_pt>=120))",2200,0,"M_{J} from p_{T}#geq120 GeV large-R jets",kMagenta+2,1));
 
   vector<var_class> mj_lep;
   //mj_lep.push_back(var_class("ht",4000,0,"H_{T}^{40}",2,1));
   mj_lep.push_back(var_class("mj_nolep_30",2200,0,"M_{J} without leptons",2,1));
   mj_lep.push_back(var_class("mj_siglep_30",2200,0,"M_{J} with 20 GeV leptons",28,1));
-  mj_lep.push_back(var_class("mj_30", 2200,0,"M_{J} with 30 GeV leptons",4,1));
+  mj_lep.push_back(var_class("mj_30", 2200,0,"M_{J} with 30 GeV leptons",4,1,mj_points));
 
   ///////////////////// ROCs to plot /////////////////////
   vector<TString> vs_sam, vs_vars;
@@ -157,11 +167,10 @@ int main(){
   v_sam.push_back(&zjets_t1qc); vs_sam.push_back("zjets_t1qc");
 
   vector<vector<var_class>*> v_vars;
-  // v_vars.push_back(&mj_general); vs_vars.push_back("general");
-  // v_vars.push_back(&mj_sizes); vs_vars.push_back("size");
-  // v_vars.push_back(&mj_cands); vs_vars.push_back("cands");
-  // v_vars.push_back(&mj_pt); vs_vars.push_back("pt");
-  v_vars.push_back(&mj_eta); vs_vars.push_back("eta"); 
+  v_vars.push_back(&mj_general); vs_vars.push_back("general");
+  v_vars.push_back(&mj_sizes); vs_vars.push_back("size");
+  v_vars.push_back(&mj_cands); vs_vars.push_back("cands");
+  v_vars.push_back(&mj_pt); vs_vars.push_back("pt");
   v_vars.push_back(&mj_ptfat); vs_vars.push_back("ptfat"); 
 
   vector<TString> v_cuts;
@@ -235,7 +244,7 @@ void DrawROC(vector<sample_class> samples, vector<var_class> vars, TString cuts,
   title.ReplaceAll("(nmus+nels)", "n_{lep}");  
   title.ReplaceAll("els_pt","p^{e}_{T}");title.ReplaceAll("mus_pt","p^{#mu}_{T}");
   title.ReplaceAll("mj_30", "M_{J}");
-  title.ReplaceAll(">=", " #geq "); 
+  title.ReplaceAll(">=", " #geq "); title.ReplaceAll("==", " = "); 
   title.ReplaceAll(">", " > "); title.ReplaceAll("<", " < "); title.ReplaceAll("&&", ", "); 
   title.ReplaceAll("met", "MET");  title.ReplaceAll("ht30", "H_{T}^{30}"); title.ReplaceAll("ht", "H_{T}"); 
   title.ReplaceAll("mt", "m_{T}"); 
@@ -256,7 +265,7 @@ void DrawROC(vector<sample_class> samples, vector<var_class> vars, TString cuts,
   double legX = 0.13, legY = 0.88, legSingle = 0.064;
   double legW = 0.12, legH = legSingle*vars.size();
   TLegend leg(legX, legY-legH, legX+legW, legY);
-  leg.SetTextSize(0.055); leg.SetFillColor(0); leg.SetFillStyle(0); leg.SetBorderSize(0);
+  leg.SetTextSize(0.062); leg.SetFillColor(0); leg.SetFillStyle(0); leg.SetBorderSize(0);
   leg.SetTextFont(132);
 
   // Making individual graphs
@@ -318,7 +327,7 @@ TGraph MakeROC(TH1D &good, TH1D &bad, const bool less_is_better, vector<marker_c
       if((edge>=cuts[icut].cut&&!less_is_better) || (edge<=cuts[icut].cut&&less_is_better)){
 	marker.SetMarkerStyle(cuts[icut].style);marker.SetMarkerColor(cuts[icut].color);
 	marker.SetMarkerSize(cuts[icut].size); 
-	marker.DrawMarker(x,y);
+	if(x>0.01) marker.DrawMarker(x,y);
 	icut++;
       }
     }

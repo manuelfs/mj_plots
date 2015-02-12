@@ -28,7 +28,7 @@ bin/*
 .#*
 
 # Other
-*.root
+*root
 *.log
 *.pdf
 *.eps

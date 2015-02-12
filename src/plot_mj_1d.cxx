@@ -49,7 +49,7 @@ public:
 };
 
 int main(){ 
-  styles style("1Dtitle"); style.setDefaultStyle();
+  styles style("Paper"); style.setDefaultStyle();
   vector<hfeats> vars;
   TCanvas can;
 
@@ -62,6 +62,8 @@ int main(){
   Samples.push_back(sfeats(folder+"*TTJet*", "t#bar{t}", 2));
   Samples.push_back(sfeats(folder+"*T1qqqq*1400_*PU20*", "T1qqqq(1400,100)", 8));
   Samples.push_back(sfeats(folder+"*T1tttt*1500_*PU20*", "T1tttt(1500,100)", 4));
+  Samples.push_back(sfeats(folder+"*T1qqqq*1000_*PU20*", "T1qqqq(1000,800)", 8,2));
+  Samples.push_back(sfeats(folder+"*T1tttt*1200_*PU20*", "T1tttt(1200,800)", 4,2));
 
   for(unsigned sam(0); sam < Samples.size(); sam++){
     chain.push_back(new TChain("tree"));
@@ -75,15 +77,39 @@ int main(){
   mj_sam.push_back(3);
   mj_sam.push_back(4);
 
+  vector<int> mj_sam_lep;
+  mj_sam_lep.push_back(2);
+  mj_sam_lep.push_back(6);
+  mj_sam_lep.push_back(4);
+
+  vars.push_back(hfeats("Max$(fjets_cands_m)",80,0,800, mj_sam, "Max(m_{J}^{cands}) (GeV)","ht>500&&met>200&&njets30>=4&&(nmus+nels)==0"));
+  vars.push_back(hfeats("Max$(fjets_cands_trim_m)",80,0,800, mj_sam, "Max(m_{J}^{cands,trim}) (GeV)","ht>500&&met>200&&njets30>=4&&(nmus+nels)==0"));
+  vars.push_back(hfeats("Max$(fjets_30_m)", 80,0,800, mj_sam, "Max(m_{J}^{AK4}) (GeV)","ht>500&&met>200&&njets30>=4&&(nmus+nels)==0"));
+
+  vars.push_back(hfeats("Max$(fjets_cands_m)",80,0,800, mj_sam_lep, "Max(m_{J}^{cands}) (GeV)","ht>500&&met>200&&njets30>=4&&(nmus+nels)==1"));
+  vars.push_back(hfeats("Max$(fjets_cands_trim_m)",80,0,800, mj_sam_lep, "Max(m_{J}^{cands,trim}) (GeV)","ht>500&&met>200&&njets30>=4&&(nmus+nels)==1"));
+  vars.push_back(hfeats("Max$(fjets_30_m)", 80,0,800, mj_sam_lep, "Max(m_{J}^{AK4}) (GeV)","ht>500&&met>200&&njets30>=4&&(nmus+nels)==1"));
+
+  vars.push_back(hfeats("Max$(fjets_r08_m)",80,0,800, mj_sam_lep, "Max(m_{J}^{R=0.8}) (GeV)","ht>500&&met>200&&njets30>=4&&(nmus+nels)==2"));
+  vars.push_back(hfeats("Max$(fjets_r10_m)",80,0,800, mj_sam_lep, "Max(m_{J}^{R=1.0}) (GeV)","ht>500&&met>200&&njets30>=4&&(nmus+nels)==2"));
+  vars.push_back(hfeats("Max$(fjets_30_m)", 80,0,800, mj_sam_lep, "Max(m_{J}^{R=1.2}) (GeV)","ht>500&&met>200&&njets30>=4&&(nmus+nels)==2"));
+  vars.push_back(hfeats("Max$(fjets_r14_m)",80,0,800, mj_sam_lep, "Max(m_{J}^{R=1.4}) (GeV)","ht>500&&met>200&&njets30>=4&&(nmus+nels)==2"));
+
+  vars.push_back(hfeats("Max$(fjets_r08_m)",80,0,800, mj_sam_lep, "Max(m_{J}^{R=0.8}) (GeV)","ht>500&&met>200&&njets30>=4&&(nmus+nels)==1"));
+  vars.push_back(hfeats("Max$(fjets_r10_m)",80,0,800, mj_sam_lep, "Max(m_{J}^{R=1.0}) (GeV)","ht>500&&met>200&&njets30>=4&&(nmus+nels)==1"));
+  vars.push_back(hfeats("Max$(fjets_30_m)", 80,0,800, mj_sam_lep, "Max(m_{J}^{R=1.2}) (GeV)","ht>500&&met>200&&njets30>=4&&(nmus+nels)==1"));
+  vars.push_back(hfeats("Max$(fjets_r14_m)",80,0,800, mj_sam_lep, "Max(m_{J}^{R=1.4}) (GeV)","ht>500&&met>200&&njets30>=4&&(nmus+nels)==1"));
+
   vars.push_back(hfeats("Max$(fjets_r08_m)",80,0,800, mj_sam, "Max(m_{J}^{R=0.8}) (GeV)","ht>500&&met>200&&njets30>=4&&nvmus10==0&&nvels10==0"));
   vars.push_back(hfeats("Max$(fjets_r10_m)",80,0,800, mj_sam, "Max(m_{J}^{R=1.0}) (GeV)","ht>500&&met>200&&njets30>=4&&nvmus10==0&&nvels10==0"));
-  vars.push_back(hfeats("Max$(fjets_30_m)",80,0,800, mj_sam, "Max(m_{J}^{R=1.2}) (GeV)","ht>500&&met>200&&njets30>=4&&nvmus10==0&&nvels10==0"));
+  vars.push_back(hfeats("Max$(fjets_30_m)", 80,0,800, mj_sam, "Max(m_{J}^{R=1.2}) (GeV)","ht>500&&met>200&&njets30>=4&&nvmus10==0&&nvels10==0"));
   vars.push_back(hfeats("Max$(fjets_r14_m)",80,0,800, mj_sam, "Max(m_{J}^{R=1.4}) (GeV)","ht>500&&met>200&&njets30>=4&&nvmus10==0&&nvels10==0"));
-  //vars.push_back(hfeats("mj_30",40,0,2200, mj_sam, "M_{J} (GeV)","ht>500&&met>200&&njets30>=4&&nvmus10==0&&nvels10==0"));
+
+  vars.push_back(hfeats("mj_30",40,0,2200, mj_sam, "M_{J} (GeV)","ht>500&&met>200&&njets30>=4&&nvmus10==0&&nvels10==0"));
 
   TString luminosity="4";
   float minLog = 0.04, maxLog = 10;
-  double legX = 0.54, legY = 0.89, legSingle = 0.067;
+  double legX = 0.48, legY = 0.89, legSingle = 0.067;
   double legW = 0.12, legH = legSingle*vars[0].samples.size();
   TLegend leg(legX, legY-legH, legX+legW, legY);
   leg.SetTextSize(0.057); leg.SetFillColor(0); leg.SetFillStyle(0); leg.SetBorderSize(0);
@@ -107,7 +133,7 @@ int main(){
     title.ReplaceAll("njets","n_{jets}");title.ReplaceAll("abs(lep_id)==13&&","");
     title.ReplaceAll(">=", " #geq "); title.ReplaceAll(">", " > "); title.ReplaceAll("&&", ", "); 
     title.ReplaceAll("met", "MET"); title.ReplaceAll("ht", "H_{T}");  title.ReplaceAll("mt", "m_{T}"); 
-    title.ReplaceAll("nleps==1", "1 lepton");  title.ReplaceAll("nbm","n_{b}");
+    title.ReplaceAll("nleps==1", "1 lepton");  title.ReplaceAll("nbm","n_{b}"); title.ReplaceAll("==", " = "); 
     title.ReplaceAll("nbl[1]","n_{b,l}");
     for(unsigned his(0); his < 2; his++){
       varhisto.resize(0);
@@ -196,12 +222,12 @@ int main(){
     if(vars[var].cut>0) line.DrawLine(vars[var].cut, 0, vars[var].cut, maxhisto*maxLog);
     can.SetLogy(1);
     pname = "plots/1d/log_lumi_"+vars[var].tag+".pdf";
-    can.SaveAs(pname);
+    //can.SaveAs(pname);
     histo[0][var][firstplotted]->SetMinimum(0);
     histo[0][var][firstplotted]->SetMaximum(maxhisto*1.1);
     can.SetLogy(0);
     pname = "plots/1d/lumi_"+vars[var].tag+".pdf";
-    can.SaveAs(pname);
+    //can.SaveAs(pname);
 
     //////////// Plotting area-normalized distributions ////////////
     leg.Clear(); maxhisto = -999;
