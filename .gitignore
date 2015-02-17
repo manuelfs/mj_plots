@@ -33,6 +33,7 @@ bin/*
 *.pdf
 *.eps
 *.tex
+*.pyc
 gmon.out
 out
 archive
