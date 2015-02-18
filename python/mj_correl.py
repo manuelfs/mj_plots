@@ -4,13 +4,11 @@ from rebin_tools import *
 # from rootpy.interactive import wait
 
 mode30 = False
+make1d = True
+make2d = True
+make3d = False
 # mode30 = True
-datadir = os.path.join(os.getcwd(),"out/jet40/")
-if (mode30): datadir = "./out/jet30/"
-
-outdir = os.path.join(os.getcwd(),"out/jet40/nfjets/")
-if (not os.path.exists(outdir)):
-  os.mkdir(outdir)
+datadir = os.path.join(os.getcwd(),"out/")
 
 def make_pad():
   pad = TPad("pad"," ",0.,0.,1.,1.)
@@ -61,13 +59,24 @@ selndict = {"2L-base": "2-lepton", "1L-base": "1-lepton", "0L-base": "0-lepton"}
 
 # ------------- SAMPLES -------------
 sampldict = {}
-sampldict["ttbar"] = ("t#bar{t}", kRed+1,3008)
-# sampldict["qcd"] = ("QCD",kOrange, 3017)
-sampldict["wjets"] = ("W+jets", kBlue+1, 3490)
-sampldict["T1tttt1500"] = ("T1t.NC", kGreen+1, 3013)
-# sampldict["T1tttt1200"] = ("T1t.C", kBlack, 3013)
-# sampldict["T1qqqq1400"] = ("T1q.NC", kBlue, 3013)
-# sampldict["T1qqqq1000"] = ("T1q.C", kOrange, 3013)
+sampldict["ttbar"] = ("t#bar{t}", kRed+1,3008, "tt")
+# sampldict["qcd"] = ("QCD",kOrange, 3017, "qcd")
+# sampldict["wjets"] = ("W+jets", kViolet, 3490, "w")
+sampldict["T1tttt1500"] = ("T1t.NC", kGreen+1, 3013,"t1tn")
+sampldict["T1tttt1200"] = ("T1t.C", kBlack, 3013,"t1tc")
+# sampldict["T1qqqq1400"] = ("T1q.NC", kBlue, 3013,"t1qn")
+# sampldict["T1qqqq1000"] = ("T1q.C", kOrange, 3013,"t1qc")
+# sampldict["T2tt650"] = ("T2t.C", kBlue, 3013,"t2tc") # no skim available
+# sampldict["T2tt850"] = ("T2t.NC", kMagenta+3, 3013,")
+
+samplstr = ""
+for i,samp in enumerate(sampldict.keys()):
+  samplstr = samplstr + sampldict[samp][3]
+  if (i<len(sampldict)-1): samplstr = samplstr + "_"
+
+outdir = os.path.join(os.getcwd(),"out",samplstr)
+if (not os.path.exists(outdir)):
+  os.mkdir(outdir)
 
 # ------ Samples used in plots depend on what is defined in sampldict (not samp_order)
 samp_order = []
@@ -76,6 +85,8 @@ samp_order.append("ttbar")
 samp_order.append("qcd")
 samp_order.append("T1tttt1500")
 samp_order.append("T1tttt1200")
+samp_order.append("T2tt850")
+# samp_order.append("T2tt650")
 samp_order.append("T1qqqq1400")
 samp_order.append("T1qqqq1000")
 
@@ -84,6 +95,10 @@ varlist = []
 varlist.append("met")
 varlist.append("mt")
 varlist.append("mindphin_metjet")
+varlist.append("pt_tt")
+varlist.append("lead_pt_top")
+varlist.append("sublead_pt_top")
+varlist.append("lead_pt_gluon")
 if (mode30):
   varlist.append("mj_30")
   varlist.append("ht30")
@@ -118,6 +133,12 @@ else:
   var_pairs.append(["met","njets"])
   var_pairs.append(["mt","mj_40"])
   var_pairs.append(["mindphin_metjet","mj_40"])
+  var_pairs.append(["pt_tt","ht"])
+  var_pairs.append(["lead_pt_top","ht"])
+  var_pairs.append(["pt_tt","mj_40"])
+  var_pairs.append(["lead_pt_top","mj_40"])
+  var_pairs.append(["pt_tt","lead_pt_top"])
+  var_pairs.append(["pt_tt","lead_pt_gluon"])
 
 # --------- SETS OF VARIABLES TO PLOT -------------
 var_sets = []
@@ -127,6 +148,7 @@ if (mode30):
 else:
   var_sets.append(["mj_40","njets","met"])
   var_sets.append(["ht","njets","met"])
+  var_sets.append(["mj_40","lead_pt_top","pt_tt"])
 
 flist = {}
 for samp in sampldict.keys():
@@ -134,114 +156,131 @@ for samp in sampldict.keys():
 
 for seln in selndict.keys():
   #------- 1D - DISTRIBUTIONS ---------
-  for var in varlist:
-    leg = make_legend()
-    leg.SetHeader(selndict[seln]+" *SHAPE*")
+  if (make1d):
+    for var in varlist:
+      leg = make_legend()
+      leg.SetHeader(selndict[seln]+" *SHAPE*")
 
-    can = TCanvas("can"+seln+var,"can",1000,1000)
-    pad = make_pad()
-    pad.Draw()
-    pad.cd()
+      can = TCanvas("can"+seln+var,"can",1000,1000)
+      pad = make_pad()
+      pad.Draw()
+      pad.cd()
 
-    hist = {}
-    first_draw = True
-    for i,samp in enumerate(samp_order):
-      if samp not in sampldict.keys(): continue
-      hist[samp] = flist[samp].Get(seln+"_"+var+"_"+samp).Clone()
-      hist[samp].SetDirectory(0)
-      hist[samp].Scale(1./hist[samp].Integral())
+      hist = {}
+      first_draw = True
+      for i,samp in enumerate(samp_order):
+        if samp not in sampldict.keys(): continue
+        try:
+          hist[samp] = flist[samp].Get(seln+"_"+var+"_"+samp).Clone()
+        except:
+          print "\n------ Skipping missing:", " seln=", seln, " var=", var, " samp=", samp
+          continue
+        hist[samp].SetDirectory(0)
+        if (hist[samp].Integral()>0.):
+          hist[samp].Scale(1./hist[samp].Integral())
 
-      hist[samp].SetFillColor(sampldict[samp][1])
-      hist[samp].SetFillStyle(sampldict[samp][2])
-      hist[samp].SetLineColor(sampldict[samp][1])
-      hist[samp].SetLineWidth(2)
+        hist[samp].SetFillColor(sampldict[samp][1])
+        hist[samp].SetFillStyle(sampldict[samp][2])
+        hist[samp].SetLineColor(sampldict[samp][1])
+        hist[samp].SetLineWidth(2)
 
-      if (first_draw):
-        style_axis(hist[samp])
-        hist[samp].GetYaxis().SetRangeUser(0.,0.5)
-        hist[samp].Draw("hist")
-        first_draw = False
-      else: 
-        hist[samp].Draw("hist same")
+        if (first_draw):
+          style_axis(hist[samp])
+          hist[samp].GetYaxis().SetRangeUser(0.,0.5)
+          hist[samp].Draw("hist")
+          first_draw = False
+        else: 
+          hist[samp].Draw("hist same")
 
       
-    for samp in samp_order:
-      if samp not in sampldict.keys(): continue
-      leg.AddEntry(hist[samp], sampldict[samp][0], "LP")
+      if (len(hist)):  
+        for samp in samp_order:
+          if samp not in hist.keys(): continue
+          leg.AddEntry(hist[samp], sampldict[samp][0], "LP")
 
-    leg.Draw()
-    can.Print(outdir+seln+"_"+var+".pdf")
+        leg.Draw()
+        can.Print(os.path.join(outdir, seln+"_"+var+".pdf"))
 
   #------- CORRELATIONS ---------
-  for pair in var_pairs:
-    if pair[0] not in varlist: continue     
-    if pair[1] not in varlist: continue     
+  if (make2d):
+    for pair in var_pairs:
 
-    leg = make_legend()
-    leg.SetHeader(selndict[seln]+" *SHAPE*")
+      leg = make_legend()
+      leg.SetHeader(selndict[seln]+" *SHAPE*")
 
-    can = TCanvas("can"+seln+pair[0]+pair[1],"can",1000,1000)
-    pad = make_pad()
-    pad.Draw()
-    pad.cd()
+      can = TCanvas("can"+seln+pair[0]+pair[1],"can",1000,1000)
+      pad = make_pad()
+      pad.Draw()
+      pad.cd()
 
-    hist = {}
-    first_draw = True
-    for i,samp in enumerate(samp_order):
-      if samp not in sampldict.keys(): continue
-      if ("wjets" in samp): continue
-      hist[samp] = flist[samp].Get(seln+"_"+pair[0]+"_"+pair[1]+"_"+samp).Clone()
-      hist[samp].SetDirectory(0)
-      hist[samp].Scale(1./hist[samp].Integral())
+      hist = {}
+      first_draw = True
+      for i,samp in enumerate(samp_order):
+        if samp not in sampldict.keys(): continue
+        try:
+          hist[samp] = flist[samp].Get(seln+"_"+pair[0]+"_"+pair[1]+"_"+samp).Clone()
+        except:
+          print "\n------ Skipping missing:", " seln=", seln, " vars=", pair[0],"-",pair[1], " samp=", samp
+          continue
+        hist[samp].SetDirectory(0)
+        if (hist[samp].Integral()>0.):
+          hist[samp].Scale(1./hist[samp].Integral())
 
-      hist[samp].SetLineColor(sampldict[samp][1])
-      hist[samp].SetLineWidth(2)
-      if (first_draw):
-        style_axis(hist[samp])
-        hist[samp].Draw("box")
-        first_draw = False
-      else: 
-        hist[samp].Draw("box same")
+        hist[samp].SetLineColor(sampldict[samp][1])
+        hist[samp].SetLineWidth(2)
+        if (first_draw):
+          style_axis(hist[samp])
+          hist[samp].Draw("box")
+          first_draw = False
+        else: 
+          hist[samp].Draw("box same")
 
-      
-    for samp in samp_order:
-      if samp not in sampldict.keys(): continue
-      if ("wjets" in samp): continue
-      corr = hist[samp].GetCorrelationFactor()
-      leg.AddEntry(hist[samp], sampldict[samp][0]+" #rho="+"{0:.2f}".format(corr), "F")
+        
+      if (len(hist)):
+        for samp in samp_order:
+          if samp not in hist.keys(): continue
+          if ("wjets" in samp): continue
+          corr = hist[samp].GetCorrelationFactor()
+          leg.AddEntry(hist[samp], sampldict[samp][0]+" #rho="+"{0:.2f}".format(corr), "F")
 
-    leg.Draw()
-    can.Print(outdir+seln+"_"+pair[0]+"_"+pair[1]+".pdf")
+        leg.Draw()
+        can.Print(os.path.join(outdir, seln+"_"+pair[0]+"_"+pair[1]+".pdf"))
 
   #------- 3D - DISTRIBUTIONS ---------
-  for set in var_sets:
+  if (make3d):
+    for set in var_sets:
 
-    can = TCanvas("can"+seln+set[0]+set[1]+set[2],"can",1000,1000)
-    pad = make_pad()
-    pad.Draw()
-    pad.cd()
+      can = TCanvas("can"+seln+set[0]+set[1]+set[2],"can",1000,1000)
+      pad = make_pad()
+      pad.Draw()
+      pad.cd()
 
-    hist = {}
-    first_draw = True
-    for i,samp in enumerate(samp_order):
-      if samp not in sampldict.keys(): continue
-      if ("wjets" in samp): continue
-      hist[samp] = flist[samp].Get(seln+"_"+set[0]+"_"+set[1]+"_"+set[2]+"_"+samp).Clone()
-      hist[samp].RebinX(2)
-      hist[samp].RebinY(2)
-      hist[samp].RebinZ(2)
-      hist[samp].SetDirectory(0)
-      hist[samp].Scale(1./hist[samp].Integral())
+      hist = {}
+      first_draw = True
+      for i,samp in enumerate(samp_order):
+        if samp not in sampldict.keys(): continue
+        try:
+          hist[samp] = flist[samp].Get(seln+"_"+set[0]+"_"+set[1]+"_"+set[2]+"_"+samp).Clone()
+        except:
+          print "\n------ Skipping missing:", " seln=", seln, " vars=", set[0],"-",set[1],"-",set[2], " samp=", samp
+          continue
+        hist[samp].RebinX(2)
+        hist[samp].RebinY(2)
+        hist[samp].RebinZ(2)
+        hist[samp].SetDirectory(0)
+        if (hist[samp].Integral()>0.):
+          hist[samp].Scale(1./hist[samp].Integral())
 
-      hist[samp].SetMarkerColor(sampldict[samp][1])
-      if (first_draw):
-        style_axis(hist[samp])
-        hist[samp].Draw("box")
-        first_draw = False
-      else: 
-        hist[samp].Draw("box same")
+        hist[samp].SetMarkerColor(sampldict[samp][1])
+        if (first_draw):
+          style_axis(hist[samp])
+          hist[samp].Draw("box")
+          first_draw = False
+        else: 
+          hist[samp].Draw("box same")
 
-    can.Print(outdir+seln+"_"+set[0]+"_"+set[1]+"_"+set[2]+".pdf")
+      if (len(hist)):
+        can.Print(os.path.join(outdir, seln+"_"+set[0]+"_"+set[1]+"_"+set[2]+".pdf"))
 
 
 
