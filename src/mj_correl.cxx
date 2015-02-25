@@ -52,51 +52,81 @@ int main(){
   // double mus_iso_max = 0.4;
   
   vector<seln> selns;
-  selns.push_back(seln("0L-base",
+//  selns.push_back(seln("0L-base",
+//                /*nleps_*/ 0, /*nisotks_max_*/ intmax,
+//                /*sig_lep_pt_min*/ 15.,/*veto_lep_pt_min*/ 15.,
+//                /*ht_min_*/ 500., /*ht_max_*/ dblmax,
+//                /*mj_min_*/ 0., /*mj_max_*/ dblmax,
+//                /*met_min_*/ 200., /*met_max_*/ dblmax,
+//                /*mt_min_*/ 0, /*mt_max_*/ dblmax,
+//                /*njets_min_*/ 0, /*njets_max_*/ intmax,
+//                /*nbl_min_*/ 0, /*nbl_max_*/ intmax));
+//  selns.push_back(seln("1L-base",
+//                  /*nleps_*/ 1, /*nisotks_max_*/ intmax,
+//                  /*sig_lep_pt_min*/ 15.,/*veto_lep_pt_min*/ 15.,
+//                  /*ht_min_*/ 500., /*ht_max_*/ dblmax,
+//                  /*mj_min_*/ 0., /*mj_max_*/ dblmax,
+//                  /*met_min_*/ 200., /*met_max_*/ dblmax,
+//                  /*mt_min_*/ 0, /*mt_max_*/ dblmax,
+//                  /*njets_min_*/ 0, /*njets_max_*/ intmax,
+//                  /*nbl_min_*/ 0, /*nbl_max_*/ intmax));
+//
+//  selns.push_back(seln("2L-base",
+//                /*nleps_*/ 2, /*nisotks_max_*/ intmax,
+//                /*sig_lep_pt_min*/ 15.,/*veto_lep_pt_min*/ 15.,
+//                /*ht_min_*/ 500., /*ht_max_*/ dblmax,
+//                /*mj_min_*/ 0., /*mj_max_*/ dblmax,
+//                /*met_min_*/ 200., /*met_max_*/ dblmax,
+//                /*mt_min_*/ 0, /*mt_max_*/ dblmax,
+//                /*njets_min_*/ 0, /*njets_max_*/ intmax,
+//                /*nbl_min_*/ 0, /*nbl_max_*/ intmax));
+
+    selns.push_back(seln("0L-sign",
                 /*nleps_*/ 0, /*nisotks_max_*/ intmax,
                 /*sig_lep_pt_min*/ 15.,/*veto_lep_pt_min*/ 15.,
                 /*ht_min_*/ 500., /*ht_max_*/ dblmax,
                 /*mj_min_*/ 0., /*mj_max_*/ dblmax,
                 /*met_min_*/ 200., /*met_max_*/ dblmax,
                 /*mt_min_*/ 0, /*mt_max_*/ dblmax,
-                /*njets_min_*/ 0, /*njets_max_*/ intmax,
-                /*nbl_min_*/ 0, /*nbl_max_*/ intmax));
-  selns.push_back(seln("1L-base",
+                /*njets_min_*/ 6, /*njets_max_*/ intmax,
+                /*nbl_min_*/ 2, /*nbl_max_*/ intmax));
+  selns.push_back(seln("1L-sign",
                   /*nleps_*/ 1, /*nisotks_max_*/ intmax,
                   /*sig_lep_pt_min*/ 15.,/*veto_lep_pt_min*/ 15.,
                   /*ht_min_*/ 500., /*ht_max_*/ dblmax,
                   /*mj_min_*/ 0., /*mj_max_*/ dblmax,
                   /*met_min_*/ 200., /*met_max_*/ dblmax,
                   /*mt_min_*/ 0, /*mt_max_*/ dblmax,
-                  /*njets_min_*/ 0, /*njets_max_*/ intmax,
-                  /*nbl_min_*/ 0, /*nbl_max_*/ intmax));
+                  /*njets_min_*/ 6, /*njets_max_*/ intmax,
+                  /*nbl_min_*/ 2, /*nbl_max_*/ intmax));
 
-  selns.push_back(seln("2L-base",
+  selns.push_back(seln("2L-sign",
                 /*nleps_*/ 2, /*nisotks_max_*/ intmax,
                 /*sig_lep_pt_min*/ 15.,/*veto_lep_pt_min*/ 15.,
                 /*ht_min_*/ 500., /*ht_max_*/ dblmax,
                 /*mj_min_*/ 0., /*mj_max_*/ dblmax,
                 /*met_min_*/ 200., /*met_max_*/ dblmax,
                 /*mt_min_*/ 0, /*mt_max_*/ dblmax,
-                /*njets_min_*/ 0, /*njets_max_*/ intmax,
-                /*nbl_min_*/ 0, /*nbl_max_*/ intmax));
+                /*njets_min_*/ 6, /*njets_max_*/ intmax,
+                /*nbl_min_*/ 2, /*nbl_max_*/ intmax));
 
   msgsvc(msglvl, msg::dbg,"Defined selections...");
 
   //---------------- DEFINE VARIABLES FOR ALL PLOTS ----------------
   map<TString, var> vars_map;
   if (mode30){
-    // vars_map["mj_30"] = var("mj_30", "Sum(m^{30}_{J}) [GeV]", 30, 0., 1500.);
-    // vars_map["ht30"] = var("ht30", "H^{30}_{T} [GeV]", 35, 500., 4000.);
-    // vars_map["njets30"] = var("njets30", "jet^{30} multiplicity", 20, 0., 20.);
-    // vars_map["nbl30"] = var("nbl30", "b-jet^{30} multiplicity", 6, 0., 6.);
+    vars_map["mj_30"] = var("mj_30", "Sum(m^{30}_{J}) [GeV]", 30, 0., 1500.);
+    vars_map["ht30"] = var("ht30", "H^{30}_{T} [GeV]", 35, 500., 4000.);
+    vars_map["njets30"] = var("njets30", "jet^{30} multiplicity", 20, 0., 20.);
+    vars_map["nbl30"] = var("nbl30", "b-jet^{30} multiplicity", 6, 0., 6.);
   } else {
     vars_map["mj_40"] = var("mj_40", "Sum(m_{J}) [GeV]", 30, 0., 1500.);
     vars_map["mj_40_fjm70"] = var("mj_40_fjm70", "Sum(m_{J}) (w/ m_{J}>70) [GeV]", 30, 0., 1500.);
     vars_map["ht"] = var("ht", "H_{T} [GeV]", 35, 500., 4000.);
     vars_map["njets"] = var("njets", "jet multiplicity", 20, 0., 20.);
     vars_map["nbl"] = var("nbl", "b-jet multiplicity", 6, 0., 6.);
-    vars_map["fjets_40_m"] = var("fjets_40_m", "large-R jet mass [GeV]", 40, 0., 400.);
+    vars_map["lead_fjets_40_m"] = var("lead_fjets_40_m", "lead-m large-R jet mass [GeV]", 30, 0., 1500.);
+    vars_map["lead_fjets_40_pt"] = var("lead_fjets_40_pt", "lead-m large-R jet p_{T} [GeV]", 30, 0., 1500.);
     vars_map["nfjets_40"] = var("nfjets_40", "large-R jet multiplicity", 20, 0., 20.);
   }
   vars_map["met"] = var("met", "MET [GeV]", 30, 0., 1500.);
@@ -112,14 +142,13 @@ int main(){
   //---------------- DEFINE VARIABLE PAIRS 2D HISTOGRAMS ----------------
   vector<pair<TString,TString> > var_pairs; //use only variables defined in vars_map
   if (mode30){
-    // var_pairs.push_back(make_pair("ht30","mj_30"));
-    // var_pairs.push_back(make_pair("njets30","mj_30"));
-    // var_pairs.push_back(make_pair("nbl30","mj_30"));
-    // var_pairs.push_back(make_pair("met","mj_30"));
-    // var_pairs.push_back(make_pair("met","njets30"));
-    // var_pairs.push_back(make_pair("met","ht"));
-    // var_pairs.push_back(make_pair("mt","mj_30"));
-    // var_pairs.push_back(make_pair("mindphin_metjet","mj_30"));
+    var_pairs.push_back(make_pair("ht30","mj_30"));
+    var_pairs.push_back(make_pair("njets30","mj_30"));
+    var_pairs.push_back(make_pair("nbl30","mj_30"));
+    var_pairs.push_back(make_pair("met","mj_30"));
+    var_pairs.push_back(make_pair("met","njets30"));
+    var_pairs.push_back(make_pair("met","ht"));
+    var_pairs.push_back(make_pair("mt","mj_30"));
   } else {
     var_pairs.push_back(make_pair("ht","mj_40"));
     var_pairs.push_back(make_pair("njets","mj_40"));
@@ -128,8 +157,6 @@ int main(){
     var_pairs.push_back(make_pair("met","mj_40"));
     var_pairs.push_back(make_pair("met","ht"));
     var_pairs.push_back(make_pair("met","njets"));
-    var_pairs.push_back(make_pair("mt","mj_40"));
-    var_pairs.push_back(make_pair("mindphin_metjet","mj_40"));
     var_pairs.push_back(make_pair("pt_tt","lead_pt_top"));
     var_pairs.push_back(make_pair("pt_tt","lead_pt_gluon"));
     var_pairs.push_back(make_pair("pt_tt","mj_40"));
@@ -142,17 +169,15 @@ int main(){
   //---------------- DEFINE VARIABLE SETS 3D HISTOGRAMS ----------------
   vector<vector<TString> > var_sets(0,vector<TString>(0)); //use only variables defined in vars_map
   if (mode30) {
-  //   var_sets.push_back(vector<TString>(0));
-  //   var_sets[0].push_back("mj_30");   var_sets[0].push_back("njets30");   var_sets[0].push_back("met");
-  //   var_sets.push_back(vector<TString>(0));
-  //   var_sets[1].push_back("ht30");   var_sets[1].push_back("njets30");   var_sets[1].push_back("met");
+    var_sets.push_back(vector<TString>(0));
+    var_sets[0].push_back("mj_30");   var_sets[0].push_back("njets30");   var_sets[0].push_back("met");
+    var_sets.push_back(vector<TString>(0));
+    var_sets[1].push_back("ht30");   var_sets[1].push_back("njets30");   var_sets[1].push_back("met");
   } else {
     var_sets.push_back(vector<TString>(0));
     var_sets[0].push_back("mj_40");   var_sets[0].push_back("njets");   var_sets[0].push_back("met");
     var_sets.push_back(vector<TString>(0));
     var_sets[1].push_back("ht");   var_sets[1].push_back("njets");   var_sets[1].push_back("met");
-    var_sets.push_back(vector<TString>(0));
-    var_sets[2].push_back("mj_40");   var_sets[2].push_back("lead_pt_top");   var_sets[2].push_back("pt_tt");
   }
 
   msgsvc(msglvl, msg::dbg,"Defined 3D plots...");
@@ -160,7 +185,7 @@ int main(){
   for (vector<sample>::iterator isamp = samples.begin(); isamp != samples.end(); isamp++) {
 
     msgsvc(msglvl, msg::dbg, "Running over sample: " + isamp->name);
-    TString outdir = "./out/mj_plots_"+isamp->name+".root";
+    TString outdir = "./out/sign/mj_plots_"+isamp->name+".root";
     TFile fout(outdir,"RECREATE");
     small_tree tree((basedir+isamp->filestr).Data());
 
@@ -221,12 +246,17 @@ int main(){
 
       // ------------ CALCULATE CUSTOM VARIABLES --------------
       
-      // ------ MJ with massive fat jets ----------
-      double mj_40_fjm70(0.);
-      for (vector<float>::iterator fjmass=tree.fjets_40_m().begin(); fjmass!=tree.fjets_40_m().end(); fjmass++){
-        if (*fjmass>70.) mj_40_fjm70 += *fjmass;
+      // ------ MJ with massive fat jets and leading mass jet vars ----------
+      flt_val["mj_40_fjm70"] = 0.;
+      flt_val["lead_fjets_40_m"] = 0.; 
+      flt_val["lead_fjets_40_pt"] = 0.; 
+      for (size_t i(0); i<tree.fjets_40_m().size(); i++){
+        if (tree.fjets_40_m()[i]>70.) flt_val["mj_40_fjm70"] += tree.fjets_40_m()[i];
+        if (tree.fjets_40_m()[i]>flt_val["lead_fjets_40_m"]){
+          flt_val["lead_fjets_40_m"] = tree.fjets_40_m()[i]; 
+          flt_val["lead_fjets_40_pt"] = tree.fjets_40_pt()[i]; 
+        }
       }
-      flt_val["mj_40_fjm70"] = mj_40_fjm70;
 
       // ------ Generator level top pt ----------
       flt_val["lead_pt_top"] = -1.*dblmax;
@@ -267,13 +297,7 @@ int main(){
 
         for (map<TString, var>::iterator ivar = vars_map.begin(); ivar!=vars_map.end(); ivar++){
           TString hname = iseln->name+"_"+ivar->second.name+"_"+isamp->name;
-          if (ivar->second.name!="fjets_40_m") {
-            h1d_map[hname].fill(flt_val[ivar->second.name], weight);
-          } else {
-            for (vector<float>::iterator fjmass=tree.fjets_40_m().begin(); fjmass!=tree.fjets_40_m().end(); fjmass++) {
-              h1d_map[hname].fill(*fjmass, weight);
-            }
-          }
+          h1d_map[hname].fill(flt_val[ivar->second.name], weight);
         }
 
         for (vector<pair<TString,TString> >::iterator ipair=var_pairs.begin(); ipair!=var_pairs.end(); ipair++){

@@ -98,7 +98,7 @@ class h1d{
     h1d(const var &var_, TString hname){
       hist = TH1D(hname, hname, var_.nbins, var_.min, var_.max); 
       hist.GetXaxis()->SetTitle(var_.axisttl);
-      hist.GetYaxis()->SetTitle("Fraction of total");
+      hist.GetYaxis()->SetTitle("Events");
       hist.SetLineWidth(2);
       hist.Sumw2();
     }
