@@ -161,7 +161,7 @@ class h3d{
 };
 
 bool passIsolation(const small_tree &tree, int ilep, bool isElectron, bool isveto, TString isotype, const double coneiso_cut);
-bool passSelection(const small_tree &tree, const seln &iseln, bool mode30);
+bool passSelection(const small_tree &tree, const seln &iseln);
 
 void msgsvc(const unsigned &setlvl, const unsigned &lvl, const TString &mymsg);
 

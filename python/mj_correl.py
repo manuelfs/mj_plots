@@ -11,7 +11,8 @@ make3d = False
 shape = True
 # opt = "sign_shape"
 # opt = "sign"
-opt = "base_shape"
+# opt = "base_shape"
+opt = "mt_cut"
 # opt = "mj_ge300"
 datadir = os.path.join(os.getcwd(),"out",opt)
 print "Looking for input in", datadir
@@ -148,7 +149,8 @@ else:
   var_pairs.append(["lead_pt_top","ht"])
   var_pairs.append(["pt_tt","mj_40"])
   var_pairs.append(["lead_pt_top","mj_40"])
-  var_pairs.append(["pt_tt","lead_pt_top"])
+  var_pairs.append(["lead_pt_top", "pt_tt"])
+  var_pairs.append(["isr", "ptt"])
 
 # --------- SETS OF VARIABLES TO PLOT -------------
 var_sets = []
@@ -218,9 +220,6 @@ for seln in selndict.keys():
   #------- CORRELATIONS ---------
   if (make2d):
     for pair in var_pairs:
-
-      leg = make_legend()
-      leg.SetHeader(selndict[seln]+" *SHAPE*")
 
       can = TCanvas("can"+seln+pair[0]+pair[1],"can",1000,1000)
       pad = make_pad()
