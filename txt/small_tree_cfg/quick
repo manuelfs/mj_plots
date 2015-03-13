@@ -1,0 +1,147 @@
+##################   Provenance   #############
+int run
+int lumiblock
+int event
+
+####################   Global   ###################
+float weight
+int npv
+int ntrupv
+float ntrupv_mean
+float met
+float met_phi
+float ht
+float mht
+float mt
+float mt_reliso
+float st
+float st_reliso
+float lep_pt
+float lep_pt_reliso
+float dphi_wlep
+float dphi_wlep_reliso
+float mindphin_metjet
+float min_mt_bmet
+float min_mt_bmet_with_w_mass
+
+##################   Leptons   ################
+int nleps
+int nleps_reliso
+
+int nmus
+int nvmus
+int nmus_reliso
+int nvmus_reliso
+std::vector<float> mus_pt
+std::vector<float> mus_eta
+std::vector<float> mus_phi
+std::vector<float> mus_mt
+std::vector<bool> mus_sigid
+std::vector<float> mus_d0
+std::vector<float> mus_dz
+std::vector<float> mus_reliso
+std::vector<float> mus_reliso_r04
+std::vector<float> mus_reliso_r03
+std::vector<float> mus_reliso_r02
+std::vector<float> mus_reliso_r015
+std::vector<float> mus_reliso_r01
+std::vector<float> mus_miniso_tr10
+std::vector<float> mus_miniso_10
+std::vector<float> mus_miniso_tr10_ch
+std::vector<float> mus_miniso_10_ch
+std::vector<float> mus_miniso_tr10_pfpu
+std::vector<float> mus_miniso_10_pfpu
+std::vector<float> mus_tru_dr
+std::vector<int> mus_tru_id
+std::vector<int> mus_tru_momid
+std::vector<bool> mus_tru_tm
+std::vector<int> mus_charge
+
+int nels
+int nvels
+int nels_reliso
+int nvels_reliso
+std::vector<float> els_pt
+std::vector<float> els_eta
+std::vector<float> els_phi
+std::vector<float> els_mt
+std::vector<bool> els_sigid
+std::vector<bool> els_ispf
+std::vector<float> els_d0
+std::vector<float> els_dz
+std::vector<float> els_reliso
+std::vector<float> els_reliso_r04
+std::vector<float> els_reliso_r03
+std::vector<float> els_reliso_r02
+std::vector<float> els_reliso_r015
+std::vector<float> els_reliso_r01
+std::vector<float> els_miniso_tr10
+std::vector<float> els_miniso_10
+std::vector<float> els_miniso_tr10_ch
+std::vector<float> els_miniso_10_ch
+std::vector<float> els_miniso_tr10_pfpu
+std::vector<float> els_miniso_10_pfpu
+std::vector<float> els_tru_dr
+std::vector<int> els_tru_id
+std::vector<int> els_tru_momid
+std::vector<bool> els_tru_tm
+std::vector<int> els_charge
+
+###################   Tracks   ##################
+int ntks
+int ntks_chg
+int ntks_chg_reliso
+std::vector<int> tks_id
+std::vector<float> tks_pt
+std::vector<float> tks_eta
+std::vector<float> tks_phi
+std::vector<float> tks_mt
+std::vector<int> tks_from_pv
+std::vector<bool> tks_is_primary
+std::vector<bool> tks_is_primary_reliso
+std::vector<bool> tks_is_sig_lep
+std::vector<float> tks_r03_ch
+std::vector<float> tks_r02_ch
+std::vector<float> tks_mini_ch
+std::vector<float> tks_r03_ne
+std::vector<float> tks_r02_ne
+std::vector<float> tks_mini_ne
+std::vector<int> tks_tru_id
+std::vector<float> tks_tru_dr
+std::vector<float> tks_tru_dp
+std::vector<bool> tks_from_w
+std::vector<bool> tks_from_tau
+std::vector<bool> tks_from_taulep
+std::vector<bool> tks_from_tauhad
+std::vector<int> tks_num_prongs
+
+###################   Jets   ##################
+int njets
+int nbl
+int nbm
+int nbt
+
+std::vector<float> jets_pt
+std::vector<float> jets_eta
+std::vector<float> jets_phi
+std::vector<float> jets_csv
+std::vector<float> jets_id
+std::vector<float> jets_islep
+
+####################   MC   ###################
+unsigned mc_type
+std::vector<float>  mc_pt
+std::vector<float>  mc_eta
+std::vector<float>  mc_phi
+std::vector<int>    mc_id
+std::vector<int>    mc_status
+std::vector<size_t> mc_mom
+
+################  Fat Jets   ##################
+int nfjets
+float mj
+std::vector<float> fjets_pt
+std::vector<float> fjets_eta
+std::vector<float> fjets_phi
+std::vector<float> fjets_m
+std::vector<float> fjets_nconst

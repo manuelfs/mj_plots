@@ -113,9 +113,11 @@ edgelist = {}
 edgelist["mj"] = [0.,200.,300., 400.,600.,1500.]
 edgelist["ptt"] = [0.,200., 400.,600.,1000.]
 edgelist["avetoppt"] = [0.,200., 400.,600.,1000.]
-edgelist["dphitt"] = [x/5.*3.14 for x in range(0,5)]
+edgelist["dphi_tt"] = [x/5.*3.14 for x in range(0,5)]
+edgelist["dphi_fjm1_fjm2"] = [x/5.*3.14 for x in range(0,5)]
 edgelist["ht"] = [500.,750.,1000.,1500., 2000.,4000.]
 edgelist["njets"] = [4, 6, 8, 20]
+edgelist["nisrjets"] = [0,1,2,3,4]
 edgelist["leadpttop"] = [0., 100., 200., 300., 400., 600.]
 
 # --------- VARIABLES -------------
@@ -123,9 +125,11 @@ varlbl = {}
 varlbl["mj"] = "M_{J}"
 varlbl["ptt"] = "p_{T}(t#bar{t})"
 varlbl["avetoppt"] = "p^{ave}_{T}(t)"
-varlbl["dphitt"] = "#Delta#phi(t,#bar{t})"
+varlbl["dphi_tt"] = "#Delta#phi(t,#bar{t})"
+varlbl["dphi_fjm1_fjm2"] = "#Delta#phi(m_{j1},m_{j2})"
 varlbl["ht"] = "H_{T}"
 varlbl["njets"] = "n_{jets}"
+varlbl["nisrjets"] = "n_{ISR}"
 varlbl["leadpttop"] = "p_T^{lead}(t)"
 
 # --------- PAIRS OF VARIABLES TO PLOT -------------
@@ -150,14 +154,20 @@ var_pairs = []
 # var_pairs.append(["isr","ptt"])
 # var_pairs.append(["nisrjets","mj"])
 # var_pairs.append(["dphitt","ptt"])
-var_pairs.append(["dphitt","avetoppt"])
+# var_pairs.append(["dphitt","avetoppt"])
+# var_pairs.append(["isr1pt","avetoppt"])
+# var_pairs.append(["isr2pt","avetoppt"])
+# var_pairs.append(["isr3pt","avetoppt"])
+# var_pairs.append(["minDphiIsrTop","mj"])
+# var_pairs.append(["minDphiIsrTop","leadfjm"])
+var_pairs.append(["dphi_tt","dphi_fjm1_fjm2"])
 
 flist = TFile(os.path.join(datadir,"mj_plots_"+samp+".root"),"READ")
 
 for seln in selns:
   for pair in var_pairs:
-    print pair
     hist = flist.Get('_'.join([seln, pair[0], pair[1], samp])).Clone()
+    hist.RebinY(2)
     slices = {}
     slices["X"] = slice2DX(hist, edgelist[pair[0]],pair[0])
     slices["Y"] = slice2DY(hist, edgelist[pair[1]],pair[1])

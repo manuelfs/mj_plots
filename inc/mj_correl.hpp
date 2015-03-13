@@ -1,13 +1,14 @@
 #ifndef H_MJ_CORREL
 #define H_MJ_CORREL
 
-#include "small_tree.hpp"
+#include "small_tree_quick.hpp"
 #include <string>
 
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
 #include "TString.h"
+#include "TLorentzVector.h"
 
 
 class var{
@@ -159,6 +160,8 @@ class h3d{
       hist.Fill(xval, yval, zval, weight);
     };
 };
+
+bool comp_mass(const TLorentzVector &fj1, const TLorentzVector &fj2);
 
 bool passIsolation(const small_tree &tree, int ilep, bool isElectron, bool isveto, TString isotype, const double coneiso_cut);
 bool passSelection(const small_tree &tree, const seln &iseln);
