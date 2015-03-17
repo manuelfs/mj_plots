@@ -7,7 +7,6 @@
 #include <utility>
 #include <set>
 #include <map>
-#include <vector>
 #include <algorithm>
 
 #include "TFile.h"
@@ -27,12 +26,12 @@ namespace{
   const int intmax = numeric_limits<int>::max();
 }
 
-namespace msg { enum { dbg=0, info=1, warn=2, err=3}; }
+namespace msg { enum { dbg=1, info=2, warn=3, err=4, truth=5}; }
 
 int main(){
 
-  unsigned msglvl = msg::dbg;
-  // unsigned msglvl = msg::info;
+  // unsigned msglvl = msg::dbg;
+  unsigned msglvl = msg::truth;
 
   // TString basedir = "/cms5r0/manuelf/root/archive/15-01-30/skim/";
   TString basedir = "/cms5r0/ald77/archive/current/";
@@ -63,29 +62,40 @@ int main(){
 
   //---------------- DEFINE VARIABLES FOR ALL PLOTS ----------------
   map<TString, var> vars_map;
-  vars_map["mj"] = var("mj", "Sum(m_{J}) [GeV]", 30, 0., 1500.);
+  vars_map["mj"] = var("mj", "Sum(m_{J}) [GeV]", 15, 0., 1500.);
   vars_map["ht"] = var("ht", "H_{T} [GeV]", 35, 500., 4000.);
+  vars_map["ht_isr_me"] = var("ht_isr_me", "H_{T}(ISR ME) [GeV]", 15, 0., 1500.);
+  vars_map["ht_isr_ps"] = var("ht_isr_ps", "H_{T}(ISR PS) [GeV]", 15, 0., 1500.);
+  vars_map["ht_isr"] = var("ht_isr", "H_{T}(ISR ME+PS) [GeV]", 15, 0., 1500.);
+  vars_map["ht_fsr"] = var("ht_fsr", "H_{T}(FSR PS) [GeV]", 15, 0., 1500.);
+  vars_map["ht_ifsr"] = var("ht_ifsr", "H_{T}(FSR PS) [GeV]", 20, 0., 2000.);
+  vars_map["ht_top_daughters"] = var("ht_top_daughters", "H_{T}(tops daughters) [GeV]", 20, 0., 2000.);
+  vars_map["ht_part"] = var("ht_part", "H_{T}(partons) [GeV]", 35, 500., 4000.);
   vars_map["njets"] = var("njets", "jet multiplicity", 20, 0., 20.);
   vars_map["nbl"] = var("nbl", "b-jet multiplicity", 6, 0., 6.);
   vars_map["fjm1"] = var("fjm1", "m_{j1} [GeV]", 10, 0., 500.);
+  vars_map["fjm1_nconst"] = var("fjm1_nconst", "m_{j1} const. multiplicity", 5, 0., 5.);
   vars_map["fjm2"] = var("fjm2", "m_{j2} [GeV]", 10, 0., 500.);
-  vars_map["leadfjpt"] = var("leadfjpt", "lead-m large-R jet p_{T} [GeV]", 30, 0., 1500.);
+  vars_map["fjm2_nconst"] = var("fjm2_nconst", "m_{j2} const. multiplicity", 5, 0., 5.);
+  vars_map["fjpt1"] = var("fjpt1", "lead-m large-R jet p_{T} [GeV]", 30, 0., 1500.);
   vars_map["nfjets"] = var("nfjets", "large-R jet multiplicity", 20, 0., 20.);
   vars_map["met"] = var("met", "MET [GeV]", 30, 0., 1500.);
   vars_map["mt"] = var("mt", "m_{T} [GeV]", 20, 0., 1000.);
   vars_map["isr"] = var("isr", "ISR [GeV]", 10, 0., 1000.);
-  vars_map["isr1pt"] = var("isr1pt", "ISR 1st parton [GeV]", 10, 0., 1000.);
-  vars_map["isr2pt"] = var("isr2pt", "ISR 2nd parton [GeV]", 10, 0., 1000.);
-  vars_map["isr3pt"] = var("isr3pt", "ISR 3rd parton [GeV]", 10, 0., 1000.);
-  vars_map["nisrjets"] = var("nisrjets", "ISR parton multiplicity", 6, 0., 6.);
-  vars_map["ptt"] = var("ptt", "p^{gen}_{T}(t#bar{t}) [GeV]", 10, 0., 1000.);
+  vars_map["nisr_me"] = var("nisr_me", "ISR ME parton multiplicity", 6, 0., 6.);
+  vars_map["nisr_ps"] = var("nisr_ps", "ISR PS parton multiplicity", 6, 0., 6.);
+  vars_map["nisr"] = var("nisr", "ISR ME+PS parton multiplicity", 15, 0., 15.);
+  vars_map["nfsr"] = var("nfsr", "FSR parton multiplicity", 10, 0., 10.);
+  vars_map["nifsr"] = var("nifsr", "IFSR ME+PS parton multiplicity", 20, 0., 20.);
+  vars_map["npart"] = var("npart", "parton multiplicity", 20, 0., 20.);
+  vars_map["ntop_daughters"] = var("ntop_daughters", "top daughter multiplicity", 6, 0., 6.);
+  vars_map["ptt"] = var("ptt", "p_{T}(t#bar{t}), ME [GeV]", 10, 0., 1000.);
+  vars_map["ptt_ps"] = var("ptt_ps", "p_{T}(t#bar{t}), PS [GeV]", 10, 0., 1000.);
   vars_map["avetoppt"] = var("avetoppt", "(p^{gen}_{T}(t)+p^{gen}_{T}(#bar{t}))/2 [GeV]", 10, 0., 1000.);
   vars_map["dphi_tt"] = var("dphi_tt", "#Delta#phi^{gen}(t,#bar{t})", 10, 0., 3.14);
   vars_map["dphi_fjm1_fjm2"] = var("dphi_fjm1_fjm2", "#Delta#phi^{gen}(m_{j1},m_{j2})", 10, 0., 3.14);
-  vars_map["mindphi_isr_top"] = var("mindphi_isr_top", "min(#Delta#phi(t_{i},ISR_j))", 10, 0., 3.14);
   vars_map["lead_pt_top"] = var("lead_pt_top", "leading top p^{gen}_{T} [GeV]", 30, 0., 1500.);
   vars_map["sublead_pt_top"] = var("sublead_pt_top", "sub-leading top p^{gen}_{T} [GeV]", 30, 0., 1500.);
-  vars_map["leadptglu"] = var("leadptglu", "leading gluon p^{gen}_{T} [GeV]", 10, 0., 1000.);
   msgsvc(msglvl, msg::dbg,"Defined variables...");
 
   //---------------- DEFINE VARIABLE PAIRS 2D HISTOGRAMS ----------------
@@ -97,24 +107,33 @@ int main(){
   // var_pairs.push_back(make_pair("met","mj"));
   // var_pairs.push_back(make_pair("met","ht"));
   // var_pairs.push_back(make_pair("met","njets"));
-  var_pairs.push_back(make_pair("lead_pt_top", "ptt"));
-  var_pairs.push_back(make_pair("lead_pt_top", "leadfjpt"));
-  var_pairs.push_back(make_pair("isr1pt", "avetoppt"));
-  var_pairs.push_back(make_pair("isr2pt", "avetoppt"));
-  var_pairs.push_back(make_pair("isr3pt", "avetoppt"));
-  var_pairs.push_back(make_pair("ptt","mj"));
-  var_pairs.push_back(make_pair("lead_pt_top","mj"));
-  var_pairs.push_back(make_pair("dphi_tt","ptt"));
-  var_pairs.push_back(make_pair("dphi_tt","avetoppt"));
-  var_pairs.push_back(make_pair("dphi_tt","mj"));
-  var_pairs.push_back(make_pair("dphi_tt","dphi_fjm1_fjm2"));
-  var_pairs.push_back(make_pair("nisrjets","mj"));
-  var_pairs.push_back(make_pair("nisrjets","ptt"));
-  var_pairs.push_back(make_pair("mindphi_isr_top","mj"));
-  var_pairs.push_back(make_pair("mindphi_isr_top","fjm1"));
-  var_pairs.push_back(make_pair("dphi_tt","nisrjets"));
-  var_pairs.push_back(make_pair("lead_pt_top","dphi_tt"));
-  var_pairs.push_back(make_pair("fjm1","dphi_tt"));
+  // var_pairs.push_back(make_pair("lead_pt_top", "ptt"));
+  // var_pairs.push_back(make_pair("lead_pt_top", "fjpt1"));
+  // var_pairs.push_back(make_pair("ptt","mj"));
+  // var_pairs.push_back(make_pair("lead_pt_top","mj"));
+  // var_pairs.push_back(make_pair("dphi_tt","ptt"));
+  // var_pairs.push_back(make_pair("dphi_tt","avetoppt"));
+  // var_pairs.push_back(make_pair("dphi_tt","mj"));
+
+  var_pairs.push_back(make_pair("npart","njets"));
+  var_pairs.push_back(make_pair("nisr_me","mj"));
+  var_pairs.push_back(make_pair("nisr_me","dphi_tt"));
+  var_pairs.push_back(make_pair("nisr_ps","mj"));
+  var_pairs.push_back(make_pair("nisr_ps","dphi_tt"));
+  var_pairs.push_back(make_pair("nisr","mj"));
+  var_pairs.push_back(make_pair("nisr","dphi_tt"));
+  var_pairs.push_back(make_pair("nfsr","mj"));
+  var_pairs.push_back(make_pair("nfsr","dphi_tt"));
+  var_pairs.push_back(make_pair("nifsr","mj"));
+  var_pairs.push_back(make_pair("npart","mj"));
+  var_pairs.push_back(make_pair("nifsr","dphi_tt"));
+
+  var_pairs.push_back(make_pair("ht_part","ht"));
+  var_pairs.push_back(make_pair("ht_isr_me","mj"));
+  var_pairs.push_back(make_pair("ht_isr","mj"));
+  var_pairs.push_back(make_pair("ht_fsr","mj"));
+  var_pairs.push_back(make_pair("ht_part","mj"));
+
   msgsvc(msglvl, msg::dbg,"Defined correlations...");
 
   //---------------- DEFINE VARIABLE SETS 3D HISTOGRAMS ----------------
@@ -182,6 +201,16 @@ int main(){
       // cout<<"Event passed"<<endl;
       tree.GetEntry(ientry);
       double weight = tree.weight()*5;
+      if (tree.event()!= 106827864 && 
+          tree.event()!=105178777 && 
+          tree.event()!=73140398 && 
+          tree.event()!=67007130 && 
+          tree.event()!=59229595 && 
+          tree.event()!=45145334 && 
+          tree.event()!=23202067) continue;
+
+      //------------- PRESELECTION -------------------
+      if (tree.ht()<500. || tree.met()<200.) continue;
 
       map<TString, double> flt_val;
       // for the sake of filling histos all are floats...
@@ -197,90 +226,135 @@ int main(){
       
       // ------ MJ with massive fat jets and leading mass jet vars ----------
       flt_val["fjm1"] = 0.; 
-      flt_val["leadfjpt"] = 0.; 
+      flt_val["fjpt1"] = 0.; 
       vector<TLorentzVector> fjs;
       for (size_t i(0); i<tree.fjets_m().size(); i++){
         TLorentzVector ifj;
         ifj.SetPtEtaPhiM(tree.fjets_pt()[i],tree.fjets_eta()[i],tree.fjets_phi()[i],tree.fjets_m()[i]);; 
         fjs.push_back(ifj);        
       }
-      sort(fjs.begin(), fjs.end(), comp_mass);
-      flt_val["dphi_fjm1_fjm2"] = fjs[0].DeltaPhi(fjs[1]);
+      flt_val["fjpt1"] = fjs[0].Pt();
+      sort(fjs.begin(), fjs.end(), compMass);
+      flt_val["fjm1"] = fjs[0].M();
       
       msgsvc(msglvl, msg::dbg, "Looking at the generator level ");
       // ------ Generator level ----------
-      flt_val["lead_pt_top"] = -1.*dblmax;
-      flt_val["sublead_pt_top"] = -1.*dblmax;
-      flt_val["leadptglu"] = -1.*dblmax;
-      flt_val["nisrjets"] = 0;
-      TVector2 isr(1e-5,1e-5);
-      vector<int> tops; 
-      vector<double> tops_pt; 
-      vector<double> isrs_pt; 
-      vector<double> tops_phi; 
-      vector<double> isrs_phi; 
-      // cout<<"==========================================="<<endl;
+      vector<TVector3> tops_me; 
+      vector<TVector3> tops_ps; 
+      vector<TVector3> top_daughters; 
+      vector<TVector3> isr_me; 
+      vector<TVector3> isr_ps; 
+      vector<TVector3> fsr; 
+      if (msglvl == msg::truth) cout<<"==================== Event: "<<tree.event()<<" ======================="<<endl;
+      int ancestor_id = intmax;
       for (size_t i(0); i<tree.mc_id().size(); i++){
-        // cout<<setw(10)<<tree.mc_id()[i]<<setw(10)<<tree.mc_mom()[i]<<endl;
-            // cout<<"Id: "<<tree.mc_id()[i]<<"   Mom "<<tree.mc_mom()[i]<<endl;
         if (abs(tree.mc_id()[i])==6 && tree.mc_status()[i]==22) {
-          tops.push_back(i);
-          tops_pt.push_back(tree.mc_pt()[i]);
-          tops_phi.push_back(tree.mc_phi()[i]);
+          ancestor_id = tree.mc_mom()[i];
+        }
+      }
+
+      for (size_t i(0); i<tree.mc_id().size(); i++){
+            if (msglvl == msg::truth) cout<<"Id  "<<setw(10)<<tree.mc_id()[i]<<
+                  "  Sta "<<setw(10)<<tree.mc_status()[i]<<
+                  "  Mom "<<setw(10)<<tree.mc_mom()[i]<<
+                  "  Eta "<<setw(10)<<tree.mc_eta()[i]<<
+                  "  Phi "<<setw(10)<<tree.mc_phi()[i]<<
+                  "  Pt "<<setw(10)<<tree.mc_pt()[i];
+        if (tree.mc_pt()[i]<40. || fabs(tree.mc_eta()[i])>2.5) {
+          if (msglvl == msg::truth) cout<<" Outside acceptance"<<endl;
+          continue;
+        }
+
+        if (abs(tree.mc_id()[i])==6) {
+          if (tree.mc_status()[i]==22) {
+            TVector3 itop_me; itop_me.SetPtEtaPhi(tree.mc_pt()[i], tree.mc_eta()[i], tree.mc_phi()[i]);
+            tops_me.push_back(itop_me);
+            if (msglvl == msg::truth) cout<<" ME top"<<endl;
+          } else {
+            TVector3 itop_ps; itop_ps.SetPtEtaPhi(tree.mc_pt()[i], tree.mc_eta()[i], tree.mc_phi()[i]);
+            tops_ps.push_back(itop_ps);
+            if (msglvl == msg::truth) cout<<" PS top"<<endl;
+          }
+        } else if (tree.mc_mom()[i]==unsigned(ancestor_id) || tree.mc_mom()[i]==12212){
+          if (tree.mc_status()[i]==23){
+            TVector3 iisr_me; iisr_me.SetPtEtaPhi(tree.mc_pt()[i], tree.mc_eta()[i], tree.mc_phi()[i]);
+            isr_me.push_back(iisr_me);
+            if (msglvl == msg::truth) cout<<" ME ISR"<<endl;
+          } else {
+            TVector3 iisr_ps; iisr_ps.SetPtEtaPhi(tree.mc_pt()[i], tree.mc_eta()[i], tree.mc_phi()[i]);
+            isr_ps.push_back(iisr_ps);
+            if (msglvl == msg::truth) cout<<" PS ISR"<<endl;
+          }
+        } else if (abs(tree.mc_id()[tree.mc_mom()[i]])==6){
+          if (tree.mc_status()[i]==23){
+            TVector3 itop_child; itop_child.SetPtEtaPhi(tree.mc_pt()[i], tree.mc_eta()[i], tree.mc_phi()[i]);
+            top_daughters.push_back(itop_child);
+            if (msglvl == msg::truth) cout<<" Top child"<<endl;
+          } else if (tree.mc_status()[i]!=22){
+            TVector3 ifsr; ifsr.SetPtEtaPhi(tree.mc_pt()[i], tree.mc_eta()[i], tree.mc_phi()[i]);
+            fsr.push_back(ifsr);            
+            if (msglvl == msg::truth) cout<<" FSR"<<endl;
+          } else {
+            if (msglvl == msg::truth) cout<<" W boson"<<endl;
+            continue;
+          }
+        } else if (abs(tree.mc_id()[tree.mc_mom()[i]])==24 && tree.mc_status()[i]==23){
+          if (abs(tree.mc_id()[i])==12 || abs(tree.mc_id()[i])==14 || abs(tree.mc_id()[i])==16) {
+            if (msglvl == msg::truth) cout<<" Neutrino"<<endl;
+            continue;
+          }
+          TVector3 itop_child; itop_child.SetPtEtaPhi(tree.mc_pt()[i], tree.mc_eta()[i], tree.mc_phi()[i]);
+          top_daughters.push_back(itop_child);
+          if (msglvl == msg::truth) cout<<" Top child"<<endl;
         } else {
-          if (abs(tree.mc_id()[i])==21 && tree.mc_pt()[i] > flt_val["leadptglu"]) flt_val["leadptglu"] = tree.mc_pt()[i];
-          if (tree.mc_mom()[i]>100) {
-            isrs_pt.push_back(tree.mc_pt()[i]);
-            isrs_phi.push_back(tree.mc_phi()[i]);
-            TVector2 ptcl; ptcl.SetMagPhi(tree.mc_pt()[i], tree.mc_phi()[i]);
-            isr = isr + ptcl;
-            flt_val["nisrjets"] = flt_val["nisrjets"]+1.;
+          msgsvc(msglvl, msg::err, "Could not parse truth record!");
+          for (size_t k(0); k<tree.mc_id().size(); k++){
+            cout<<"Id  "<<setw(10)<<tree.mc_id()[k]<<
+                  "  Sta "<<setw(10)<<tree.mc_status()[k]<<
+                  "  Mom "<<setw(10)<<tree.mc_mom()[k]<<
+                  "  Eta "<<setw(10)<<tree.mc_eta()[k]<<
+                  "  Pt "<<setw(10)<<tree.mc_pt()[k]<<endl;
           }
         }
-      }
-      flt_val["isr"] = isr.Mod();      
+      }  
 
-      sort(isrs_pt.begin(), isrs_pt.end());
-      if (isrs_pt.size()>0) flt_val["isr1pt"] = isrs_pt[0];
-      if (isrs_pt.size()>1) flt_val["isr2pt"] = isrs_pt[1];
-      if (isrs_pt.size()>2) flt_val["isr3pt"] = isrs_pt[2];
+      flt_val["ntop_daughters"] = top_daughters.size();
+      flt_val["ntops_me"] = tops_me.size();
+      flt_val["ntops_ps"] = tops_ps.size();
+      flt_val["nisr_me"] = isr_me.size();
+      flt_val["nisr_ps"] = isr_ps.size();
+      flt_val["nisr"] = isr_me.size() + isr_ps.size();
+      flt_val["nfsr"] = fsr.size();
+      flt_val["nifsr"] = isr_me.size() + isr_ps.size() + fsr.size();
+      flt_val["npart"] = isr_me.size() + isr_ps.size() + fsr.size() + top_daughters.size();
+
+      flt_val["ht_isr_me"] = getHT(isr_me);
+      flt_val["ht_isr_ps"] = getHT(isr_ps);
+      flt_val["ht_isr"] = flt_val["ht_isr_me"] + flt_val["ht_isr_ps"];
+      flt_val["ht_fsr"] = getHT(fsr);
+      flt_val["ht_ifsr"] = flt_val["ht_isr"] + flt_val["ht_fsr"];
+      flt_val["ht_top_daughters"] = getHT(top_daughters);
+      flt_val["ht_part"] = flt_val["ht_top_daughters"] + flt_val["ht_ifsr"];
 
       msgsvc(msglvl, msg::dbg, "Record top pTs ");
-      sort(tops_pt.begin(), tops_pt.end());
-      size_t ntops = tops_pt.size();
-      if (ntops>0) flt_val["lead_pt_top"] = tops_pt[ntops-1];
-      if (ntops>1) flt_val["sublead_pt_top"] = tops_pt[ntops-2];
-
-      // min delta phi
-      msgsvc(msglvl, msg::dbg, "Min delta phi between tops and isr ");
-      double mindphi_isr_top = dblmax;
-      for (size_t i(0); i<tops_phi.size(); i++){
-        for (size_t j(0); j<isrs_phi.size(); j++){
-          double dphi = DeltaPhi(tops_phi[i], isrs_phi[j]);
-          if (dphi < mindphi_isr_top) mindphi_isr_top = dphi;
-        }
-      }
-      flt_val["mindphi_isr_top"] = mindphi_isr_top;
+      flt_val["lead_pt_top"] = -1.*dblmax;
+      flt_val["sublead_pt_top"] = -1.*dblmax;
+      size_t ntops_me = tops_me.size();
+      sort(tops_me.begin(), tops_me.end(), compPT);
+      if (ntops_me>0) flt_val["lead_pt_top"] = tops_me[0].Pt();
+      if (ntops_me>1) flt_val["sublead_pt_top"] = tops_me[1].Pt();
 
       // ------ Generator level pt of the ttbar system ----------
-      if (isamp->name=="ttbar"){
-        if (ntops!=2){
-          cout<<"WARNING:: Bad truth record, number of tops = "<<ntops<<endl;
-          flt_val["ptt"] = dblmax; 
-          flt_val["dphi_tt"] = dblmax;
-          flt_val["avetoppt"] = dblmax;
-        } else {
-          TVector2 t1; t1.SetMagPhi(tree.mc_pt()[tops[0]], tree.mc_phi()[tops[0]]);
-          TVector2 t2; t2.SetMagPhi(tree.mc_pt()[tops[1]], tree.mc_phi()[tops[1]]);
-          TVector2 tt = t1+t2;
-          flt_val["ptt"] = tt.Mod();
-          flt_val["dphi_tt"] = t1.DeltaPhi(t2);
-          flt_val["avetoppt"] = (tree.mc_pt()[tops[0]]+tree.mc_pt()[tops[1]])/2.;
-        }
-      } else {
-        flt_val["ptt"] = dblmax;
+      if (ntops_me!=2 || isamp->name!="ttbar"){
+        if (ntops_me!=2) msgsvc(msglvl, msg::dbg, "Bad truth record or tops outside acceptance, number of tops found = " + TString::Format("%i",int(ntops_me)));
+        flt_val["ptt"] = dblmax; 
         flt_val["dphi_tt"] = dblmax;
         flt_val["avetoppt"] = dblmax;
+      } else {
+        TVector3 tt_me = tops_me[0]+tops_me[1];
+        flt_val["ptt"] = tt_me.Mag();
+        flt_val["dphi_tt"] = tops_me[0].DeltaPhi(tops_me[1]);
+        flt_val["avetoppt"] = (tops_me[0].Pt()+tops_me[1].Pt())/2.;
       }
 
       for (vector<seln>::iterator iseln = selns.begin(); iseln!=selns.end(); iseln++){
@@ -312,8 +386,18 @@ int main(){
   return 0;
 }
 
-bool comp_mass(const TLorentzVector &fj1, const TLorentzVector &fj2){
-  return (fj1.M()>fj2.M());
+bool compMass(const TLorentzVector &tlv1, const TLorentzVector &tlv2){
+  return (tlv1.M()>tlv2.M());
+}
+
+bool compPT(const TVector3 &v1, const TVector3 &v2){
+  return (v1.Pt()>v2.Pt());
+}
+
+double getHT(vector<TVector3> &v){
+  double ht = 0.;
+  for (size_t i(0); i<v.size(); i++) ht +=v[i].Pt();
+  return ht;
 }
 
 bool passIsolation(const small_tree &tree, int ilep, bool isElectron, bool isveto){

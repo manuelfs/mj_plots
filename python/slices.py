@@ -62,7 +62,7 @@ def label(x, y, text, color=1, size=0.08):
 
 def units(var): 
   gev_vars = ["mj", "ht", "leadfjm", "leadfjpt", "met", "mt", "isr", "isr1pt", "isr2pt", "isr3pt", "ptt", "leadpttop", "subleadpttop", "leadptglu"]
-  if var in gev_vars:
+  if var in gev_vars or var[0:1]=="ht":
     return "GeV"
   else:
     return ""
@@ -85,14 +85,14 @@ gROOT.SetBatch(kTRUE)
 
 # ------------- SELECTIONS -------------
 selns = [
-  "nl1-ht750-met250-mt150-nj6-nb2",
-  "nl1-ht500-met200-mt150-nj0-nb0",
+  # "nl1-ht750-met250-mt150-nj6-nb2",
+  # "nl1-ht500-met200-mt150-nj0-nb0",
   "nl1-ht500-met200-mt150-nj6-nb0",
   "nl1-ht500-met200-mt0-nj6-nb0",
-  "nl1-ht500-met200-mt0-nj6-nb0-mj0to200",
-  "nl1-ht500-met200-mt0-nj6-nb0-mj200to400",
-  "nl1-ht500-met200-mt0-nj6-nb0-mj400to600",
-  "nl1-ht500-met200-mt0-nj6-nb0-mj600toInf"
+  # "nl1-ht500-met200-mt0-nj6-nb0-mj0to200",
+  # "nl1-ht500-met200-mt0-nj6-nb0-mj200to400",
+  # "nl1-ht500-met200-mt0-nj6-nb0-mj400to600",
+  # "nl1-ht500-met200-mt0-nj6-nb0-mj600toInf"
 ]
 
 # ------------- SAMPLES -------------
@@ -116,8 +116,16 @@ edgelist["avetoppt"] = [0.,200., 400.,600.,1000.]
 edgelist["dphi_tt"] = [x/5.*3.14 for x in range(0,5)]
 edgelist["dphi_fjm1_fjm2"] = [x/5.*3.14 for x in range(0,5)]
 edgelist["ht"] = [500.,750.,1000.,1500., 2000.,4000.]
+edgelist["ht_isr_me"] = [0.,500.,1000.,1500.]
+edgelist["ht_isr"] = [0.,500.,1000.,1500.]
+edgelist["ht_fsr"] = [0.,500.,1000.,1500.]
+edgelist["ht_part"] = [0.,500.,1000.,1500., 2500.]
 edgelist["njets"] = [4, 6, 8, 20]
-edgelist["nisrjets"] = [0,1,2,3,4]
+edgelist["npart"] = [0, 4, 6, 8, 20]
+edgelist["nisr_me"] = [0,1,2,3,4]
+edgelist["nisr"] = [0,4,6,10]
+edgelist["nifsr"] = [0,4,6,10]
+edgelist["nfsr"] = [0,1,2,3]
 edgelist["leadpttop"] = [0., 100., 200., 300., 400., 600.]
 
 # --------- VARIABLES -------------
@@ -128,8 +136,16 @@ varlbl["avetoppt"] = "p^{ave}_{T}(t)"
 varlbl["dphi_tt"] = "#Delta#phi(t,#bar{t})"
 varlbl["dphi_fjm1_fjm2"] = "#Delta#phi(m_{j1},m_{j2})"
 varlbl["ht"] = "H_{T}"
+varlbl["ht_isr_me"] = "H_{T} ISR ME"
+varlbl["ht_isr"] = "H_{T} ISR ME+PS"
+varlbl["ht_fsr"] = "H_{T} FSR"
+varlbl["ht_part"] = "H_{T} part."
 varlbl["njets"] = "n_{jets}"
-varlbl["nisrjets"] = "n_{ISR}"
+varlbl["npart"] = "n_{partons}"
+varlbl["nisr_me"] = "n_{ISR ME}"
+varlbl["nisr"] = "n_{ISR ME+PS}"
+varlbl["nfsr"] = "n_{FSR}"
+varlbl["nifsr"] = "n_{ISR+FSR}"
 varlbl["leadpttop"] = "p_T^{lead}(t)"
 
 # --------- PAIRS OF VARIABLES TO PLOT -------------
@@ -155,22 +171,34 @@ var_pairs = []
 # var_pairs.append(["nisrjets","mj"])
 # var_pairs.append(["dphitt","ptt"])
 # var_pairs.append(["dphitt","avetoppt"])
-# var_pairs.append(["isr1pt","avetoppt"])
-# var_pairs.append(["isr2pt","avetoppt"])
-# var_pairs.append(["isr3pt","avetoppt"])
 # var_pairs.append(["minDphiIsrTop","mj"])
 # var_pairs.append(["minDphiIsrTop","leadfjm"])
-var_pairs.append(["dphi_tt","dphi_fjm1_fjm2"])
+# var_pairs.append(["dphi_tt","dphi_fjm1_fjm2"])
+
+# var_pairs.append(["npart","njets"])
+# var_pairs.append(["nisr_me","mj"])
+# var_pairs.append(["nisr_me","dphi_tt"])
+# var_pairs.append(["nisr_ps","mj"])
+# var_pairs.append(["nisr_ps","dphi_tt"])
+# var_pairs.append(["nisr","mj"])
+# var_pairs.append(["nisr","dphi_tt"])
+# var_pairs.append(["nfsr","mj"])
+# var_pairs.append(["nfsr","dphi_tt"])
+# var_pairs.append(["nifsr","mj"])
+var_pairs.append(["npart","mj"])
+# var_pairs.append(["nifsr","dphi_tt"])
+
+# var_pairs.append(["ht_part","ht"])
+# var_pairs.append(["ht_isr_me","mj"])
+# var_pairs.append(["ht_isr","mj"])
+# var_pairs.append(["ht_fsr","mj"])
+# var_pairs.append(["ht_part","mj"])
 
 flist = TFile(os.path.join(datadir,"mj_plots_"+samp+".root"),"READ")
 
 for seln in selns:
   for pair in var_pairs:
     hist = flist.Get('_'.join([seln, pair[0], pair[1], samp])).Clone()
-    hist.RebinY(2)
-    slices = {}
-    slices["X"] = slice2DX(hist, edgelist[pair[0]],pair[0])
-    slices["Y"] = slice2DY(hist, edgelist[pair[1]],pair[1])
 
     can = TCanvas(hist.GetName(),"can",1000,900)
     pad = make_pad()
@@ -179,12 +207,17 @@ for seln in selns:
 
     hist.SetLineWidth(3)
     hist.SetLineColor(kRed+1)
-    hist.SetMarkerSize(1.8)
+    hist.SetMarkerSize(1.)
     style_axis(hist)
-    hist.Draw("colz text")
+    if ("ht" in pair[0]): hist.Draw("colz")
+    else: hist.Draw("colz text")
+    # hist.Draw("colz")
     # label(0.77,0.85,"#rho={:.2f}".format(hist.GetCorrelationFactor()),1,0.05)
     can.Print(hist.GetName()+".pdf")
 
+    slices = {}
+    slices["X"] = slice2DX(hist, edgelist[pair[0]],pair[0])
+    slices["Y"] = slice2DY(hist, edgelist[pair[1]],pair[1])
     for iaxis,axis in enumerate(["X","Y"]):
 
       leg = make_legend()

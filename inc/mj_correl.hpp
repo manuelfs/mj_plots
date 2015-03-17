@@ -3,11 +3,13 @@
 
 #include "small_tree_quick.hpp"
 #include <string>
+#include <vector>
 
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
 #include "TString.h"
+#include "TVector3.h"
 #include "TLorentzVector.h"
 
 
@@ -161,7 +163,9 @@ class h3d{
     };
 };
 
-bool comp_mass(const TLorentzVector &fj1, const TLorentzVector &fj2);
+bool compMass(const TLorentzVector &fj1, const TLorentzVector &fj2);
+bool compPT(const TVector3 &v1, const TVector3 &v2);
+double getHT(std::vector<TVector3> &v);
 
 bool passIsolation(const small_tree &tree, int ilep, bool isElectron, bool isveto, TString isotype, const double coneiso_cut);
 bool passSelection(const small_tree &tree, const seln &iseln);
