@@ -1,6 +1,7 @@
 // plot_distribution: Macro that plots variables both lumi weighted and normalized to the same area.
 
 #include <iostream>
+#include <vector>
 
 #include "TChain.h"
 #include "TH1D.h"
@@ -8,6 +9,7 @@
 #include "TLegend.h"
 #include "TLine.h"
 #include "TString.h"
+#include "TColor.h"
 
 #include "styles.hpp"
 #include "utilities.hpp"
@@ -24,7 +26,7 @@ public:
     cuts = icuts; cut = icut; samples = isamples;
     tag = ivarname+"_"+cuts; tag.ReplaceAll("_1",""); tag.ReplaceAll(".",""); 
     tag.ReplaceAll("(",""); tag.ReplaceAll("$","");  tag.ReplaceAll(")",""); 
-    tag.ReplaceAll("[",""); tag.ReplaceAll("]",""); 
+    tag.ReplaceAll("[",""); tag.ReplaceAll("]",""); tag.ReplaceAll("||","_");
     tag.ReplaceAll("/","_"); tag.ReplaceAll("*",""); tag.ReplaceAll("&&","_");
     tag.ReplaceAll(">",""); tag.ReplaceAll("<",""); tag.ReplaceAll("=","");
     tag.ReplaceAll("+",""); 
@@ -40,12 +42,17 @@ public:
 
 class sfeats {
 public:
-  sfeats(TString ifile, TString ilabel, int icolor, int istyle=1, TString icut="1"){
+  sfeats(vector<TString> ifile, TString ilabel, int icolor, int istyle=1, TString icut="1"){
     file = ifile; label = ilabel; cut = icut;
     color = icolor; style = istyle;
+    isSig = ifile[0].Contains("T1tttt");// && ifile.Contains("1200");
+    factor = "1";
+    if(ifile[0].Contains("TTW")) factor = "0.36";
   }
-  TString file, label, cut;
+  vector<TString> file;
+  TString label, cut, factor;
   int color, style;
+  bool isSig;
 };
 
 int main(){ 
@@ -53,21 +60,72 @@ int main(){
   vector<hfeats> vars;
   TCanvas can;
 
+  TColor ucsb_blue(1000, 1/255.,57/255.,166/255.);
+  TColor ucsb_gold(1001, 255/255.,200/255.,47/255);
+  TColor penn_red(1002, 149/255.,0/255.,26/255.);
+  TColor uf_orange(1003, 255/255.,74/255.,0/255.);
+  TColor uo_green(1004, 0/255.,79/255.,39/255.);
+  TColor tcu_purple(1005, 52/255.,42/255.,123/255.);
+  TColor tar_heel_blue(1006, 86/255.,160/255.,211/255.);
+  TColor sig_teal(1007, 96/255.,159/255.,128/255.);
+  TColor sig_gold(1008, 215/255.,162/255.,50/255.);
+  TColor seal_brown(1010, 89/255.,38/255.,11/255.);
+
+  //TString folder="archive/15-03-03/skim/";
+  TString folder="archive/15-01-30/skim/";
+  vector<TString> s_tt;
+  s_tt.push_back(folder+"*_TTJet*");
+  vector<TString> s_wjets;
+  s_wjets.push_back(folder+"*WJets*");
+  vector<TString> s_zjets;
+  s_zjets.push_back(folder+"*_ZJets*");
+  vector<TString> s_single;
+  s_single.push_back(folder+"*_T*channel*");
+  vector<TString> s_ttv;
+  s_ttv.push_back(folder+"*TTW*");
+  s_ttv.push_back(folder+"*TTZ*");
+  vector<TString> s_qcd;
+  s_qcd.push_back(folder+"*QCD_Pt*");
+  vector<TString> s_other;
+  s_other.push_back(folder+"*DY*");
+  s_other.push_back(folder+"*WH_HToBB*");
+  vector<TString> s_t1t;
+  s_t1t.push_back(folder+"*T1tttt*1500_*PU20*");
+  vector<TString> s_t1tc;
+  s_t1tc.push_back(folder+"*T1tttt*1200_*PU20*");
+  vector<TString> s_t1q;
+  s_t1q.push_back(folder+"*T1qqqq*1400_*PU20*");
+  vector<TString> s_t1qc;
+  s_t1qc.push_back(folder+"*T1qqqq*1000_*PU20*");
+
   // Reading ntuples
-  TString folder="/afs/cern.ch/user/m/manuelf/work/ucsb/15-01-30_skim/";
   vector<TChain *> chain;
   vector<sfeats> Samples; 
-  Samples.push_back(sfeats(folder+"*ZJetsToNuNu*", "Z#rightarrow#nu#nu", kMagenta+2));
-  Samples.push_back(sfeats(folder+"*QCD_HT*", "QCD", 28));
-  Samples.push_back(sfeats(folder+"*TTJet*", "t#bar{t}", 2));
-  Samples.push_back(sfeats(folder+"*T1qqqq*1400_*PU20*", "T1qqqq(1400,100)", 8));
-  Samples.push_back(sfeats(folder+"*T1tttt*1500_*PU20*", "T1tttt(1500,100)", 4));
-  Samples.push_back(sfeats(folder+"*T1qqqq*1000_*PU20*", "T1qqqq(1000,800)", 8,2));
-  Samples.push_back(sfeats(folder+"*T1tttt*1200_*PU20*", "T1tttt(1200,800)", 4,2));
+  Samples.push_back(sfeats(s_zjets, "Z#rightarrow#nu#nu", kMagenta+2));
+  Samples.push_back(sfeats(s_qcd, "QCD", 28));
+  Samples.push_back(sfeats(s_tt, "t#bar{t}", 2));
+  Samples.push_back(sfeats(s_t1q, "T1qqqq(1400,100)", 8));
+  Samples.push_back(sfeats(s_t1t, "T1tttt(1500,100)", 4));
+  Samples.push_back(sfeats(s_t1qc, "T1qqqq(1000,800)", 8,2));
+  Samples.push_back(sfeats(s_t1tc, "T1tttt(1200,800)", 4,2));
+
+  // // Jack's colors
+  // Samples.push_back(sfeats(s_zjets, "Z#rightarrow#nu#nu", 1002));
+  // Samples.push_back(sfeats(s_qcd, "QCD", 1001));
+  // Samples.push_back(sfeats(s_tt, "t#bar{t}", 1000,1));
+  // Samples.push_back(sfeats(s_t1q, "T1qqqq(1400,100)", 4));
+  // Samples.push_back(sfeats(s_t1t, "T1tttt(1500,100)", 2));
+  // Samples.push_back(sfeats(s_t1qc, "T1qqqq(1000,800)", 4,2));
+  // Samples.push_back(sfeats(s_t1tc, "T1tttt(1200,800)", 2,2));
+
+  Samples.push_back(sfeats(s_ttv, "ttV", 1002));
+  Samples.push_back(sfeats(s_single, "Single top", 1005));
+  Samples.push_back(sfeats(s_wjets, "W + jets", 1004));
 
   for(unsigned sam(0); sam < Samples.size(); sam++){
     chain.push_back(new TChain("tree"));
-    chain[sam]->Add(Samples[sam].file);
+    for(unsigned insam(0); insam < Samples[sam].file.size(); insam++)
+      chain[sam]->Add(Samples[sam].file[insam]);
   }
 
   vector<int> mj_sam;
@@ -107,6 +165,8 @@ int main(){
 
   vars.push_back(hfeats("mj_30",40,0,2200, mj_sam, "M_{J} (GeV)","ht>500&&met>200&&njets30>=4&&nvmus10==0&&nvels10==0"));
 
+
+
   TString luminosity="4";
   float minLog = 0.04, maxLog = 10;
   double legX = 0.48, legY = 0.89, legSingle = 0.067;
@@ -126,7 +186,8 @@ int main(){
     title = vars[var].cuts; if(title=="1") title = "";
     title.ReplaceAll("nvmus==1&&nmus==1&&nvels==0","1 #mu");
     title.ReplaceAll("nvmus10==0&&nvels10==0", "0 leptons");  
-    title.ReplaceAll("(nmus+nels)", "n_{lep}");  title.ReplaceAll("njets30","n_{jets}^{30}"); 
+    title.ReplaceAll("(Max$(els_pt*els_sigid*(els_miniso_tr10<0.1))>20||Max$(mus_pt*mus_sigid*(mus_miniso_tr10<0.4))>20)&&(nmus+nels)", "n_{lep}");  
+    title.ReplaceAll("((nmus+nels)", "n_{lep}");  title.ReplaceAll("njets30","n_{jets}^{30}"); 
     title.ReplaceAll("els_pt","p^{e}_{T}");title.ReplaceAll("mus_pt","p^{#mu}_{T}");
     title.ReplaceAll("mus_reliso","RelIso"); title.ReplaceAll("els_reliso","RelIso");
     title.ReplaceAll("mus_miniso_tr15","MiniIso"); title.ReplaceAll("els_miniso_tr15","MiniIso");
@@ -151,9 +212,9 @@ int main(){
     float maxhisto(-999);
     for(unsigned sam(0); sam < vars[var].samples.size(); sam++){
       int isam = vars[var].samples[sam];
-      bool isSig = Samples[isam].file.Contains("T1tttt");
-      isSig=(sam==1);
-      totCut = luminosity+"*weight*("+vars[var].cuts+"&&"+Samples[isam].cut+")"; 
+      bool isSig = Samples[isam].isSig;
+      totCut = Samples[isam].factor+"*"+luminosity+"*weight*("+vars[var].cuts+"&&"+Samples[isam].cut+")"; 
+      //cout<<totCut<<endl;
       chain[isam]->Project(histo[0][var][sam]->GetName(), variable, totCut);
       histo[0][var][sam]->SetBinContent(vars[var].nbins,
 					  histo[0][var][sam]->GetBinContent(vars[var].nbins)+
@@ -174,10 +235,12 @@ int main(){
 
       if(!isSig){ // Adding previous bkg histos
 	for(int bsam(sam-1); bsam >= 0; bsam--){
-	  if(!Samples[vars[var].samples[bsam]].file.Contains("T1tttt")){
-	    histo[0][var][sam]->Add(histo[0][var][bsam]);
-	    break;
-	  }
+	  histo[0][var][sam]->Add(histo[0][var][bsam]);
+	  break;
+	  // if(!Samples[vars[var].samples[bsam]].file[0].Contains("T1tttt")){
+	  //   histo[0][var][sam]->Add(histo[0][var][bsam]);
+	  //   break;
+	  // }
 	}
 	histo[0][var][sam]->SetFillColor(Samples[isam].color);
 	histo[0][var][sam]->SetFillStyle(1001);
@@ -195,8 +258,7 @@ int main(){
       int isam = vars[var].samples[sam];
       leghisto = Samples[isam].label+" [N = " + RoundNumber(nentries[sam],0) + "]";
       leg.AddEntry(histo[0][var][sam], leghisto);
-      bool isSig = Samples[isam].file.Contains("T1tttt");
-      isSig = (sam==1);
+      bool isSig = Samples[isam].isSig;
       if(!isSig){
 	if(firstplotted < 0) {
 	  histo[0][var][sam]->Draw();
@@ -206,8 +268,7 @@ int main(){
     }
     for(int sam(vars[var].samples.size()-1); sam >= 0; sam--){
       int isam = vars[var].samples[sam];
-      bool isSig = Samples[isam].file.Contains("T1tttt");
-      isSig = (sam==1);
+      bool isSig = Samples[isam].isSig;
       if(isSig) histo[0][var][sam]->Draw("same");
     }
     legH = legSingle*vars[var].samples.size(); leg.SetY1NDC(legY-legH);
@@ -221,13 +282,13 @@ int main(){
     }
     if(vars[var].cut>0) line.DrawLine(vars[var].cut, 0, vars[var].cut, maxhisto*maxLog);
     can.SetLogy(1);
-    pname = "plots/1d/log_lumi_"+vars[var].tag+".pdf";
-    //can.SaveAs(pname);
+    pname = "plots/1d/log_lumi_"+vars[var].tag+".eps";
+    can.SaveAs(pname);
     histo[0][var][firstplotted]->SetMinimum(0);
     histo[0][var][firstplotted]->SetMaximum(maxhisto*1.1);
     can.SetLogy(0);
-    pname = "plots/1d/lumi_"+vars[var].tag+".pdf";
-    //can.SaveAs(pname);
+    pname = "plots/1d/lumi_"+vars[var].tag+".eps";
+    can.SaveAs(pname);
 
     //////////// Plotting area-normalized distributions ////////////
     leg.Clear(); maxhisto = -999;
@@ -252,11 +313,11 @@ int main(){
     if(vars[var].cut>0) line.DrawLine(vars[var].cut, 0, vars[var].cut, maxhisto*1.1);
     histo[1][var][0]->SetMaximum(maxhisto*1.1);
     can.SetLogy(0);
-    pname = "plots/1d/shapes_"+vars[var].tag+".pdf";
+    pname = "plots/1d/shapes_"+vars[var].tag+".eps";
     can.SaveAs(pname);
     histo[1][var][0]->SetMaximum(maxhisto*maxLog);
     can.SetLogy(1);
-    pname = "plots/1d/log_shapes_"+vars[var].tag+".pdf";
+    pname = "plots/1d/log_shapes_"+vars[var].tag+".eps";
     can.SaveAs(pname);
   }// Loop over variables
 
