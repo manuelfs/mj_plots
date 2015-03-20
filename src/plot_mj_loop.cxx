@@ -10,6 +10,7 @@
 #include "TLine.h"
 #include "TString.h"
 #include "TColor.h"
+#include "TF1.h"
 
 #include "styles.hpp"
 #include "utilities.hpp"
@@ -31,6 +32,7 @@ public:
     tag.ReplaceAll("/","_"); tag.ReplaceAll("*",""); tag.ReplaceAll("&&","_");
     tag.ReplaceAll(">",""); tag.ReplaceAll("<",""); tag.ReplaceAll("=","");
     tag.ReplaceAll("+",""); tag.ReplaceAll("{",""); tag.ReplaceAll("}",""); 
+    tag.ReplaceAll("^",""); tag.ReplaceAll(",",""); 
     unit = "";
     if(title.Contains("GeV)")) unit = "GeV";
     if(title.Contains("phi")) unit = "rad";
@@ -57,7 +59,8 @@ public:
 };
 
 int main(){ 
-  styles style("Paper"); style.setDefaultStyle();
+  styles style("Paper"); style.PadLeftMargin = 0.13; style.yTitleOffset = 1.07;
+  style.setDefaultStyle(); 
   vector<hfeats> vars;
   TCanvas can;
 
@@ -103,11 +106,11 @@ int main(){
   vector<TChain *> chain;
   vector<sfeats> Samples; 
   // MJ note's colors
+  Samples.push_back(sfeats(s_t1t, "T1tttt(1500,100)", 4));
+  Samples.push_back(sfeats(s_t1q, "T1qqqq(1400,100)", 8));
   Samples.push_back(sfeats(s_zjets, "Z#rightarrow#nu#nu", kMagenta+2));
   Samples.push_back(sfeats(s_qcd, "QCD", 28));
   Samples.push_back(sfeats(s_tt, "t#bar{t}", 2));
-  Samples.push_back(sfeats(s_t1q, "T1qqqq(1400,100)", 8));
-  Samples.push_back(sfeats(s_t1t, "T1tttt(1500,100)", 4));
   //Samples.push_back(sfeats(s_t1qc, "T1qqqq(1000,800)", 8,2));
   //Samples.push_back(sfeats(s_t1tc, "T1tttt(1200,800)", 4,2));
 
@@ -137,10 +140,18 @@ int main(){
   mj_sam.push_back(3);
   mj_sam.push_back(4);
 
-  vars.push_back(hfeats("Average M_{J} (GeV)",7,5,40, mj_sam, "n_{tru PV}",
+  vars.push_back(hfeats("Average M_{J}^{10} (GeV)",7,5,40, mj_sam, "True n_{PV}",
+   			"ht>500&&met>200&&njets>=4&&(nmus+nels)==0"));
+  vars.push_back(hfeats("Average M_{J}^{30} (GeV)",7,5,40, mj_sam, "True n_{PV}",
+   			"ht>500&&met>200&&njets>=4&&(nmus+nels)==0"));
+  vars.push_back(hfeats("Average M_{J}^{40} (GeV)",7,5,40, mj_sam, "True n_{PV}",
+   			"ht>500&&met>200&&njets>=4&&(nmus+nels)==0"));
+  vars.push_back(hfeats("Average M_{J}^{pfcand} (GeV)",7,5,40, mj_sam, "True n_{PV}",
+			"ht>500&&met>200&&njets>=4&&(nmus+nels)==0"));
+  vars.push_back(hfeats("Average M_{J}^{pfcand,trim} (GeV)",7,5,40, mj_sam, "True n_{PV}",
 			"ht>500&&met>200&&njets>=4&&(nmus+nels)==0"));
 
-  double legX = 0.48, legY = 0.89, legSingle = 0.067;
+  double legX = 0.15, legY = 0.89, legSingle = 0.067;
   double legW = 0.22, legH = legSingle*Samples.size();
   TLegend leg(legX, legY-legH, legX+legW, legY);
   leg.SetTextSize(0.057); leg.SetFillColor(0); leg.SetFillStyle(0); leg.SetBorderSize(0);
@@ -148,6 +159,8 @@ int main(){
 
   vector<vector<TH1D*> > varhisto[4];
   TString hname, pname, leghisto, title;
+  TF1 linfit("linfit","[0]+[1]*x",vars[0].minx, vars[0].maxx);
+  linfit.SetParameter(0, 200);  linfit.SetParameter(1, 0);
 
   for(unsigned sam(0); sam < Samples.size(); sam++){
 
@@ -194,7 +207,26 @@ int main(){
 
       if(tree.ht()<500 || tree.met()<200 || tree.njets()<4 || (tree.nmus()+tree.nels())!=0) continue;
       for(unsigned var(0); var<vars.size(); var++){
-	double weight(tree.weight()*4), ntrupv(tree.ntrupv()), mj(tree.mj_30());
+	double weight(tree.weight()*4), ntrupv(tree.ntrupv()), mj(0);
+	switch(var){
+	case 0:
+	  mj = tree.mj_10();
+	  break;
+	case 1:
+	  mj = tree.mj_30();
+	  break;
+	case 2:
+	  mj = tree.mj_40();
+	  break;
+	case 3:
+	  mj = tree.mj_cands();
+	  break;
+	case 4:
+	  mj = tree.mj_cands_trim();
+	  break;
+	default:
+	  break;
+	}
 	varhisto[0][sam][var]->Fill(ntrupv, weight*mj);
 	varhisto[1][sam][var]->Fill(ntrupv, weight);
 	varhisto[2][sam][var]->Fill(ntrupv, weight*mj*mj);
@@ -213,29 +245,37 @@ int main(){
 	double denom(varhisto[1][sam][var]->GetBinContent(bin));
 	double wX2(varhisto[2][sam][var]->GetBinContent(bin));
 	double w2(varhisto[3][sam][var]->GetBinContent(bin));
+	double effn(pow(denom,2)); // Effective number of entries, see TH1::GetEffectiveEntries()
 	if(denom) {
 	  mean /= denom;
 	  wX2 /= denom;
+	  effn /= w2;
 	} else {
 	  mean = 0;
 	  wX2 = 0;
-	  w2 = 1;
+	  effn = 1;
 	}
 	varhisto[0][sam][var]->SetBinContent(bin, mean);
-	varhisto[0][sam][var]->SetBinError(bin, sqrt((wX2-mean*mean)/pow(denom,2)*w2));	  
-	//cout<<bin<<": mean "<<mean<<", denom "<<denom<<"\t";
+	varhisto[0][sam][var]->SetBinError(bin, sqrt((wX2-mean*mean)/effn));	  
       } // Loop over number of bins
-      leghisto = Samples[sam].label;
+
+      varhisto[0][sam][var]->Fit(&linfit,"M Q N","", vars[var].minx, vars[var].maxx);
+      leghisto = Samples[sam].label+" [<M_{J}> = "+RoundNumber(linfit.GetParameter(0),1)+" + "+
+	RoundNumber(linfit.GetParameter(1),1)+"n_{PV}]";
       leg.AddEntry(varhisto[0][sam][var], leghisto);
+      // cout<<Samples[sam].label<<" [<M_{J}> = ("<<RoundNumber(linfit.GetParameter(0),1)<<" +- "<<
+      // 	RoundNumber(linfit.GetParError(0),1)<<") + ("<<
+      // 	RoundNumber(linfit.GetParameter(1),1)<<" +- "<<RoundNumber(linfit.GetParError(1),1)<<")n_{PV}]"<<endl;
       if(sam==0){
 	varhisto[0][sam][var]->SetMinimum(0);
-	varhisto[0][sam][var]->SetMaximum(1300);
+	varhisto[0][sam][var]->SetMaximum(1650);
 	varhisto[0][sam][var]->Draw("e");
       } else varhisto[0][sam][var]->Draw("e same");
     }  // Loop over samples
     leg.Draw();
     pname = "plots/pu_"+vars[var].tag+".eps";
-    can.SaveAs(pname);    
+    can.SaveAs(pname);  
+    leg.Clear();
   } // Loop over variables to plot
 
   // Deleting pointers
