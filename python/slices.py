@@ -71,7 +71,7 @@ def units(var):
 gStyle.SetOptStat(0)
 gStyle.SetOptTitle(0)
 gStyle.SetPalette(55)
-ROOT.gStyle.SetPaintTextFormat(".1f");
+ROOT.gStyle.SetPaintTextFormat(".0f");
 
 Red = array.array('d',[1., 0.39])
 Green = array.array('d',[1.,0.51])
@@ -89,10 +89,15 @@ selns = [
   # "nl1-ht500-met200-mt150-nj0-nb0",
   "nl1-ht500-met200-mt150-nj6-nb0",
   "nl1-ht500-met200-mt0-nj6-nb0",
-  # "nl1-ht500-met200-mt0-nj6-nb0-mj0to200",
-  # "nl1-ht500-met200-mt0-nj6-nb0-mj200to400",
-  # "nl1-ht500-met200-mt0-nj6-nb0-mj400to600",
-  # "nl1-ht500-met200-mt0-nj6-nb0-mj600toInf"
+  # "nl1-ht500-met200-mt150-nj6-nb0-mj300to400",
+  # "nl1-ht500-met200-mt150-nj6-nb0-mj400to500",
+  # "nl1-ht500-met200-mt150-nj6-nb0-mj500to600",
+  # "nl1-ht500-met200-mt150-nj6-nb0-mj600toInf",
+
+  "nl1-ht500-met200-mt0-nj6-nb0-mj300to400",
+  "nl1-ht500-met200-mt0-nj6-nb0-mj400to500",
+  "nl1-ht500-met200-mt0-nj6-nb0-mj500to600",
+  "nl1-ht500-met200-mt0-nj6-nb0-mj600toInf"
 ]
 
 # ------------- SAMPLES -------------
@@ -103,7 +108,10 @@ sampldict["ttbar"] = "t#bar{t}"
 # sampldict["T1tttt1500"] = ("T1tttt NC", kGreen+2, 3013,"t1tn")
 # sampldict["T1tttt1200"] = ("T1tttt C", kBlack, 3013,"t1tc")
 
-colors = [kRed+1, kBlue+2, kGreen+2, kOrange+7, kBlack]
+# colors = [kRed+1, kOrange, kGreen+1, kBlue+1]
+colors = [kBlack, kMagenta+2, kBlue+1, kGreen+1]
+
+# markers = [20, kBlue+2, kGreen+2, kOrange+7, kBlack]
 
 # ------ Samples used in plots depend on what is defined in sampldict (not samp_order)
 samp = 'ttbar'
@@ -111,20 +119,19 @@ samp = 'ttbar'
 # --------- VARIABLES -------------
 edgelist = {}
 edgelist["mj"] = [0.,200.,300., 400.,600.,1500.]
+edgelist["met"] = [200.,300., 400.,500.,1500.]
+edgelist["met_me"] = [200.,300., 400.,500.,1500.]
 edgelist["ptt"] = [0.,200., 400.,600.,1000.]
 edgelist["avetoppt"] = [0.,200., 400.,600.,1000.]
 edgelist["dphi_tt"] = [x/5.*3.14 for x in range(0,5)]
 edgelist["dphi_fjm1_fjm2"] = [x/5.*3.14 for x in range(0,5)]
 edgelist["ht"] = [500.,750.,1000.,1500., 2000.,4000.]
 edgelist["ht_isr_me"] = [0.,500.,1000.,1500.]
-edgelist["ht_isr"] = [0.,500.,1000.,1500.]
 edgelist["ht_fsr"] = [0.,500.,1000.,1500.]
 edgelist["ht_part"] = [0.,500.,1000.,1500., 2500.]
 edgelist["njets"] = [4, 6, 8, 20]
 edgelist["npart"] = [0, 4, 6, 8, 20]
 edgelist["nisr_me"] = [0,1,2,3,4]
-edgelist["nisr"] = [0,4,6,10]
-edgelist["nifsr"] = [0,4,6,10]
 edgelist["nfsr"] = [0,1,2,3]
 edgelist["leadpttop"] = [0., 100., 200., 300., 400., 600.]
 
@@ -137,16 +144,15 @@ varlbl["dphi_tt"] = "#Delta#phi(t,#bar{t})"
 varlbl["dphi_fjm1_fjm2"] = "#Delta#phi(m_{j1},m_{j2})"
 varlbl["ht"] = "H_{T}"
 varlbl["ht_isr_me"] = "H_{T} ISR ME"
-varlbl["ht_isr"] = "H_{T} ISR ME+PS"
 varlbl["ht_fsr"] = "H_{T} FSR"
 varlbl["ht_part"] = "H_{T} part."
 varlbl["njets"] = "n_{jets}"
 varlbl["npart"] = "n_{partons}"
 varlbl["nisr_me"] = "n_{ISR ME}"
-varlbl["nisr"] = "n_{ISR ME+PS}"
 varlbl["nfsr"] = "n_{FSR}"
-varlbl["nifsr"] = "n_{ISR+FSR}"
 varlbl["leadpttop"] = "p_T^{lead}(t)"
+varlbl["met"] = "MET"
+varlbl["met_me"] = "MET (ME)"
 
 # --------- PAIRS OF VARIABLES TO PLOT -------------
 var_pairs = []
@@ -169,32 +175,30 @@ var_pairs = []
 # var_pairs.append(["dphitt","nisrjets"])
 # var_pairs.append(["isr","ptt"])
 # var_pairs.append(["nisrjets","mj"])
-# var_pairs.append(["dphitt","ptt"])
+var_pairs.append(["dphi_tt","ptt"])
 # var_pairs.append(["dphitt","avetoppt"])
 # var_pairs.append(["minDphiIsrTop","mj"])
 # var_pairs.append(["minDphiIsrTop","leadfjm"])
 # var_pairs.append(["dphi_tt","dphi_fjm1_fjm2"])
 
 # var_pairs.append(["npart","njets"])
-# var_pairs.append(["nisr_me","mj"])
+var_pairs.append(["nisr_me","mj"])
 # var_pairs.append(["nisr_me","dphi_tt"])
-# var_pairs.append(["nisr_ps","mj"])
-# var_pairs.append(["nisr_ps","dphi_tt"])
-# var_pairs.append(["nisr","mj"])
-# var_pairs.append(["nisr","dphi_tt"])
 # var_pairs.append(["nfsr","mj"])
 # var_pairs.append(["nfsr","dphi_tt"])
-# var_pairs.append(["nifsr","mj"])
-var_pairs.append(["npart","mj"])
-# var_pairs.append(["nifsr","dphi_tt"])
 
 # var_pairs.append(["ht_part","ht"])
 # var_pairs.append(["ht_isr_me","mj"])
-# var_pairs.append(["ht_isr","mj"])
 # var_pairs.append(["ht_fsr","mj"])
 # var_pairs.append(["ht_part","mj"])
 
-flist = TFile(os.path.join(datadir,"mj_plots_"+samp+".root"),"READ")
+# var_pairs.append(["dphi_tt","ht_isr_me"])
+
+# var_pairs.append(["met","met_me"])
+
+
+# flist = TFile(os.path.join(datadir,"mj_plots_"+samp+".root"),"READ")
+flist = TFile(os.path.join(datadir,"mj_htISR_1100toInf.root"),"READ")
 
 for seln in selns:
   for pair in var_pairs:
@@ -207,7 +211,9 @@ for seln in selns:
 
     hist.SetLineWidth(3)
     hist.SetLineColor(kRed+1)
-    hist.SetMarkerSize(1.)
+    hist.SetMarkerSize(2.5)
+    hist.RebinX(2)
+    hist.RebinY(2)
     style_axis(hist)
     if ("ht" in pair[0]): hist.Draw("colz")
     else: hist.Draw("colz text")
@@ -225,18 +231,21 @@ for seln in selns:
 
       ymax = 0
       for i,slice in enumerate(slices[axis]):
-        if (ymax < slice.GetMaximum()): 
+        if (ymax < 1.5*slice.GetMaximum()): 
           ymax = 1.5*slice.GetMaximum()
           slices[axis][0].GetYaxis().SetRangeUser(0.,ymax)
         slice.SetLineColor(colors[i])
-        slice.SetLineWidth(4)
+        slice.SetLineWidth(5)
         slice.SetLineStyle(i+2)
+        # slice.SetMarkerStyle(20+i)
+        # slice.SetMarkerSize(2.5)
+        # slice.SetMarkerColor(colors[i])
         # slice.Rebin(2)
         style_axis(slice)
         if (i==0): slice.Draw("hist")
         else: slice.Draw("hist same")
         svar = pair[iaxis]
-        if (svar == "dphitt"):
+        if (svar == "dphi_tt"):
           leg.AddEntry(slice, '{} {:.1f} - {:.1f} {} (#mu {:.1f}, RMS {:.1f})'.format(varlbl[svar], edgelist[svar][i], edgelist[svar][i+1], units(svar), slice.GetMean(), slice.GetRMS()), "F")
         else:
           leg.AddEntry(slice, '{} {:.0f} - {:.0f} {} (#mu {:.1f}, RMS {:.1f})'.format(varlbl[svar], edgelist[svar][i], edgelist[svar][i+1], units(svar), slice.GetMean(), slice.GetRMS()), "F")

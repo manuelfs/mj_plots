@@ -1,5 +1,5 @@
 #include "generate_small_tree.hpp"
- 
+
 #include <cstring>
 
 #include <stdexcept>
@@ -67,7 +67,17 @@ string FixName(string name){
     pos = name.rfind("__");
   }
 
-  return name;
+  //Remove leading and trailing spaces
+  pos = 0;
+  for(pos = 0; pos < name.size(); ++pos){
+    if(name.at(pos) != ' ') break;
+  }
+  size_t endpos = name.size();
+  for(endpos = name.size(); endpos != 0; --endpos){
+    if(name.at(endpos-1) != ' ') break;
+  }
+
+  return name.substr(pos, endpos-pos);
 }
 
 set<Variable> GetVariables(const string &file_name){
@@ -80,12 +90,17 @@ set<Variable> GetVariables(const string &file_name){
     size_t start = line.find_first_not_of(" ");
     if(start >= line.size() || line.at(start) == '#' || line.at(start) == '/') continue;
 
+    //Replace double space with single space
+    size_t pos = line.rfind("  ");
+    while(pos < line.size()){
+      line.replace(pos, 2, " ");
+      pos = line.rfind("  ");
+    }
     size_t end = line.find_last_of(allowed)+1;
-    size_t split_start = line.find(' ', start);
-    size_t split_end = line.rfind(' ', end)+1;
+    size_t split = line.rfind(' ', end)+1;
 
-    vars.insert(Variable(line.substr(start, split_start-start),
-                         line.substr(split_end, end-split_end)));
+    vars.insert(Variable(line.substr(start, split-start),
+                         line.substr(split, end-split)));
   }
   infile.close();
 

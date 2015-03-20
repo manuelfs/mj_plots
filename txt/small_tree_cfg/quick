@@ -18,6 +18,12 @@ float st
 float st_reliso
 float lep_pt
 float lep_pt_reliso
+float lep_phi
+float lep_phi_reliso
+float lep_eta
+float lep_eta_reliso
+int lep_charge
+int lep_charge_reliso
 float dphi_wlep
 float dphi_wlep_reliso
 float mindphin_metjet
@@ -114,6 +120,7 @@ std::vector<bool> tks_from_tau
 std::vector<bool> tks_from_taulep
 std::vector<bool> tks_from_tauhad
 std::vector<int> tks_num_prongs
+std::vector<int> tks_charge
 
 ###################   Jets   ##################
 int njets
@@ -127,6 +134,9 @@ std::vector<float> jets_phi
 std::vector<float> jets_csv
 std::vector<float> jets_id
 std::vector<float> jets_islep
+std::vector<int>   jets_fjet_index
+std::vector<float> jets_gen_pt
+std::vector<float> jets_parton_pt
 
 ####################   MC   ###################
 unsigned mc_type

@@ -163,13 +163,13 @@ class h3d{
     };
 };
 
+void msgsvc(const unsigned &lvl, const TString &mymsg);
+
 bool compMass(const TLorentzVector &fj1, const TLorentzVector &fj2);
 bool compPT(const TVector3 &v1, const TVector3 &v2);
 double getHT(std::vector<TVector3> &v);
 
 bool passIsolation(const small_tree &tree, int ilep, bool isElectron, bool isveto, TString isotype, const double coneiso_cut);
 bool passSelection(const small_tree &tree, const seln &iseln);
-
-void msgsvc(const unsigned &setlvl, const unsigned &lvl, const TString &mymsg);
 
 #endif
