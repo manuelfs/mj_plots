@@ -18,19 +18,34 @@
 
 using namespace std;
 
+class var_class {
+public:
+  var_class(TString variable, TString name, char type, TString unit="GeV");
+  TString variable, name;
+  char type;
+  TString unit;
+};
+
+var_class::var_class(TString ivariable, TString iname, char itype, TString iunit):
+  variable(ivariable),
+  name(iname),
+  type(itype),
+  unit(iunit){
+}
+
 class bdt_class {
 public:
-  bdt_class(vector<pair<TString, char> > ivars, TString isignal, TString ibkg);
-  vector<pair<TString, char> > vars;
+  bdt_class(vector<var_class> ivars, TString isignal, TString ibkg);
+  vector<var_class> vars;
   TString signal, bkg, name;
 };
 
-bdt_class::bdt_class(vector<pair<TString, char> > ivars, TString isignal, TString ibkg):
+bdt_class::bdt_class(vector<var_class> ivars, TString isignal, TString ibkg):
   vars(ivars),
   signal(isignal),
   bkg(ibkg){
   name = "bdt_"+signal+"_"+bkg+"_";
-  for(unsigned ind(0); ind < vars.size(); ind++) name += vars[ind].first;
+  for(unsigned ind(0); ind < vars.size(); ind++) name += vars[ind].variable;
   name.ReplaceAll("*","");
 }
 
@@ -40,35 +55,42 @@ int main(){
   TString ntuplefolder("archive/15-01-30/skim/"), rootfolder("root/");
   gSystem->mkdir(rootfolder, kTRUE);
 
-  vector<pair<TString, char> > v_htmj;
-  v_htmj.push_back(make_pair("ht",'F'));
-  v_htmj.push_back(make_pair("mj_30",'F'));
+  vector<var_class> v_htmj;
+  v_htmj.push_back(var_class("ht","H_{T}",'F'));
+  v_htmj.push_back(var_class("mj_30","M_{J}",'F'));
 
-  vector<pair<TString, char> > v_htnjets;
-  v_htnjets.push_back(make_pair("ht",'F'));
-  v_htnjets.push_back(make_pair("njets30",'I'));
+  vector<var_class> v_htnjets;
+  v_htnjets.push_back(var_class("ht","H_{T}",'F'));
+  v_htnjets.push_back(var_class("njets30","n_{jets}^{30}",'I'));
 
-  vector<pair<TString, char> > v_njetsmj;
-  v_njetsmj.push_back(make_pair("njets30",'I'));
-  v_njetsmj.push_back(make_pair("mj_30",'F'));
+  vector<var_class> v_njetsmj;
+  v_njetsmj.push_back(var_class("njets30","n_{jets}^{30}",'I'));
+  v_njetsmj.push_back(var_class("mj_30","M_{J}",'F'));
+
+  vector<var_class> v_njetsmjhtmet;
+  v_njetsmjhtmet.push_back(var_class("mj_30","M_{J}",'F'));
+  v_njetsmjhtmet.push_back(var_class("ht","H_{T}",'F'));
+  v_njetsmjhtmet.push_back(var_class("njets30","n_{jets}^{30}",'I'));
+  v_njetsmjhtmet.push_back(var_class("met","MET",'F'));
 
   vector<TString> v_signal;
-  //v_signal.push_back("*T1tttt*1500*");
-   v_signal.push_back("*T1tttt*1200*");
-   v_signal.push_back("*T1qqqq*1400*");
-   v_signal.push_back("*T1qqqq*1000*");
+  v_signal.push_back("*T1tttt*1500*");
+  v_signal.push_back("*T1tttt*1200*");
+  v_signal.push_back("*T1qqqq*1400*");
+  v_signal.push_back("*T1qqqq*1000*");
 		      
   vector<TString> v_bkg;
-  //v_bkg.push_back("*QCD_Pt*");
+  v_bkg.push_back("*QCD_Pt*");
   v_bkg.push_back("*TTJet*");
   //v_bkg.push_back("*ZJetsToNuNu*");
 
   vector<bdt_class> bdts;
   for(unsigned isig(0); isig < v_signal.size(); isig++){
     for(unsigned ibkg(0); ibkg < v_bkg.size(); ibkg++){
-      bdts.push_back(bdt_class(v_htmj, v_signal[isig], v_bkg[ibkg]));
-      bdts.push_back(bdt_class(v_htnjets, v_signal[isig], v_bkg[ibkg]));
-      bdts.push_back(bdt_class(v_njetsmj, v_signal[isig], v_bkg[ibkg]));
+      //bdts.push_back(bdt_class(v_htmj, v_signal[isig], v_bkg[ibkg]));
+      //bdts.push_back(bdt_class(v_htnjets, v_signal[isig], v_bkg[ibkg]));
+      //bdts.push_back(bdt_class(v_njetsmj, v_signal[isig], v_bkg[ibkg]));
+      bdts.push_back(bdt_class(v_njetsmjhtmet, v_signal[isig], v_bkg[ibkg]));
     }
   }
 
@@ -83,7 +105,8 @@ int main(){
     // Creating TMVA factory
     TMVA::Factory *factory = new TMVA::Factory(bdts[ibdt].name, &tmvaFile,"!V:Silent:Color");
     for(unsigned ind(0); ind < bdts[ibdt].vars.size(); ind++) 
-      factory->AddVariable(bdts[ibdt].vars[ind].first, bdts[ibdt].vars[ind].second);
+      factory->AddVariable(bdts[ibdt].vars[ind].variable, bdts[ibdt].vars[ind].name, 
+			   bdts[ibdt].vars[ind].unit, bdts[ibdt].vars[ind].type);
     factory->AddSpectator("met := met", "MET", "GeV", 'F');
     factory->AddSpectator("ht := ht", "H_{T}", "GeV", 'F');
     factory->AddSpectator("mj_30 := mj_30", "M_{J}", "GeV", 'F');
@@ -95,8 +118,7 @@ int main(){
     factory->SetSignalWeightExpression    ("weight");
     factory->SetBackgroundWeightExpression("weight");
 
-    TCut mycuts = ""; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
-    TCut mycutb = ""; // for example: TCut mycutb = "abs(var1)<0.5";
+    TCut mycuts(""), mycutb("");
     factory->PrepareTrainingAndTestTree( mycuts, mycutb, "nTrain_Signal="+nTrain+":nTrain_Background="+nTrain+
 					 ":nTest_Signal="+nTest+":nTest_Background="+nTest+
 					 ":SplitMode=Random:NormMode=NumEvents:!V" );
@@ -108,7 +130,9 @@ int main(){
     factory->EvaluateAllMethods(); // Evaluate and compare performance of all configured MVAs
 
     delete factory;
-    cout<<"\t\tWritten "<<rootfolder+bdts[ibdt].name+".root"<<endl;
+    tmvaFile.Write();
+    tmvaFile.Close();
+    cout<<"\t\t\t\t\t\t\t\t\t\t\tWritten "<<rootfolder+bdts[ibdt].name+".root"<<endl;
 
   } // Loop over BDTs
 
