@@ -29,17 +29,27 @@ namespace{
 namespace msg { enum {dbg=1, info=2, warn=3, err=4, truth=5}; }
 // const unsigned msglvl = msg::truth;
 unsigned msglvl = msg::info;
+bool split_mctype = false;
 
 int main(){
 
   // TString basedir = "/cms5r0/manuelf/root/archive/15-01-30/skim/";
   TString basedir = "/cms5r0/ald77/archive/current/skims/";
 
+  vector<TString> mctypes;
+  // mctypes.push_back("ll");
+  // mctypes.push_back("lt");
+  // mctypes.push_back("lh");
+  // mctypes.push_back("hh");
+  mctypes.push_back("nl0");
+  mctypes.push_back("nl1");
+  mctypes.push_back("nl2");
+
   vector<sample> samples; 
   samples.push_back(sample("*_TTJets*", "ttbar", true));
   // samples.push_back(sample("*_TTZ*", "ttZ", true));
-  // samples.push_back(sample("*-T1tttt_2J_mGl-1500_mLSP-100_*PU20*", "T1tttt1500", true));
-  // samples.push_back(sample("*-T1tttt_2J_mGl-1200_mLSP-800_*PU20*", "T1tttt1200", true));
+  samples.push_back(sample("*-T1tttt_2J_mGl-1500_mLSP-100_*PU20*", "T1tttt1500", true));
+  samples.push_back(sample("*-T1tttt_2J_mGl-1200_mLSP-800_*PU20*", "T1tttt1200", true));
   // samples.push_back(sample("*-T1qqqq_2J_mGl-1000_mLSP-800_*", "T1qqqq1000", false));
   // samples.push_back(sample("*-T1qqqq_2J_mGl-1400_mLSP-100_*", "T1qqqq1400", false));
   // samples.push_back(sample("*-T2tt_2J_mStop-650_mLSP-325_*", "T2tt650", true)); skim not available
@@ -49,15 +59,15 @@ int main(){
 
   //---------------- DEFINE EVENT SELECTIONS ----------------
   vector<seln> selns;
-  selns.push_back(seln("nl1-ht750-met250-mt150-nj6-nb2", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 750., dblmax, /*mj*/ 0.,  dblmax, /*met*/ 250.,  dblmax, /*mt*/ 150,  dblmax, /*njets*/ 6,  intmax, /*nbl*/ 2,  intmax));
-  selns.push_back(seln("nl1-ht500-met200-mt150-nj0-nb0", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 0.,  dblmax, /*met*/ 200.,  dblmax, /*mt*/ 150,  dblmax, /*njets*/0,  intmax, /*nbl*/ 0,  intmax));
-  selns.push_back(seln("nl1-ht500-met200-mt150-nj6-nb0", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 0.,  dblmax, /*met*/ 200.,  dblmax, /*mt*/ 150,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
-  selns.push_back(seln("nl1-ht500-met200-mt0-nj6-nb0", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 0.,  dblmax, /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
+  // selns.push_back(seln("nl1-ht750-met250-mt150-nj6-nb2", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 750., dblmax, /*mj*/ 0.,  dblmax, /*met*/ 250.,  dblmax, /*mt*/ 150,  dblmax, /*njets*/ 6,  intmax, /*nbl*/ 2,  intmax));
+  // selns.push_back(seln("nl1-ht500-met200-mt150-nj0-nb0", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 0.,  dblmax, /*met*/ 200.,  dblmax, /*mt*/ 150,  dblmax, /*njets*/0,  intmax, /*nbl*/ 0,  intmax));
+  // selns.push_back(seln("nl1-ht500-met200-mt150-nj6-nb0", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 0.,  dblmax, /*met*/ 200.,  dblmax, /*mt*/ 150,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
+  // selns.push_back(seln("nl1-ht500-met200-mt0-nj6-nb0", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 0.,  dblmax, /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
  
-  selns.push_back(seln("nl1-ht500-met200-mt0-nj6-nb0-mj300to400", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 300.,  400., /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
-  selns.push_back(seln("nl1-ht500-met200-mt0-nj6-nb0-mj400to500", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 400.,  500., /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
-  selns.push_back(seln("nl1-ht500-met200-mt0-nj6-nb0-mj500to600", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 500.,  600., /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
-  selns.push_back(seln("nl1-ht500-met200-mt0-nj6-nb0-mj600toInf", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 600.,  dblmax, /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
+  selns.push_back(seln("nlna-ht500-met200-mt0-nj6-nb0", /*nleps_*/ -1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 0.,  dblmax, /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
+  selns.push_back(seln("nlna-ht500-met200-mt0-nj6-nb0-mj300to450", /*nleps_*/ -1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 300.,  450., /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
+  selns.push_back(seln("nlna-ht500-met200-mt0-nj6-nb0-mj450to600", /*nleps_*/ -1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 450.,  600., /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
+  selns.push_back(seln("nlna-ht500-met200-mt0-nj6-nb0-mj600toInf", /*nleps_*/ -1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 600., dblmax, /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
  
   // selns.push_back(seln("nl1-ht500-met200-mt150-nj6-nb0-mj300to400", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 300.,  400., /*met*/ 200.,  dblmax, /*mt*/ 150,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
   // selns.push_back(seln("nl1-ht500-met200-mt150-nj6-nb0-mj400to500", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 400.,  500., /*met*/ 200.,  dblmax, /*mt*/ 150,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
@@ -67,7 +77,7 @@ int main(){
 
   //---------------- DEFINE VARIABLES FOR ALL PLOTS ----------------
   map<TString, var> vars_map;
-  vars_map["mj"] = var("mj", "Sum(m_{J}) [GeV]", 15, 0., 1500.);
+  vars_map["mj"] = var("mj", "M_{J} [GeV]", 30, 0., 1500.);
   vars_map["ht"] = var("ht", "H_{T} [GeV]", 35, 500., 4000.);
   vars_map["ht_isr_me"] = var("ht_isr_me", "H_{T}(ISR ME) [GeV]", 15, 0., 1500.);
   vars_map["ht_fsr"] = var("ht_fsr", "H_{T}(FSR PS) [GeV]", 15, 0., 1500.);
@@ -85,14 +95,16 @@ int main(){
   vars_map["met_me"] = var("met_me", "MET (ME) [GeV]", 16, 0., 800.);
   vars_map["mt"] = var("mt", "m_{T} [GeV]", 20, 0., 1000.);
   vars_map["isr"] = var("isr", "ISR [GeV]", 10, 0., 1000.);
+  vars_map["pt_isr"] = var("pt_isr", "ISR p_{T}[GeV]", 100, 0., 1000.);
+  vars_map["pt_gg"] = var("pt_gg", "gluino system p_{T}[GeV]", 100, 0., 1000.);
+  vars_map["lead_isr_pt"] = var("lead_isr_pt", "leading ISR p_{T} [GeV]", 20, 0., 1000.);
+  vars_map["sublead_isr_pt"] = var("sublead_isr_pt", "subleading ISR p_{T} [GeV]", 20, 0., 1000.);
   vars_map["fsr"] = var("fsr", "FSR [GeV]", 10, 0., 1000.);
-  vars_map["nisr_me"] = var("nisr_me", "ISR ME parton multiplicity", 6, 0., 6.);
+  vars_map["nisr_me"] = var("nisr_me", "ISR ME parton multiplicity", 4, 0., 4.);
   vars_map["npart"] = var("npart", "parton multiplicity", 20, 0., 20.);
   vars_map["ntop_daughters"] = var("ntop_daughters", "top daughter multiplicity", 6, 1., 7.);
-  vars_map["ptt"] = var("ptt", "p_{T}(t#bar{t}), ME [GeV]", 10, 0., 1000.);
-  vars_map["ptt_ps"] = var("ptt_ps", "p_{T}(t#bar{t}), PS [GeV]", 10, 0., 1000.);
-  vars_map["avetoppt"] = var("avetoppt", "(p^{gen}_{T}(t)+p^{gen}_{T}(#bar{t}))/2 [GeV]", 10, 0., 1000.);
-  vars_map["dphi_tt"] = var("dphi_tt", "#Delta#phi^{gen}(t,#bar{t})", 10, 0., 3.14);
+  vars_map["ptt"] = var("ptt", "p_{T}(t#bar{t}), ME [GeV]", 100, 0., 1000.);
+  vars_map["dphi_tt"] = var("dphi_tt", "#Delta#phi^{gen}(t,#bar{t})", 6, 0., 3.14);
   vars_map["dphi_fjm1_fjm2"] = var("dphi_fjm1_fjm2", "#Delta#phi^{gen}(m_{j1},m_{j2})", 10, 0., 3.14);
   vars_map["lead_pt_top"] = var("lead_pt_top", "leading top p^{gen}_{T} [GeV]", 30, 0., 1500.);
   vars_map["sublead_pt_top"] = var("sublead_pt_top", "sub-leading top p^{gen}_{T} [GeV]", 30, 0., 1500.);
@@ -113,14 +125,18 @@ int main(){
   // var_pairs.push_back(make_pair("ptt","mj"));
   // var_pairs.push_back(make_pair("lead_pt_top","mj"));
   var_pairs.push_back(make_pair("dphi_tt","ptt"));
-  // var_pairs.push_back(make_pair("dphi_tt","avetoppt"));
   // var_pairs.push_back(make_pair("dphi_tt","mj"));
+
+  var_pairs.push_back(make_pair("pt_gg","pt_isr"));
+  var_pairs.push_back(make_pair("ptt","pt_isr"));
 
   var_pairs.push_back(make_pair("npart","njets"));
   var_pairs.push_back(make_pair("nisr_me","mj"));
   var_pairs.push_back(make_pair("nisr_me","dphi_tt"));
+  var_pairs.push_back(make_pair("nisr_me","ht_isr_me"));
 
   var_pairs.push_back(make_pair("dphi_tt","ht_isr_me"));
+  var_pairs.push_back(make_pair("dphi_tt","nisr_me"));
 
   var_pairs.push_back(make_pair("ht_part","ht"));
   var_pairs.push_back(make_pair("ht_isr_me","mj"));
@@ -129,10 +145,10 @@ int main(){
   msgsvc(msg::dbg,"Defined correlations...");
 
   //---------------- DEFINE VARIABLE SETS 3D HISTOGRAMS ----------------
-  // vector<vector<TString> > var_sets(0,vector<TString>(0)); //use only variables defined in vars_map
-  // int ivarset = 0;
-  // var_sets.push_back(vector<TString>(0));
-  // var_sets[ivarset].push_back("ptt");   var_sets[ivarset].push_back("dphi_tt");   var_sets[ivarset].push_back("mj");
+  vector<vector<TString> > var_sets(0,vector<TString>(0)); //use only variables defined in vars_map
+  int ivarset = 0;
+  var_sets.push_back(vector<TString>(0));
+  var_sets[ivarset].push_back("ptt");   var_sets[ivarset].push_back("dphi_tt");   var_sets[ivarset].push_back("mj");
 
   // ivarset++;
   // var_sets.push_back(vector<TString>(0));
@@ -147,41 +163,67 @@ int main(){
   //---------------- LOOP OVER SAMPLES ----------------
   for (vector<sample>::iterator isamp = samples.begin(); isamp != samples.end(); isamp++) {
 
+    if (isamp->name!="ttbar") split_mctype = false;//assuming ttbar is always first in the vector...
     msgsvc(msg::dbg, "Running over sample: " + isamp->name);
-    TString outdir = "./ntup/mj_plots_"+isamp->name+".root";
-    TFile fout(outdir,"RECREATE");
-    small_tree tree((basedir+isamp->filestr).Data());
 
     map<TString, h1d> h1d_map;
     map<TString, h2d> h2d_map;
     map<TString, h3d> h3d_map;
 
+    TString outdir = "./ntup/mj_plots_"+isamp->name+".root";
+    TFile fout(outdir,"RECREATE");
+    small_tree tree((basedir+isamp->filestr).Data());
+
     //---------------- CREATE 1D HISTOGRAMS FOR ALL VARIABLES ----------------
     for (map<TString, var>::iterator ivar = vars_map.begin(); ivar!=vars_map.end(); ivar++){
       for (vector<seln>::iterator iseln = selns.begin(); iseln!=selns.end(); iseln++){
-        TString hname = iseln->name+"_"+ivar->second.name+"_"+isamp->name;
-        msgsvc(msg::dbg, "Creating histogram: " + hname);
-        h1d_map[hname] = h1d(ivar->second,hname);
+        if (split_mctype){
+          for (vector<TString>::iterator itype = mctypes.begin(); itype!=mctypes.end(); itype++){
+            TString hname = iseln->name+"_"+ivar->second.name+"_"+isamp->name + "_" + *itype;
+            msgsvc(msg::dbg, "Creating histogram: " + hname);
+            h1d_map[hname] = h1d(ivar->second,hname);
+          }
+        } else {
+          TString hname = iseln->name+"_"+ivar->second.name+"_"+isamp->name;
+          msgsvc(msg::dbg, "Creating histogram: " + hname);
+          h1d_map[hname] = h1d(ivar->second,hname);
+        }
       }
     }
 
     //---------------- CREATE 2D HISTOGRAMS FOR ALL VARIABLE PAIRS ----------------
     for (vector<pair<TString,TString> >::iterator ipair=var_pairs.begin(); ipair!=var_pairs.end(); ipair++){
       for (vector<seln>::iterator iseln = selns.begin(); iseln!=selns.end(); iseln++){
-        TString hname = iseln->name+"_"+ipair->first+"_"+ipair->second+"_"+isamp->name;
-        msgsvc(msg::dbg, "Creating histogram: " + hname);
-        h2d_map[hname] = h2d(vars_map[ipair->first], vars_map[ipair->second], hname);
+        if (split_mctype){
+          for (vector<TString>::iterator itype = mctypes.begin(); itype!=mctypes.end(); itype++){
+            TString hname = iseln->name+"_"+ipair->first+"_"+ipair->second+"_"+isamp->name + "_" + *itype;
+            msgsvc(msg::dbg, "Creating histogram: " + hname);
+            h2d_map[hname] = h2d(vars_map[ipair->first], vars_map[ipair->second], hname);
+          }
+        } else {
+          TString hname = iseln->name+"_"+ipair->first+"_"+ipair->second+"_"+isamp->name;
+          msgsvc(msg::dbg, "Creating histogram: " + hname);
+          h2d_map[hname] = h2d(vars_map[ipair->first], vars_map[ipair->second], hname);
+        }
       }
     }
 
     //---------------- CREATE 3D HISTOGRAMS FOR ALL VARIABLE SETS ----------------
-    // for (vector<vector<TString> >::iterator iset=var_sets.begin(); iset!=var_sets.end(); iset++){
-    //   for (vector<seln>::iterator iseln = selns.begin(); iseln!=selns.end(); iseln++){
-    //     TString hname = iseln->name+"_"+iset->at(0)+"_"+iset->at(1)+"_"+iset->at(2)+"_"+isamp->name;
-    //     msgsvc(msg::dbg, "Creating histogram: " + hname);
-    //     h3d_map[hname] = h3d(vars_map[iset->at(0)], vars_map[iset->at(1)], vars_map[iset->at(2)], hname);
-    //   }
-    // }
+    for (vector<vector<TString> >::iterator iset=var_sets.begin(); iset!=var_sets.end(); iset++){
+      for (vector<seln>::iterator iseln = selns.begin(); iseln!=selns.end(); iseln++){
+        if (split_mctype){
+          for (vector<TString>::iterator itype = mctypes.begin(); itype!=mctypes.end(); itype++){
+            TString hname = iseln->name+"_"+iset->at(0)+"_"+iset->at(1)+"_"+iset->at(2)+"_"+isamp->name + "_" + *itype;
+            msgsvc(msg::dbg, "Creating histogram: " + hname);
+            h3d_map[hname] = h3d(vars_map[iset->at(0)], vars_map[iset->at(1)], vars_map[iset->at(2)], hname);
+          }
+        } else {
+          TString hname = iseln->name+"_"+iset->at(0)+"_"+iset->at(1)+"_"+iset->at(2)+"_"+isamp->name;
+          msgsvc(msg::dbg, "Creating histogram: " + hname);
+          h3d_map[hname] = h3d(vars_map[iset->at(0)], vars_map[iset->at(1)], vars_map[iset->at(2)], hname);
+        }
+      }
+    }
 
     //---------------- LOOP OVER EVENTS ----------------
     const size_t nent = tree.GetEntries();
@@ -189,8 +231,9 @@ int main(){
     for (size_t ientry(0); ientry<nent; ientry++){
       if (ientry%100000==0) cout<<"INFO:: Processed events: "<<ientry<<endl;
       tree.GetEntry(ientry);
-
-      // if ((tree.mc_type()&0x000F)>0x000) continue;
+      msgsvc(msg::dbg, TString::Format("Event number: %u", unsigned(tree.event())));
+      unsigned clean_mctype = tree.mc_type()&0x0FFF; 
+      TString mctype = getMCType(clean_mctype);
 
       double weight = 1.;//tree.weight()*5;
       // events that have the corresponding event display
@@ -211,7 +254,7 @@ int main(){
       //     tree.event()!=78418880) continue;
 
       // msglvl = msg::truth;
-      // if (tree.event()!=112396056) continue;
+      // if (ientry!=90000) continue;
 
       //------------- PRESELECTION -------------------
       // if (tree.ht()<500. || tree.met()<200.) continue;
@@ -246,6 +289,7 @@ int main(){
       msgsvc(msg::dbg, "Looking at the generator level ");
       // ------ Generator level ----------
       vector<TVector3> tops_me; 
+      vector<TVector3> gluinos; 
       vector<TVector3> tops_ps; 
       vector<TVector3> top_daughters; 
       vector<TVector3> top_bs; 
@@ -255,18 +299,20 @@ int main(){
       if (msglvl == msg::truth) cout<<"==================== Event: "<<tree.event()<<" ======================="<<endl;
       int ancestor_id = intmax;
       for (size_t i(0); i<tree.mc_id().size(); i++){
-        if (abs(tree.mc_id()[i])==6 && tree.mc_status()[i]==22) {
-          ancestor_id = tree.mc_mom()[i];
-        }
+        if (isamp->name=="ttbar"){
+          if (abs(tree.mc_id()[i])==6 && tree.mc_status()[i]==22) ancestor_id = tree.mc_mom()[i];
+        } 
       }
 
       unsigned nleps = 0;
       unsigned ntaus = 0;
       unsigned nvs = 0; // # neutrinos
       for (size_t i(0); i<tree.mc_id().size(); i++){
+        //don't care about the neutralino
+        if (abs(tree.mc_id()[i])==1000022) continue;
+
         //clean out some garbage ...
-        if (tree.mc_status()[i]==52 || 
-            tree.mc_status()[i]==0 || 
+        if (tree.mc_status()[i]==52 || tree.mc_status()[i]==0 || 
             (tree.mc_status()[i]>1 && tree.mc_status()[i]<10) || 
             (tree.mc_status()[i]==1 && abs(tree.mc_id()[i])>22) ||
             (tree.mc_status()[i]>70 && tree.mc_status()[i]<74)) {
@@ -287,7 +333,12 @@ int main(){
         // }
 
         // tops from the matrix element
-        if (abs(tree.mc_id()[i])==6 && tree.mc_status()[i]==22) {
+        if (abs(tree.mc_id()[i])==1000021) {
+          TVector3 iglu; iglu.SetPtEtaPhi(tree.mc_pt()[i], tree.mc_eta()[i], tree.mc_phi()[i]);
+          gluinos.push_back(iglu);
+          if (msglvl == msg::truth) cout<<" Gluino"<<endl;
+
+        } else if (abs(tree.mc_id()[i])==6 && tree.mc_status()[i]==22) {
           TVector3 itop_me; itop_me.SetPtEtaPhi(tree.mc_pt()[i], tree.mc_eta()[i], tree.mc_phi()[i]);
           tops_me.push_back(itop_me);
           if (msglvl == msg::truth) cout<<" ME top"<<endl;
@@ -297,12 +348,6 @@ int main(){
           TVector3 itop_ps; itop_ps.SetPtEtaPhi(tree.mc_pt()[i], tree.mc_eta()[i], tree.mc_phi()[i]);
           tops_ps.push_back(itop_ps);
           if (msglvl == msg::truth) cout<<" PS top"<<endl;
-
-        // ISR from ME
-        } else if (tree.mc_status()[i]==23 && tree.mc_mom()[i]==unsigned(ancestor_id)) {
-          TVector3 iisr_me; iisr_me.SetPtEtaPhi(tree.mc_pt()[i], tree.mc_eta()[i], tree.mc_phi()[i]);
-          isr_me.push_back(iisr_me);
-          if (msglvl == msg::truth) cout<<" ME ISR"<<endl;
 
         // b's from top
         } else if (abs(tree.mc_id()[i])==5 && abs(tree.mc_id()[tree.mc_mom()[i]])==6 && tree.mc_status()[i]==23){
@@ -381,48 +426,41 @@ int main(){
           fsr.push_back(ifsr);
           if (msglvl == msg::truth) cout<<" FSR"<<endl;
 
-        // what is left? 
+        // ISR from ME
+        } else if (tree.mc_status()[i]==23) {
+          TVector3 iisr_me; iisr_me.SetPtEtaPhi(tree.mc_pt()[i], tree.mc_eta()[i], tree.mc_phi()[i]);
+          isr_me.push_back(iisr_me);
+          if (msglvl == msg::truth) cout<<" ME ISR"<<endl;
+
+        // odd left-overs...? 
         } else {
           //ignore additional photon FSR for now...
           if (abs(tree.mc_id()[i])==22) {
             if (msglvl == msg::truth) cout<<" Duplicate ... "<<endl;
-            continue; //this should be removed from our trees...
-          }
-
-          if (tree.mc_status()[i]==1 && tree.mc_id()[tree.mc_mom()[i]]==tree.mc_id()[i]) {
+            continue; 
+          //more duplicates  
+          } else if (tree.mc_status()[i]==1 && tree.mc_id()[tree.mc_mom()[i]]==tree.mc_id()[i]) {
             if (msglvl == msg::truth) cout<<" Duplicate ... "<<endl;
-            continue; //this should be removed from our trees...
-          }
-          if (tree.mc_mom()[i]>5000) { //this is not ISR or top so it is some garbage from the parton shower
+            continue; 
+          //mostly garbage attached to the proton, this is not ME ISR or top so it is from the parton shower
+          } else if (tree.mc_mom()[i]>5000) {
             if (msglvl == msg::truth) cout<<" Garbage ... "<<endl;
-            continue; //this should be removed from our trees...
+            continue; 
           }
-          // msgsvc(msg::err, "Could not parse truth record!");
-          // for (size_t k(0); k<tree.mc_id().size(); k++){
-            // if (msglvl == msg::truth) 
-              cout<<" **** ??? **** "<<tree.event()<<endl;
-          // }
+          cout<<" **** ??? **** "<<tree.event()<<endl;
         }
       }  
-
-      // if (top_daughters.size()<6){
-      //   cout<<hex<<tree.mc_type()<<endl;
-      //   cout<<dec;
-      //   cout<<"==================== Event: "<<tree.event()<<" ======================="<<endl;
-      //   for (size_t k(0); k<tree.mc_id().size(); k++){
-      //     cout<<"Id  "<<setw(10)<<tree.mc_id()[k]<<
-      //           "  Sta "<<setw(10)<<tree.mc_status()[k]<<
-      //           "  Mom "<<setw(10)<<tree.mc_mom()[k]<<
-      //           "  Eta "<<setw(10)<<tree.mc_eta()[k]<<
-      //           "  Pt "<<setw(10)<<tree.mc_pt()[k]<<endl;
-      //   }
-      // }
 
       flt_val["ntop_daughters"] = top_daughters.size();
       flt_val["ntops_me"] = tops_me.size();
       flt_val["ntops_ps"] = tops_ps.size();
       flt_val["nisr_me"] = isr_me.size();
       flt_val["npart"] = isr_me.size() + top_daughters.size();
+
+      flt_val["lead_isr_pt"] = -1.;
+      flt_val["sublead_isr_pt"] = -1.;
+      if (isr_me.size()>0) flt_val["lead_isr_pt"] = isr_me[0].Pt();
+      if (isr_me.size()>1) flt_val["sublead_isr_pt"] = isr_me[1].Pt();
 
       flt_val["met_me"] = met_me.Pt();
 
@@ -437,18 +475,38 @@ int main(){
       if (ntops_me>0) flt_val["lead_pt_top"] = tops_me[0].Pt();
       if (ntops_me>1) flt_val["sublead_pt_top"] = tops_me[1].Pt();
 
-      // ------ Generator level pt of the ttbar system ----------
-      if (ntops_me!=2 || isamp->name!="ttbar"){
-        if (ntops_me!=2) msgsvc(msg::dbg, "Bad truth record or tops outside acceptance, number of tops found = " + TString::Format("%i",int(ntops_me)));
+      // ------ Generator level pt of the ttbar/gg system and the isr - these should balance ----------
+      if (ntops_me!=2){
+        if (ntops_me!=2 && isamp->name=="ttbar") msgsvc(msg::err, "Bad truth record, number of tops found = " + TString::Format("%i",int(ntops_me)));
         flt_val["ptt"] = dblmax; 
         flt_val["dphi_tt"] = dblmax;
-        flt_val["avetoppt"] = dblmax;
       } else {
         TVector3 tt_me = tops_me[0]+tops_me[1];
-        flt_val["ptt"] = tt_me.Mag();
+        flt_val["ptt"] = tt_me.Pt();
         flt_val["dphi_tt"] = tops_me[0].DeltaPhi(tops_me[1]);
-        flt_val["avetoppt"] = (tops_me[0].Pt()+tops_me[1].Pt())/2.;
       }
+
+      flt_val["pt_gg"] = dblmax;
+      if (isamp->name=="T1tttt1200" || isamp->name=="T1tttt1500"){
+        if (gluinos.size()==2){
+          TVector3 glu_pair = gluinos[0]+gluinos[1];
+          flt_val["pt_gg"] = glu_pair.Pt();
+        } else {
+          msgsvc(msg::err, "Bad truth record, number of gluinos found = " + TString::Format("%i",int(gluinos.size())));
+        }
+      } 
+
+      flt_val["pt_isr"] = dblmax;
+      TVector3 isr_system;
+      for (size_t iisr(0); iisr<isr_me.size(); iisr++){
+        if (iisr==0) {
+          isr_system.SetPtEtaPhi(isr_me[iisr].Pt(),isr_me[iisr].Eta(), isr_me[iisr].Phi());
+        } else {
+          TVector3 v_iisr; v_iisr.SetPtEtaPhi(isr_me[iisr].Pt(),isr_me[iisr].Eta(), isr_me[iisr].Phi());
+          isr_system += v_iisr;
+        }
+      }
+      flt_val["pt_isr"] = isr_system.Pt();
 
       msgsvc(msg::dbg, "Beginning to fill histograms");
 
@@ -456,29 +514,31 @@ int main(){
         msgsvc(msg::dbg, "Checking selection "+ iseln->name);      
         if (!passSelection(tree, *iseln)) continue;
         msgsvc(msg::dbg, "Selection "+iseln->name + " passed");
-        if (flt_val["ht_isr_me"]<1100) continue;
 
         for (map<TString, var>::iterator ivar = vars_map.begin(); ivar!=vars_map.end(); ivar++){
           msgsvc(msg::dbg, "Filling "+ivar->first);
           TString hname = iseln->name+"_"+ivar->second.name+"_"+isamp->name;
+          if (split_mctype) hname = iseln->name+"_"+ivar->second.name+"_"+isamp->name + "_" + mctype;
           h1d_map[hname].fill(flt_val[ivar->second.name], weight);
         }
 
         for (vector<pair<TString,TString> >::iterator ipair=var_pairs.begin(); ipair!=var_pairs.end(); ipair++){
           TString hname = iseln->name+"_"+ipair->first+"_"+ipair->second+"_"+isamp->name;
+          if (split_mctype) hname = iseln->name+"_"+ipair->first+"_"+ipair->second+"_"+isamp->name + "_" + mctype;
           h2d_map[hname].fill(flt_val[ipair->first], flt_val[ipair->second], weight);
         }
 
         // for (vector<vector<TString> >::iterator iset=var_sets.begin(); iset!=var_sets.end(); iset++){
         //   TString hname = iseln->name+"_"+iset->at(0)+"_"+iset->at(1)+"_"+iset->at(2)+"_"+isamp->name;
+        //   if (split_mctype) hname = iseln->name+"_"+iset->at(0)+"_"+iset->at(1)+"_"+iset->at(2)+"_"+isamp->name + "_" + mctype;
         //   h3d_map[hname].fill(flt_val[iset->at(0)], flt_val[iset->at(1)], flt_val[iset->at(2)], weight);
         // }
 
       }    
     }
 
-  fout.Write();
-  fout.Close();
+    fout.Write();
+    fout.Close();
   }
 
   return 0;
@@ -498,22 +558,6 @@ double getHT(vector<TVector3> &v){
   return ht;
 }
 
-bool passIsolation(const small_tree &tree, int ilep, bool isElectron, bool isveto){
-
-  if (isElectron) {
-    if (isveto)
-      return ((tree.els_miniso_tr10()[ilep] < 0.1) || (tree.els_reliso_r02()[ilep] < 0.1));
-    else 
-      return ((tree.els_miniso_tr10()[ilep] < 0.1) || (tree.els_reliso_r02()[ilep] < 0.1));
-  } else { 
-    if (isveto)
-      return ((tree.mus_miniso_tr10()[ilep] < 0.4) || (tree.mus_reliso_r02()[ilep] < 0.4));
-    else 
-      return ((tree.mus_miniso_tr10()[ilep] < 0.4) || (tree.mus_reliso_r02()[ilep] < 0.4));
-  } 
-
-}
-
 bool passSelection(const small_tree &tree, const seln &iseln){
 
   size_t nveto_mus(0), nveto_els(0);
@@ -521,28 +565,30 @@ bool passSelection(const small_tree &tree, const seln &iseln){
   vector<int> sigmus_index = vector<int>(0);
   msgsvc(msg::dbg, "Check selection");
 
-  //---------- ELECTRONS ----------------      
-  for (size_t iel=0; iel<tree.els_pt().size(); iel++){
-    if (!tree.els_ispf()[iel]) continue;
-    if (tree.els_pt()[iel] < iseln.veto_lep_pt_min) continue;
-    if (passIsolation(tree, iel, /*isElectron*/ true, /*isveto*/ true)) nveto_els++;
+  if (iseln.nleps>=0){ //if we care about reco leptons
+    //---------- ELECTRONS ----------------      
+    for (size_t iel=0; iel<tree.els_pt().size(); iel++){
+      if (!tree.els_ispf()[iel]) continue;
+      if (tree.els_pt()[iel] < iseln.veto_lep_pt_min) continue;
+      if (tree.els_miniso_tr10()[iel] < 0.1) nveto_els++;
 
 
-    if (!(tree.els_sigid()[iel])) continue;
-    if (tree.els_pt()[iel] < iseln.sig_lep_pt_min) continue;
-    if (passIsolation(tree, iel, /*isElectron*/ true, /*isveto*/ false)) sigels_index.push_back(iel);
+      if (!(tree.els_sigid()[iel])) continue;
+      if (tree.els_pt()[iel] < iseln.sig_lep_pt_min) continue;
+      if (tree.els_miniso_tr10()[iel] < 0.1) sigels_index.push_back(iel);
+    }
+    //---------- MUONS ----------------
+    for (size_t imu=0; imu<tree.mus_pt().size(); imu++){
+      if (tree.mus_pt()[imu] < iseln.veto_lep_pt_min) continue;
+      if (tree.mus_miniso_tr10()[imu] < 0.2) nveto_mus++;
+
+      if (!(tree.mus_sigid()[imu])) continue;
+      if (tree.mus_pt()[imu] < iseln.sig_lep_pt_min) continue;
+      if (tree.mus_miniso_tr10()[imu] < 0.2) sigmus_index.push_back(imu);
+    }
+
+    if ((sigels_index.size()+sigmus_index.size())!=unsigned(iseln.nleps) || (nveto_els+nveto_mus)!=unsigned(iseln.nleps)) return false;
   }
-  //---------- MUONS ----------------
-  for (size_t imu=0; imu<tree.mus_pt().size(); imu++){
-    if (tree.mus_pt()[imu] < iseln.veto_lep_pt_min) continue;
-    if (passIsolation(tree, imu, /*isElectron*/ false, /*isveto*/ true)) nveto_mus++;
-
-    if (!(tree.mus_sigid()[imu])) continue;
-    if (tree.mus_pt()[imu] < iseln.sig_lep_pt_min) continue;
-    if (passIsolation(tree, imu, /*isElectron*/ false, /*isveto*/ false)) sigmus_index.push_back(imu);
-  }
-
-  if ((sigels_index.size()+sigmus_index.size())!=iseln.nleps || (nveto_els+nveto_mus)!=iseln.nleps) return false;
 
   if (iseln.nleps==1) {
     msgsvc(msg::dbg, "Calculating mT");
@@ -557,12 +603,28 @@ bool passSelection(const small_tree &tree, const seln &iseln){
   if (tree.njets() < iseln.njets_min || tree.njets() > iseln.njets_max) return false;
   if (tree.nbm() < iseln.nbl_min || tree.nbm() > iseln.nbl_max) return false;
   
-
   if (tree.met() <= iseln.met_min || tree.met() > iseln.met_max) return false;
 
   if (iseln.nleps==0 && tree.mindphin_metjet()<=4.0) return false;
 
   return true;
+}
+
+TString getMCType(unsigned mc_type){
+  // if (mc_type==0x200 || mc_type==0x211 || mc_type==0x222) return "ll";
+  // else if (mc_type==0x101 || mc_type==0x112) return "lt";
+  // else if (mc_type==0x100 || mc_type==0x111) return "lh";
+  // else if (mc_type==0x000 || mc_type==0x001 || mc_type==0x002) return "hh";
+  // else if (mc_type==0x000) return "hh";
+  unsigned nleps = (mc_type&0xF00)>>8;
+  nleps += (mc_type&0x00F);
+  nleps -= (mc_type&0x0F0)>>4;
+
+  if (nleps==2) return "nl2";
+  else if (nleps==1) return "nl1";
+  else if (nleps==0) return "nl0";
+
+  return "";
 }
 
 void msgsvc(const unsigned &lvl, const TString &mymsg) {

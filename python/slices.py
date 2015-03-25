@@ -4,6 +4,7 @@ from rebin_tools import *
 from slice_tools import *
 # from rootpy.interactive import wait
 
+doslices = True
 datadir = os.getcwd()
 print "Looking for input in", datadir
 
@@ -61,43 +62,52 @@ def label(x, y, text, color=1, size=0.08):
   l.DrawLatex(x,y,text);
 
 def units(var): 
-  gev_vars = ["mj", "ht", "leadfjm", "leadfjpt", "met", "mt", "isr", "isr1pt", "isr2pt", "isr3pt", "ptt", "leadpttop", "subleadpttop", "leadptglu"]
+  gev_vars = ["mj", "leadfjm", "leadfjpt", "met", "mt", "isr", "isr1pt", "isr2pt", "isr3pt", "ptt", "leadpttop", "subleadpttop", "leadptglu"]
   if var in gev_vars or var[0:1]=="ht":
     return "GeV"
   else:
     return ""
 
+def set_pallete(samp):
+  if (samp=="ttbar"):
+    Red = array.array('d',[1., 0.39])
+    Green = array.array('d',[1.,0.51])
+    Blue = array.array('d',[1., 0.78])
+    Length = array.array('d',[0.,1.])
+    nb = 50
+    TColor.CreateGradientColorTable(2,Length,Red,Green,Blue,nb)
+  elif (samp=="T1tttt1500"):
+    Red = array.array('d',[1., 0.23])
+    Green = array.array('d',[1.,0.72])
+    Blue = array.array('d',[1., 0.52])
+    Length = array.array('d',[0.,1.])
+    nb = 50
+    TColor.CreateGradientColorTable(2,Length,Red,Green,Blue,nb)
+  elif (samp=="T1tttt1200"):
+    Red = array.array('d',[1., 0.78])
+    Green = array.array('d',[1.,0.47])
+    Blue = array.array('d',[1., 0.63])
+    Length = array.array('d',[0.,1.])
+    nb = 50
+    TColor.CreateGradientColorTable(2,Length,Red,Green,Blue,nb)
+
 
 gStyle.SetOptStat(0)
 gStyle.SetOptTitle(0)
 gStyle.SetPalette(55)
-ROOT.gStyle.SetPaintTextFormat(".0f");
-
-Red = array.array('d',[1., 0.39])
-Green = array.array('d',[1.,0.51])
-Blue = array.array('d',[1., 0.78])
-Length = array.array('d',[0.,1.])
-nb = 50
-TColor.CreateGradientColorTable(2,Length,Red,Green,Blue,nb)
-
+ROOT.gStyle.SetPaintTextFormat(".0f")
 gROOT.SetBatch(kTRUE)
-# ROOT.gStyle.SetPaintTextFormat(".0f");
 
 # ------------- SELECTIONS -------------
 selns = [
   # "nl1-ht750-met250-mt150-nj6-nb2",
   # "nl1-ht500-met200-mt150-nj0-nb0",
-  "nl1-ht500-met200-mt150-nj6-nb0",
-  "nl1-ht500-met200-mt0-nj6-nb0",
-  # "nl1-ht500-met200-mt150-nj6-nb0-mj300to400",
-  # "nl1-ht500-met200-mt150-nj6-nb0-mj400to500",
-  # "nl1-ht500-met200-mt150-nj6-nb0-mj500to600",
-  # "nl1-ht500-met200-mt150-nj6-nb0-mj600toInf",
-
-  "nl1-ht500-met200-mt0-nj6-nb0-mj300to400",
-  "nl1-ht500-met200-mt0-nj6-nb0-mj400to500",
-  "nl1-ht500-met200-mt0-nj6-nb0-mj500to600",
-  "nl1-ht500-met200-mt0-nj6-nb0-mj600toInf"
+  # "nl1-ht500-met200-mt150-nj6-nb0",
+  # "nl1-ht500-met200-mt0-nj6-nb0",
+  "nlna-ht500-met200-mt0-nj6-nb0",
+  # "nlna-ht500-met200-mt0-nj6-nb0-mj300to450",
+  # "nlna-ht500-met200-mt0-nj6-nb0-mj450to600",
+  # "nlna-ht500-met200-mt0-nj6-nb0-mj600toInf"
 ]
 
 # ------------- SAMPLES -------------
@@ -105,26 +115,24 @@ sampldict = {}
 sampldict["ttbar"] = "t#bar{t}"
 # sampldict["qcd"] = ("QCD",kRed, 3017, "qcd")
 # sampldict["wjets"] = ("W+jets", kViolet, 3490, "w")
-# sampldict["T1tttt1500"] = ("T1tttt NC", kGreen+2, 3013,"t1tn")
-# sampldict["T1tttt1200"] = ("T1tttt C", kBlack, 3013,"t1tc")
+sampldict["T1tttt1500"] = "T1tttt NC"
+sampldict["T1tttt1200"] = "T1tttt C"
 
 # colors = [kRed+1, kOrange, kGreen+1, kBlue+1]
-colors = [kBlack, kMagenta+2, kBlue+1, kGreen+1]
+colors = [kMagenta+2, kBlue+1, kGreen+1, kOrange-3, kRed+1]
 
 # markers = [20, kBlue+2, kGreen+2, kOrange+7, kBlack]
 
-# ------ Samples used in plots depend on what is defined in sampldict (not samp_order)
-samp = 'ttbar'
-
 # --------- VARIABLES -------------
 edgelist = {}
-edgelist["mj"] = [0.,200.,300., 400.,600.,1500.]
+edgelist["mj"] = [300., 450., 600.,1500.]
 edgelist["met"] = [200.,300., 400.,500.,1500.]
 edgelist["met_me"] = [200.,300., 400.,500.,1500.]
 edgelist["ptt"] = [0.,200., 400.,600.,1000.]
 edgelist["avetoppt"] = [0.,200., 400.,600.,1000.]
-edgelist["dphi_tt"] = [x/5.*3.14 for x in range(0,5)]
-edgelist["dphi_fjm1_fjm2"] = [x/5.*3.14 for x in range(0,5)]
+edgelist["dphi_tt"] = [x/3.*3.14 for x in range(0,3)]
+print edgelist["dphi_tt"]
+edgelist["dphi_fjm1_fjm2"] = [x/3.*3.14 for x in range(0,3)]
 edgelist["ht"] = [500.,750.,1000.,1500., 2000.,4000.]
 edgelist["ht_isr_me"] = [0.,500.,1000.,1500.]
 edgelist["ht_fsr"] = [0.,500.,1000.,1500.]
@@ -172,18 +180,20 @@ var_pairs = []
 # var_pairs.append(["dphitt","mj"])
 # var_pairs.append(["leadpttop","dphitt"])
 # var_pairs.append(["leadfjm","dphitt"])
-# var_pairs.append(["dphitt","nisrjets"])
 # var_pairs.append(["isr","ptt"])
 # var_pairs.append(["nisrjets","mj"])
-var_pairs.append(["dphi_tt","ptt"])
+# var_pairs.append(["dphi_tt","ptt"])
 # var_pairs.append(["dphitt","avetoppt"])
 # var_pairs.append(["minDphiIsrTop","mj"])
 # var_pairs.append(["minDphiIsrTop","leadfjm"])
 # var_pairs.append(["dphi_tt","dphi_fjm1_fjm2"])
 
 # var_pairs.append(["npart","njets"])
-var_pairs.append(["nisr_me","mj"])
-# var_pairs.append(["nisr_me","dphi_tt"])
+# var_pairs.append(["nisr_me","mj"])
+# var_pairs.append(["nisr_me","ht_isr_me"])
+
+# var_pairs.append(["dphi_tt", "nisr_me"])
+# var_pairs.append(["dphi_tt", "ht_isr_me"])
 # var_pairs.append(["nfsr","mj"])
 # var_pairs.append(["nfsr","dphi_tt"])
 
@@ -192,66 +202,81 @@ var_pairs.append(["nisr_me","mj"])
 # var_pairs.append(["ht_fsr","mj"])
 # var_pairs.append(["ht_part","mj"])
 
-# var_pairs.append(["dphi_tt","ht_isr_me"])
+var_pairs.append(["dphi_tt","ht_isr_me"])
 
 # var_pairs.append(["met","met_me"])
 
+# var_pairs.append(["pt_gg","pt_isr"])
+# var_pairs.append(["ptt","pt_isr"])
 
-# flist = TFile(os.path.join(datadir,"mj_plots_"+samp+".root"),"READ")
-flist = TFile(os.path.join(datadir,"mj_htISR_1100toInf.root"),"READ")
+for samp in sampldict.keys():
+  set_pallete(samp)
+  flist = TFile(os.path.join(datadir,"mj_plots_"+samp+".root"),"READ")
+  for seln in selns:
+    # if (samp=="ttbar"): mctypes = ["ll","lt","lh","hh"]
+    # if (samp=="ttbar"): mctypes = ["nl0","nl1","nl2"]
+    mctypes = [""]
+    for mctype in mctypes:
+      for pair in var_pairs:
+        print samp, seln, mctype, pair
+        if (mctype!=""): hist = flist.Get('_'.join([seln, pair[0], pair[1], samp, mctype])).Clone()
+        else: hist = flist.Get('_'.join([seln, pair[0], pair[1], samp])).Clone()
 
-for seln in selns:
-  for pair in var_pairs:
-    hist = flist.Get('_'.join([seln, pair[0], pair[1], samp])).Clone()
+        can = TCanvas(hist.GetName(),"can",1000,900)
+        pad = make_pad()
+        pad.Draw()
+        pad.cd()
 
-    can = TCanvas(hist.GetName(),"can",1000,900)
-    pad = make_pad()
-    pad.Draw()
-    pad.cd()
+        slices = {}
+        if (doslices):
+          slices["X"] = slice2DX(hist, edgelist[pair[0]],pair[0])
+          slices["Y"] = slice2DY(hist, edgelist[pair[1]],pair[1])
 
-    hist.SetLineWidth(3)
-    hist.SetLineColor(kRed+1)
-    hist.SetMarkerSize(2.5)
-    hist.RebinX(2)
-    hist.RebinY(2)
-    style_axis(hist)
-    if ("ht" in pair[0]): hist.Draw("colz")
-    else: hist.Draw("colz text")
-    # hist.Draw("colz")
-    # label(0.77,0.85,"#rho={:.2f}".format(hist.GetCorrelationFactor()),1,0.05)
-    can.Print(hist.GetName()+".pdf")
+        style_axis(hist)
+        hist.SetLineWidth(3)
+        hist.SetLineColor(kRed+1)
+        hist.SetMarkerSize(2.5)
+        # hist.RebinX(2)
+        if (pair[0]=="mj"): hist.RebinX(2)
+        elif (pair[1]=="mj"): hist.RebinY(2)
+        if (pair[0]=="ht_isr_me"): hist.RebinX(2)
+        elif (pair[1]=="ht_isr_me"): hist.RebinY(2)
+        # hist.Draw("colz text")
+        hist.Draw("scat")
+        # label(0.77,0.85,"#rho={:.2f}".format(hist.GetCorrelationFactor()),1,0.05)
+        can.Print(hist.GetName()+".pdf")
 
-    slices = {}
-    slices["X"] = slice2DX(hist, edgelist[pair[0]],pair[0])
-    slices["Y"] = slice2DY(hist, edgelist[pair[1]],pair[1])
-    for iaxis,axis in enumerate(["X","Y"]):
+        if (doslices):
+          for iaxis,axis in enumerate(["X","Y"]):
 
-      leg = make_legend()
-      # leg.SetHeader(seln)
+            leg = make_legend()
+            # leg.SetHeader(seln)
 
-      ymax = 0
-      for i,slice in enumerate(slices[axis]):
-        if (ymax < 1.5*slice.GetMaximum()): 
-          ymax = 1.5*slice.GetMaximum()
-          slices[axis][0].GetYaxis().SetRangeUser(0.,ymax)
-        slice.SetLineColor(colors[i])
-        slice.SetLineWidth(5)
-        slice.SetLineStyle(i+2)
-        # slice.SetMarkerStyle(20+i)
-        # slice.SetMarkerSize(2.5)
-        # slice.SetMarkerColor(colors[i])
-        # slice.Rebin(2)
-        style_axis(slice)
-        if (i==0): slice.Draw("hist")
-        else: slice.Draw("hist same")
-        svar = pair[iaxis]
-        if (svar == "dphi_tt"):
-          leg.AddEntry(slice, '{} {:.1f} - {:.1f} {} (#mu {:.1f}, RMS {:.1f})'.format(varlbl[svar], edgelist[svar][i], edgelist[svar][i+1], units(svar), slice.GetMean(), slice.GetRMS()), "F")
-        else:
-          leg.AddEntry(slice, '{} {:.0f} - {:.0f} {} (#mu {:.1f}, RMS {:.1f})'.format(varlbl[svar], edgelist[svar][i], edgelist[svar][i+1], units(svar), slice.GetMean(), slice.GetRMS()), "F")
+            ymax = 0
+            for i,slice in enumerate(slices[axis]):
+              if (ymax < 1.5*slice.GetMaximum()): 
+                ymax = 1.5*slice.GetMaximum()
+                slices[axis][0].GetYaxis().SetRangeUser(0.,ymax)
+              slice.SetLineColor(colors[i])
+              slice.SetLineWidth(3)
+              slice.SetLineStyle(len(slices[axis])-i)
+              slice.SetYTitle("Events")
+              # slice.SetMarkerStyle(20+i)
+              # slice.SetMarkerSize(2.5)
+              # slice.SetMarkerColor(colors[i])
+              # slice.Rebin(2)
+              style_axis(slice)
+              if (i==0): slice.Draw("hist")
+              else: slice.Draw("hist same")
+              svar = pair[iaxis]
+              if (svar == "dphi_tt"):
+                leg.AddEntry(slice, '{} {:.1f} - {:.1f} {} (#mu {:.1f}, RMS {:.1f})'.format(varlbl[svar], edgelist[svar][i], edgelist[svar][i+1], units(svar), slice.GetMean(), slice.GetRMS()), "L")
+              elif (svar[0]=="n"):
+                leg.AddEntry(slice, '{} = {:.0f} {} (#mu {:.1f}, RMS {:.1f})'.format(varlbl[svar], edgelist[svar][i], units(svar), slice.GetMean(), slice.GetRMS()), "L")
+              else:
+                leg.AddEntry(slice, '{} {:.0f} - {:.0f} {} (#mu {:.1f}, RMS {:.1f})'.format(varlbl[svar], edgelist[svar][i], edgelist[svar][i+1], units(svar), slice.GetMean(), slice.GetRMS()), "L")
 
-      leg.Draw()
-      
-      can.Print(os.path.join(outdir, seln + "_"+pair[1-iaxis]+"_inSlices_"+svar+"_"+samp+".pdf"))
-
-
+            leg.Draw()
+            
+            if (mctype!=""): can.Print(os.path.join(outdir, '_'.join([seln, pair[1-iaxis], "inSlices", svar, samp, mctype+".pdf"])))
+            else: can.Print(os.path.join(outdir, '_'.join([seln, pair[1-iaxis], "inSlices", svar, samp+".pdf"])))

@@ -58,8 +58,8 @@ class seln{
 
     TString name;
 
-    size_t nleps;
-    size_t nisotks_max;
+    int nleps;
+    int nisotks_max;
 
     double sig_lep_pt_min;
     double veto_lep_pt_min;
@@ -168,8 +168,8 @@ void msgsvc(const unsigned &lvl, const TString &mymsg);
 bool compMass(const TLorentzVector &fj1, const TLorentzVector &fj2);
 bool compPT(const TVector3 &v1, const TVector3 &v2);
 double getHT(std::vector<TVector3> &v);
+TString getMCType(unsigned mc_type);
 
-bool passIsolation(const small_tree &tree, int ilep, bool isElectron, bool isveto, TString isotype, const double coneiso_cut);
 bool passSelection(const small_tree &tree, const seln &iseln);
 
 #endif

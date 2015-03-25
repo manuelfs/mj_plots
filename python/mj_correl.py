@@ -9,12 +9,7 @@ make2d = False
 make3d = False
 
 shape = True
-# opt = "sign_shape"
-# opt = "sign"
-# opt = "base_shape"
-opt = "mt_cut"
-# opt = "mj_ge300"
-datadir = os.path.join(os.getcwd(),"out",opt)
+datadir = os.getcwd()
 print "Looking for input in", datadir
 
 def make_pad():
@@ -63,12 +58,10 @@ gROOT.SetBatch(kTRUE)
 
 # ------------- SELECTIONS -------------
 selndict = {
-  "2L-base": "2l, Preseln", 
-  "1L-base": "1l, Preseln", 
-  "0L-base": "0l, Preseln",
-  "2L-sign": "2l, Preseln,6j,2b", 
-  "1L-sign": "1l, Preseln,6j,2b", 
-  "0L-sign": "0l, Preseln,6j,2b"
+  "nlna-ht500-met200-mt0-nj6-nb0": "",
+  "nlna-ht500-met200-mt0-nj6-nb0-mj300to450": "",
+  "nlna-ht500-met200-mt0-nj6-nb0-mj450to600": "",
+  "nlna-ht500-met200-mt0-nj6-nb0-mj600toInf": ""
 }
 
 # ------------- SAMPLES -------------
@@ -76,8 +69,8 @@ sampldict = {}
 sampldict["ttbar"] = ("t#bar{t}", kRed+1,3008, "tt")
 # sampldict["qcd"] = ("QCD",kRed, 3017, "qcd")
 # sampldict["wjets"] = ("W+jets", kViolet, 3490, "w")
-sampldict["T1tttt1500"] = ("T1tttt NC", kGreen+2, 3013,"t1tn")
-# sampldict["T1tttt1200"] = ("T1tttt C", kBlack, 3013,"t1tc")
+sampldict["T1tttt1500"] = ("T1tttt(1500,100)", kGreen+2, 3013,"t1tn")
+sampldict["T1tttt1200"] = ("T1tttt(1200,800)", kBlack, 3013,"t1tc")
 # sampldict["T1qqqq1400"] = ("T1qqqq NC", kBlue+1, 3013,"t1qn")
 # sampldict["T1qqqq1000"] = ("T1q.C", kOrange, 3013,"t1qc")
 # sampldict["T2tt650"] = ("T2t.C", kBlue, 3013,"t2tc") # no skim available
@@ -88,9 +81,7 @@ for i,samp in enumerate(sampldict.keys()):
   samplstr = samplstr + sampldict[samp][3]
   if (i<len(sampldict)-1): samplstr = samplstr + "_"
 
-outdir = os.path.join(os.getcwd(),"out",opt,samplstr)
-if (not os.path.exists(outdir)):
-  os.mkdir(outdir)
+outdir = os.getcwd()
 
 # ------ Samples used in plots depend on what is defined in sampldict (not samp_order)
 samp_order = []
@@ -106,27 +97,29 @@ samp_order.append("T1qqqq1000")
 
 # ------ VARIABLES TO USE IN THE PLOTS -------------
 varlist = []
-varlist.append("met")
-varlist.append("mt")
-varlist.append("mindphin_metjet")
-varlist.append("pt_tt")
-varlist.append("lead_pt_top")
-varlist.append("sublead_pt_top")
-varlist.append("lead_pt_gluon")
-if (mode30):
-  varlist.append("mj_30")
-  varlist.append("ht30")
-  varlist.append("njets30")
-  varlist.append("nbl30")
-else:
-  varlist.append("mj_40")
-  varlist.append("mj_40_fjm70")
-  varlist.append("ht")
-  varlist.append("njets")
-  varlist.append("nfjets_40")
-  varlist.append("lead_fjets_40_m")
-  varlist.append("lead_fjets_40_pt")
-  varlist.append("nbl")
+varlist.append("lead_isr_pt")
+varlist.append("sublead_isr_pt")
+# varlist.append("met")
+# varlist.append("mt")
+# varlist.append("mindphin_metjet")
+# varlist.append("pt_tt")
+# varlist.append("lead_pt_top")
+# varlist.append("sublead_pt_top")
+# varlist.append("lead_pt_gluon")
+# if (mode30):
+#   varlist.append("mj_30")
+#   varlist.append("ht30")
+#   varlist.append("njets30")
+#   varlist.append("nbl30")
+# else:
+#   varlist.append("mj_40")
+#   varlist.append("mj_40_fjm70")
+#   varlist.append("ht")
+#   varlist.append("njets")
+#   varlist.append("nfjets_40")
+#   varlist.append("lead_fjets_40_m")
+#   varlist.append("lead_fjets_40_pt")
+#   varlist.append("nbl")
 
 # --------- PAIRS OF VARIABLES TO PLOT -------------
 var_pairs = []
@@ -170,8 +163,8 @@ for seln in selndict.keys():
   if (make1d):
     for var in varlist:
       leg = make_legend()
-      if (shape): leg.SetHeader(selndict[seln]+" *SHAPE*")
-      else: leg.SetHeader(selndict[seln])
+      # if (shape): leg.SetHeader(selndict[seln]+" *SHAPE*")
+      # else: leg.SetHeader(selndict[seln])
 
       can = TCanvas("can"+seln+var,"can",1000,1000)
       pad = make_pad()
@@ -196,7 +189,8 @@ for seln in selndict.keys():
         hist[samp].SetFillColor(sampldict[samp][1])
         hist[samp].SetFillStyle(sampldict[samp][2])
         hist[samp].SetLineColor(sampldict[samp][1])
-        hist[samp].SetLineWidth(2)
+        # hist[samp].SetLineStyle(i)
+        hist[samp].SetLineWidth(4)
 
         if (first_draw):
           style_axis(hist[samp])
@@ -212,7 +206,7 @@ for seln in selndict.keys():
       if (len(hist)):  
         for samp in samp_order:
           if samp not in hist.keys(): continue
-          leg.AddEntry(hist[samp], sampldict[samp][0], "F")
+          leg.AddEntry(hist[samp], sampldict[samp][0], "L")
 
         leg.Draw()
         can.Print(os.path.join(outdir, seln+"_"+var+".pdf"))
