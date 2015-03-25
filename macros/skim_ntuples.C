@@ -52,6 +52,6 @@ void all_skim(TString folder){
   vector<TString> files = dirlist(folder, ".root");
 
   for(unsigned file(0); file < files.size(); file++){
-    skim_ntuples(folder+files[file], "ht30>=500&&met>=200");
+    skim_ntuples(folder+files[file], "ht>=500&&met>=200");
   }
 }
