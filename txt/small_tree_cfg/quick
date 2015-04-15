@@ -11,6 +11,13 @@ float ntrupv_mean
 float met
 float met_phi
 float ht
+float ht_nonb
+float ht_isr
+float ht_isr_tru
+float ht_isr_me
+int   n_isr_me
+float ht_isr_nonme
+int   n_isr_nonme
 float mht
 float mt
 float mt_reliso
@@ -29,6 +36,19 @@ float dphi_wlep_reliso
 float mindphin_metjet
 float min_mt_bmet
 float min_mt_bmet_with_w_mass
+float min_dphi_bb
+float max_dphi_bb
+float dphi_bb_high_pt
+float m_bb_min_dphi
+float m_bb_max_dphi
+float m_bb_high_pt
+float pt_bb_min_dphi
+float pt_bb_max_dphi
+float pt_bb_high_pt
+float tru_tt_dphi
+float tru_tt_m
+float tru_tt_pt
+float tru_tt_boost
 
 ##################   Leptons   ################
 int nleps
@@ -131,12 +151,28 @@ int nbt
 std::vector<float> jets_pt
 std::vector<float> jets_eta
 std::vector<float> jets_phi
+std::vector<float> jets_m
 std::vector<float> jets_csv
 std::vector<float> jets_id
-std::vector<float> jets_islep
+std::vector<bool> jets_islep
 std::vector<int>   jets_fjet_index
+std::vector<int>   jets_fjet15_index
+std::vector<int>   jets_fjet20_index
+std::vector<int>   jets_fjet30_index
+std::vector<int>   jets_fjetinf_index
+std::vector<int>   jets_fjet_nl_index
 std::vector<float> jets_gen_pt
 std::vector<float> jets_parton_pt
+std::vector<int>   jets_isr_code
+
+int ngenjets
+
+std::vector<float> genjets_pt
+std::vector<float> genjets_eta
+std::vector<float> genjets_phi
+std::vector<float> genjets_m
+std::vector<int>   genjets_isr_code
+std::vector<int>   genjets_genfjet_index
 
 ####################   MC   ###################
 unsigned mc_type
@@ -154,4 +190,52 @@ std::vector<float> fjets_pt
 std::vector<float> fjets_eta
 std::vector<float> fjets_phi
 std::vector<float> fjets_m
-std::vector<float> fjets_nconst
+std::vector<int> fjets_nconst
+
+int nfjets15
+float mj15
+std::vector<float> fjets15_pt
+std::vector<float> fjets15_eta
+std::vector<float> fjets15_phi
+std::vector<float> fjets15_m
+std::vector<int> fjets15_nconst
+
+int nfjets20
+float mj20
+std::vector<float> fjets20_pt
+std::vector<float> fjets20_eta
+std::vector<float> fjets20_phi
+std::vector<float> fjets20_m
+std::vector<int> fjets20_nconst
+
+int nfjets30
+float mj30
+std::vector<float> fjets30_pt
+std::vector<float> fjets30_eta
+std::vector<float> fjets30_phi
+std::vector<float> fjets30_m
+std::vector<int> fjets30_nconst
+
+int nfjetsinf
+float mjinf
+std::vector<float> fjetsinf_pt
+std::vector<float> fjetsinf_eta
+std::vector<float> fjetsinf_phi
+std::vector<float> fjetsinf_m
+std::vector<int> fjetsinf_nconst
+
+int nfjets_nl
+float mj_nl
+std::vector<float> fjets_nl_pt
+std::vector<float> fjets_nl_eta
+std::vector<float> fjets_nl_phi
+std::vector<float> fjets_nl_m
+std::vector<int> fjets_nl_nconst
+
+int ngenfjets
+float gen_mj
+std::vector<float> genfjets_pt
+std::vector<float> genfjets_eta
+std::vector<float> genfjets_phi
+std::vector<float> genfjets_m
+std::vector<int> genfjets_nconst

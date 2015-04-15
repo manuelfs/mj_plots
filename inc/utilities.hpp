@@ -20,8 +20,10 @@ typedef std::pair<int,double> int_double;
 typedef std::pair<double,double> double_double;
 const long double PI = acos(-1.L);
 
-float cross_section(TString file);
-std::vector<TString> dirlist(TString folder, TString inname="dir", TString tag="");
+float cross_section(const TString &file);
+std::vector<TString> dirlist(const TString &folder,
+                             const TString &inname="dir",
+                             const TString &tag="");
 bool eigen2x2(float matrix[2][2], float &eig1, float &eig2);
 bool id_big2small(const int_double& left, const int_double& right);
 bool dd_big2small(const double_double& left, const double_double& right);

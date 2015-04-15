@@ -7,10 +7,10 @@ LIBFILE := $(OBJDIR)/libStatObj.a
 
 CXX := $(shell root-config --cxx)
 EXTRA_WARNINGS := -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Wformat-nonliteral -Wformat-security -Wformat-y2k -Winit-self -Winvalid-pch -Wlong-long -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wstack-protector -Wswitch-default -Wswitch-enum -Wundef -Wunused -Wvariadic-macros -Wwrite-strings -Wabi -Wctor-dtor-privacy -Wnon-virtual-dtor -Wsign-promo -Wsign-compare #-Wunsafe-loop-optimizations -Wfloat-equal -Wsign-conversion -Wunreachable-code
-CXXFLAGS := -isystem $(shell root-config --incdir) -Wall -Wextra -pedantic -Werror -Wshadow -Woverloaded-virtual -Wold-style-cast $(EXTRA_WARNINGS) $(shell root-config --cflags) -O2 -I $(INCDIR) -g -pg
+CXXFLAGS := -isystem $(shell root-config --incdir) -Wall -Wextra -pedantic -Werror -Wshadow -Woverloaded-virtual -Wold-style-cast $(EXTRA_WARNINGS) $(shell root-config --cflags) -O2 -I $(INCDIR)
 LD := $(shell root-config --ld)
-LDFLAGS := $(shell root-config --ldflags) -g -pg
-LDLIBS := $(shell root-config --libs) -lMinuit -lRooStats -lTMVA 
+LDFLAGS := $(shell root-config --ldflags)
+LDLIBS := $(shell root-config --libs) -lMinuit -lRooStats -lTMVA
 
 EXECUTABLES := $(addprefix $(EXEDIR)/, $(addsuffix .exe, $(notdir $(basename $(wildcard $(SRCDIR)/*.cxx))))) 
 OBJECTS := $(addprefix $(OBJDIR)/, $(addsuffix .o, $(notdir $(basename $(wildcard $(SRCDIR)/*.cpp))))) $(OBJDIR)/small_tree.o 
@@ -63,6 +63,6 @@ $(EXEDIR)/%.exe: $(OBJDIR)/%.o $(LIBFILE)
 
 $(SRCDIR)/small_tree.cpp $(INCDIR)/small_tree.hpp: dummy_small_tree.all
 dummy_small_tree.all: $(EXEDIR)/generate_small_tree.exe 
-	./$< 
+	./$< -t
 
 .DELETE_ON_ERROR:

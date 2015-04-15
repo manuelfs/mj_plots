@@ -29,12 +29,15 @@ namespace{
 namespace msg { enum {dbg=1, info=2, warn=3, err=4, truth=5}; }
 // const unsigned msglvl = msg::truth;
 unsigned msglvl = msg::info;
-bool split_mctype = false;
+bool split_mctype = true;
 
 int main(){
 
   // TString basedir = "/cms5r0/manuelf/root/archive/15-01-30/skim/";
-  TString basedir = "/cms5r0/ald77/archive/current/skims/";
+  // TString basedir = "/cms5r0/ald77/archive/20150407/skims/";
+  TString basedir = "/cms5r0/ald77/archive/20150414/";
+  // TString basedir = "/cms5r0/ald77/archive/20150414/small_quick_TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola_Phys14DR-PU20bx25_PHYS14_25_V1-v1_MINIAODSIM_UCSB2290_v77_files50_batch11.root";
+  // TString basedir = "/cms2r0/aovcharova/code/susy_cfa/out/";
 
   vector<TString> mctypes;
   // mctypes.push_back("ll");
@@ -48,8 +51,8 @@ int main(){
   vector<sample> samples; 
   samples.push_back(sample("*_TTJets*", "ttbar", true));
   // samples.push_back(sample("*_TTZ*", "ttZ", true));
-  samples.push_back(sample("*-T1tttt_2J_mGl-1500_mLSP-100_*PU20*", "T1tttt1500", true));
-  samples.push_back(sample("*-T1tttt_2J_mGl-1200_mLSP-800_*PU20*", "T1tttt1200", true));
+  // samples.push_back(sample("*-T1tttt_2J_mGl-1500_mLSP-100_*PU20*", "T1tttt1500", true));
+  // samples.push_back(sample("*-T1tttt_2J_mGl-1200_mLSP-800_*PU20*", "T1tttt1200", true));
   // samples.push_back(sample("*-T1qqqq_2J_mGl-1000_mLSP-800_*", "T1qqqq1000", false));
   // samples.push_back(sample("*-T1qqqq_2J_mGl-1400_mLSP-100_*", "T1qqqq1400", false));
   // samples.push_back(sample("*-T2tt_2J_mStop-650_mLSP-325_*", "T2tt650", true)); skim not available
@@ -59,15 +62,21 @@ int main(){
 
   //---------------- DEFINE EVENT SELECTIONS ----------------
   vector<seln> selns;
-  // selns.push_back(seln("nl1-ht750-met250-mt150-nj6-nb2", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 750., dblmax, /*mj*/ 0.,  dblmax, /*met*/ 250.,  dblmax, /*mt*/ 150,  dblmax, /*njets*/ 6,  intmax, /*nbl*/ 2,  intmax));
+  selns.push_back(seln("nl1-ht750-met250-mt150-nj6-nb2", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 750., dblmax, /*mj*/ 0.,  dblmax, /*met*/ 250.,  dblmax, /*mt*/ 150,  dblmax, /*njets*/ 6,  intmax, /*nbl*/ 2,  intmax));
   // selns.push_back(seln("nl1-ht500-met200-mt150-nj0-nb0", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 0.,  dblmax, /*met*/ 200.,  dblmax, /*mt*/ 150,  dblmax, /*njets*/0,  intmax, /*nbl*/ 0,  intmax));
   // selns.push_back(seln("nl1-ht500-met200-mt150-nj6-nb0", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 0.,  dblmax, /*met*/ 200.,  dblmax, /*mt*/ 150,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
   // selns.push_back(seln("nl1-ht500-met200-mt0-nj6-nb0", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 0.,  dblmax, /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
  
   selns.push_back(seln("nlna-ht500-met200-mt0-nj6-nb0", /*nleps_*/ -1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 0.,  dblmax, /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
-  selns.push_back(seln("nlna-ht500-met200-mt0-nj6-nb0-mj300to450", /*nleps_*/ -1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 300.,  450., /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
-  selns.push_back(seln("nlna-ht500-met200-mt0-nj6-nb0-mj450to600", /*nleps_*/ -1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 450.,  600., /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
-  selns.push_back(seln("nlna-ht500-met200-mt0-nj6-nb0-mj600toInf", /*nleps_*/ -1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 600., dblmax, /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
+  // selns.push_back(seln("nl2-ht500-met200-mt0-nj6-nb0", /*nleps_*/ 2,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 0.,  dblmax, /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
+  
+  // selns.push_back(seln("nlna-ht0-met200-mt0-nj0-nb0", /*nleps_*/ -1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 0., dblmax, /*mj*/ 0.,  dblmax, /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/0,  intmax, /*nbl*/ 0,  intmax));
+  // selns.push_back(seln("nlna-ht0-met0to100-mt0-nj0-nb0", /*nleps_*/ -1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 0., dblmax, /*mj*/ 0.,  dblmax, /*met*/ 0.,  100., /*mt*/ 0,  dblmax, /*njets*/0,  intmax, /*nbl*/ 0,  intmax));
+  // selns.push_back(seln("nlna-ht500-met0-mt0-nj0-nb0", /*nleps_*/ -1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 0.,  dblmax, /*met*/ 0., dblmax, /*mt*/ 0,  dblmax, /*njets*/0,  intmax, /*nbl*/ 0,  intmax));
+  
+  //selns.push_back(seln("nlna-ht500-met200-mt0-nj6-nb0-mj300to450", /*nleps_*/ -1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 300.,  450., /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
+  //selns.push_back(seln("nlna-ht500-met200-mt0-nj6-nb0-mj450to600", /*nleps_*/ -1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 450.,  600., /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
+  //selns.push_back(seln("nlna-ht500-met200-mt0-nj6-nb0-mj600toInf", /*nleps_*/ -1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 600., dblmax, /*met*/ 200.,  dblmax, /*mt*/ 0,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
  
   // selns.push_back(seln("nl1-ht500-met200-mt150-nj6-nb0-mj300to400", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 300.,  400., /*met*/ 200.,  dblmax, /*mt*/ 150,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
   // selns.push_back(seln("nl1-ht500-met200-mt150-nj6-nb0-mj400to500", /*nleps_*/ 1,  intmax, /*sig_pt*/ 20.,/*veto_pt*/ 10., /*ht*/ 500., dblmax, /*mj*/ 400.,  500., /*met*/ 200.,  dblmax, /*mt*/ 150,  dblmax, /*njets*/6,  intmax, /*nbl*/ 0,  intmax));
@@ -78,42 +87,42 @@ int main(){
   //---------------- DEFINE VARIABLES FOR ALL PLOTS ----------------
   map<TString, var> vars_map;
   vars_map["mj"] = var("mj", "M_{J} [GeV]", 30, 0., 1500.);
+  vars_map["gen_mj"] = var("gen_mj", "gen-level M_{J} [GeV]", 30, 0., 1500.);
   vars_map["ht"] = var("ht", "H_{T} [GeV]", 35, 500., 4000.);
   vars_map["ht_isr_me"] = var("ht_isr_me", "H_{T}(ISR ME) [GeV]", 15, 0., 1500.);
-  vars_map["ht_fsr"] = var("ht_fsr", "H_{T}(FSR PS) [GeV]", 15, 0., 1500.);
+  vars_map["ht_fsr"] = var("ht_fsr", "H_{T}(FSR PS) [GeV]", 20, 0., 500.);
+  // vars_map["ht_fsr_topdiff"] = var("ht_fsr", "H_{T}(FSR PS) [GeV]", 20, 0., 500.);
   vars_map["ht_top_daughters"] = var("ht_top_daughters", "H_{T}(tops daughters) [GeV]", 20, 0., 2000.);
   vars_map["ht_part"] = var("ht_part", "H_{T}(partons) [GeV]", 35, 500., 4000.);
-  vars_map["njets"] = var("njets", "jet multiplicity", 20, 0., 20.);
-  vars_map["nbl"] = var("nbl", "b-jet multiplicity", 6, 0., 6.);
-  vars_map["fjm1"] = var("fjm1", "m_{j1} [GeV]", 10, 0., 500.);
+  vars_map["njets"] = var("njets", "jet multiplicity", 20, 0.5, 20.5);
+  vars_map["nbl"] = var("nbl", "b-jet multiplicity", 7, -0.5, 6.5);
+  vars_map["fjm1"] = var("fjm1", "m(J_{1}) [GeV]", 10, 0., 500.);
   vars_map["fjm1_nconst"] = var("fjm1_nconst", "m_{j1} const. multiplicity", 5, 0., 5.);
   vars_map["fjm2"] = var("fjm2", "m_{j2} [GeV]", 10, 0., 500.);
   vars_map["fjm2_nconst"] = var("fjm2_nconst", "m_{j2} const. multiplicity", 5, 0., 5.);
   vars_map["fjpt1"] = var("fjpt1", "lead-m large-R jet p_{T} [GeV]", 30, 0., 1500.);
-  vars_map["nfjets"] = var("nfjets", "large-R jet multiplicity", 20, 0., 20.);
+  vars_map["nfjets"] = var("nfjets", "large-R jet multiplicity", 6, 0.5, 6.5);
   vars_map["met"] = var("met", "MET [GeV]", 16, 0., 800.);
   vars_map["met_me"] = var("met_me", "MET (ME) [GeV]", 16, 0., 800.);
   vars_map["mt"] = var("mt", "m_{T} [GeV]", 20, 0., 1000.);
   vars_map["isr"] = var("isr", "ISR [GeV]", 10, 0., 1000.);
-  vars_map["pt_isr"] = var("pt_isr", "ISR p_{T}[GeV]", 100, 0., 1000.);
-  vars_map["pt_gg"] = var("pt_gg", "gluino system p_{T}[GeV]", 100, 0., 1000.);
-  vars_map["lead_isr_pt"] = var("lead_isr_pt", "leading ISR p_{T} [GeV]", 20, 0., 1000.);
-  vars_map["sublead_isr_pt"] = var("sublead_isr_pt", "subleading ISR p_{T} [GeV]", 20, 0., 1000.);
-  vars_map["fsr"] = var("fsr", "FSR [GeV]", 10, 0., 1000.);
-  vars_map["nisr_me"] = var("nisr_me", "ISR ME parton multiplicity", 4, 0., 4.);
-  vars_map["npart"] = var("npart", "parton multiplicity", 20, 0., 20.);
-  vars_map["ntop_daughters"] = var("ntop_daughters", "top daughter multiplicity", 6, 1., 7.);
+  // vars_map["pt_isr"] = var("pt_isr", "ISR p_{T}[GeV]", 100, 0., 1000.);
+  // vars_map["pt_gg"] = var("pt_gg", "gluino system p_{T}[GeV]", 100, 0., 1000.);
+  // vars_map["lead_isr_pt"] = var("lead_isr_pt", "leading ISR p_{T} [GeV]", 20, 0., 1000.);
+  // vars_map["sublead_isr_pt"] = var("sublead_isr_pt", "subleading ISR p_{T} [GeV]", 20, 0., 1000.);
+  vars_map["nisr_me"] = var("nisr_me", "ISR ME parton multiplicity", 5, -0.5, 4.5);
+  // vars_map["npart"] = var("npart", "parton multiplicity", 20, 0.5, 20.5);
+  // vars_map["ntop_daughters"] = var("ntop_daughters", "top daughter multiplicity", 7, 0.5, 7.5);
   vars_map["ptt"] = var("ptt", "p_{T}(t#bar{t}), ME [GeV]", 100, 0., 1000.);
   vars_map["dphi_tt"] = var("dphi_tt", "#Delta#phi^{gen}(t,#bar{t})", 6, 0., 3.14);
   vars_map["dphi_fjm1_fjm2"] = var("dphi_fjm1_fjm2", "#Delta#phi^{gen}(m_{j1},m_{j2})", 10, 0., 3.14);
-  vars_map["lead_pt_top"] = var("lead_pt_top", "leading top p^{gen}_{T} [GeV]", 30, 0., 1500.);
-  vars_map["sublead_pt_top"] = var("sublead_pt_top", "sub-leading top p^{gen}_{T} [GeV]", 30, 0., 1500.);
+  // vars_map["lead_pt_top"] = var("lead_pt_top", "leading top p^{gen}_{T} [GeV]", 30, 0., 1500.);
+  // vars_map["sublead_pt_top"] = var("sublead_pt_top", "sub-leading top p^{gen}_{T} [GeV]", 30, 0., 1500.);
   msgsvc(msg::dbg,"Defined variables...");
 
   //---------------- DEFINE VARIABLE PAIRS 2D HISTOGRAMS ----------------
   vector<pair<TString,TString> > var_pairs; //use only variables defined in vars_map
-  var_pairs.push_back(make_pair("ht","mj"));
-  var_pairs.push_back(make_pair("met","met_me"));
+  // var_pairs.push_back(make_pair("ht","mj"));
   // var_pairs.push_back(make_pair("njets","mj"));
   // var_pairs.push_back(make_pair("njets","ht"));
   // var_pairs.push_back(make_pair("nbl","mj"));
@@ -124,23 +133,24 @@ int main(){
   // var_pairs.push_back(make_pair("lead_pt_top", "fjpt1"));
   // var_pairs.push_back(make_pair("ptt","mj"));
   // var_pairs.push_back(make_pair("lead_pt_top","mj"));
-  var_pairs.push_back(make_pair("dphi_tt","ptt"));
+  // var_pairs.push_back(make_pair("dphi_tt","ptt"));
   // var_pairs.push_back(make_pair("dphi_tt","mj"));
 
-  var_pairs.push_back(make_pair("pt_gg","pt_isr"));
-  var_pairs.push_back(make_pair("ptt","pt_isr"));
+  // var_pairs.push_back(make_pair("pt_gg","pt_isr"));
+  // var_pairs.push_back(make_pair("ptt","pt_isr"));
+  // var_pairs.push_back(make_pair("fjm1","ht_isr_me"));
+  // var_pairs.push_back(make_pair("fjm1","nisr_me"));
 
-  var_pairs.push_back(make_pair("npart","njets"));
-  var_pairs.push_back(make_pair("nisr_me","mj"));
-  var_pairs.push_back(make_pair("nisr_me","dphi_tt"));
-  var_pairs.push_back(make_pair("nisr_me","ht_isr_me"));
+  // var_pairs.push_back(make_pair("nisr_me","mj"));
+  // var_pairs.push_back(make_pair("nisr_me","dphi_tt"));
+  // var_pairs.push_back(make_pair("nisr_me","ht_isr_me"));
 
-  var_pairs.push_back(make_pair("dphi_tt","ht_isr_me"));
-  var_pairs.push_back(make_pair("dphi_tt","nisr_me"));
+  // var_pairs.push_back(make_pair("dphi_tt","ht_isr_me"));
+  // var_pairs.push_back(make_pair("dphi_tt","nisr_me"));
+  // var_pairs.push_back(make_pair("ht_isr_me","mj"));
 
-  var_pairs.push_back(make_pair("ht_part","ht"));
-  var_pairs.push_back(make_pair("ht_isr_me","mj"));
-  var_pairs.push_back(make_pair("ht_part","mj"));
+  var_pairs.push_back(make_pair("met","met_me"));
+  var_pairs.push_back(make_pair("mj","gen_mj"));
 
   msgsvc(msg::dbg,"Defined correlations...");
 
@@ -172,7 +182,7 @@ int main(){
 
     TString outdir = "./ntup/mj_plots_"+isamp->name+".root";
     TFile fout(outdir,"RECREATE");
-    small_tree tree((basedir+isamp->filestr).Data());
+    small_tree_quick tree((basedir+isamp->filestr).Data());
 
     //---------------- CREATE 1D HISTOGRAMS FOR ALL VARIABLES ----------------
     for (map<TString, var>::iterator ivar = vars_map.begin(); ivar!=vars_map.end(); ivar++){
@@ -235,6 +245,8 @@ int main(){
       unsigned clean_mctype = tree.mc_type()&0x0FFF; 
       TString mctype = getMCType(clean_mctype);
 
+      // if ((mctype&&0x0FFF)!=0x101 && (mctype&&0x0FFF)!=0x112) continue;
+
       double weight = 1.;//tree.weight()*5;
       // events that have the corresponding event display
       // if (tree.event()!= 106827864 && 
@@ -257,13 +269,13 @@ int main(){
       // if (ientry!=90000) continue;
 
       //------------- PRESELECTION -------------------
-      // if (tree.ht()<500. || tree.met()<200.) continue;
+      if (tree.ht()<500. || tree.met()<200.) continue;
 
       map<TString, double> flt_val;
       // for the sake of filling histos all are floats...
       flt_val["ht"] = tree.ht();
-      flt_val["njets"] = double(tree.njets())+0.5; 
-      flt_val["nbl"] = double(tree.nbl())+0.5; 
+      flt_val["njets"] = double(tree.njets()); 
+      flt_val["nbl"] = double(tree.nbl()); 
       flt_val["mj"] = tree.mj();
       flt_val["met"] = tree.met(); 
       flt_val["mt"] = tree.mt(); 
@@ -289,9 +301,12 @@ int main(){
       msgsvc(msg::dbg, "Looking at the generator level ");
       // ------ Generator level ----------
       vector<TVector3> tops_me; 
+      vector<unsigned> tops_me_ind; 
       vector<TVector3> gluinos; 
       vector<TVector3> tops_ps; 
+      vector<unsigned> tops_ps_ind; 
       vector<TVector3> top_daughters; 
+      set<unsigned> top_daughters_ind; 
       vector<TVector3> top_bs; 
       vector<TVector3> isr_me; 
       vector<TVector3> fsr; 
@@ -341,18 +356,21 @@ int main(){
         } else if (abs(tree.mc_id()[i])==6 && tree.mc_status()[i]==22) {
           TVector3 itop_me; itop_me.SetPtEtaPhi(tree.mc_pt()[i], tree.mc_eta()[i], tree.mc_phi()[i]);
           tops_me.push_back(itop_me);
+          tops_me_ind.push_back(i);
           if (msglvl == msg::truth) cout<<" ME top"<<endl;
 
         // tops that decay to W and b
         } else if (abs(tree.mc_id()[i])==6 && tree.mc_status()[i]!=22) {
           TVector3 itop_ps; itop_ps.SetPtEtaPhi(tree.mc_pt()[i], tree.mc_eta()[i], tree.mc_phi()[i]);
           tops_ps.push_back(itop_ps);
+          tops_ps_ind.push_back(i);
           if (msglvl == msg::truth) cout<<" PS top"<<endl;
 
         // b's from top
         } else if (abs(tree.mc_id()[i])==5 && abs(tree.mc_id()[tree.mc_mom()[i]])==6 && tree.mc_status()[i]==23){
           TVector3 itop_child; itop_child.SetPtEtaPhi(tree.mc_pt()[i], tree.mc_eta()[i], tree.mc_phi()[i]);
           top_daughters.push_back(itop_child);
+          top_daughters_ind.insert(i);
           top_bs.push_back(itop_child);
           if (msglvl == msg::truth) cout<<" Top child"<<endl;
         
@@ -396,6 +414,7 @@ int main(){
           }
           TVector3 itop_child; itop_child.SetPtEtaPhi(tree.mc_pt()[i], tree.mc_eta()[i], tree.mc_phi()[i]);
           top_daughters.push_back(itop_child);
+          top_daughters_ind.insert(i);
           if (msglvl == msg::truth) cout<<" Top child"<<endl;
 
         //classify taus
@@ -403,10 +422,26 @@ int main(){
           ntaus++;
           TVector3 itop_child; itop_child.SetPtEtaPhi(tree.mc_pt()[i], tree.mc_eta()[i], tree.mc_phi()[i]);
           top_daughters.push_back(itop_child);
+          top_daughters_ind.insert(i);
           if (msglvl == msg::truth) cout<<" Top child"<<endl;
 
         //classify tau children
         } else if (abs(tree.mc_id()[tree.mc_mom()[i]])==15){
+          bool duplicate = false;
+          for (size_t j(0); j<i; j++){
+            if (tree.mc_id()[i] == tree.mc_id()[j] && 
+                fabs(tree.mc_pt()[i]-tree.mc_pt()[j])<0.0001  && 
+                fabs(tree.mc_eta()[i]-tree.mc_eta()[j])<0.0001  && 
+                fabs(tree.mc_phi()[i]-tree.mc_phi()[j])<0.0001) {
+              duplicate = true;
+              break;
+            }
+          }
+          if (duplicate) {
+            if (msglvl == msg::truth) cout<<" Duplicate"<<endl;
+            continue;
+          }
+
           if (abs(tree.mc_id()[i])==12 || abs(tree.mc_id()[i])==14 || abs(tree.mc_id()[i])==16) {
             if (msglvl == msg::truth) cout<<" Neutrino from tau"<<endl;
             if (nvs==0) {
@@ -451,7 +486,49 @@ int main(){
         }
       }  
 
-      flt_val["ntop_daughters"] = top_daughters.size();
+      bool found_dupl = false;
+      for (unsigned itop(0);itop<tops_ps.size();itop++){
+        for (unsigned jtop(0);jtop<tops_ps.size();jtop++){
+          if (tree.mc_mom()[tops_ps_ind[itop]]==tree.mc_mom()[tops_ps_ind[jtop]]){
+            if (tree.mc_pt()[tops_ps_ind[itop]]<tree.mc_pt()[tops_ps_ind[jtop]]) {
+              tops_ps.erase(tops_ps.begin()+itop);
+              tops_ps_ind.erase(tops_ps_ind.begin()+itop);
+              found_dupl = true;
+              break;
+            } 
+          }
+          if (found_dupl) break;
+        }
+      }
+
+      // TVector3 diff1, diff2;
+      // if (tops_me.size()==2 && tops_ps.size()==2){
+      //   if (tree.mc_mom()[tops_ps_ind[0]]==tops_me_ind[0]){
+      //     if (tree.mc_mom()[tops_ps_ind[1]]==tops_me_ind[1]){
+      //       diff1 = tops_me[0] - tops_ps[0];
+      //       diff2 = tops_me[1] - tops_ps[1];
+      //     } else {
+      //       cout<<"ERROR 1"<<endl;
+      //     }
+      //   } else if (tree.mc_mom()[tops_ps_ind[0]]==tops_me_ind[1]){
+      //     if (tree.mc_mom()[tops_ps_ind[1]]==tops_me_ind[0]){
+      //       diff1 = tops_me[0] - tops_ps[1];
+      //       diff2 = tops_me[1] - tops_ps[0];
+      //     } else {
+      //       cout<<"ERROR 2"<<endl;
+      //     }
+      //   } else {
+      //     cout<<"ERROR"<<endl;
+      //   }
+      // } else {
+      //   if (msglvl == msg::info) cout<<"Found "<<tops_me.size()<<" ME tops and "<<tops_ps.size()<<" PS tops"<<endl;
+      //   for (unsigned i(0); i< tops_ps.size(); i++){
+      //     cout<<"Top with mom "<<tree.mc_mom()[tops_ps_ind[i]]<< " has pt "<<tree.mc_pt()[tops_ps_ind[i]]<<endl;
+      //   }
+      // }
+      // flt_val["ht_fsr_topdiff"] = diff1.Pt() + diff2.Pt();
+
+      // flt_val["ntop_daughters"] = top_daughters.size();
       flt_val["ntops_me"] = tops_me.size();
       flt_val["ntops_ps"] = tops_ps.size();
       flt_val["nisr_me"] = isr_me.size();
@@ -465,15 +542,16 @@ int main(){
       flt_val["met_me"] = met_me.Pt();
 
       flt_val["ht_isr_me"] = getHT(isr_me);
+      flt_val["ht_fsr"] = getHT(fsr);
       flt_val["ht_top_daughters"] = getHT(top_daughters);
 
-      msgsvc(msg::dbg, "Record top pTs ");
-      flt_val["lead_pt_top"] = -1.*dblmax;
-      flt_val["sublead_pt_top"] = -1.*dblmax;
       size_t ntops_me = tops_me.size();
-      sort(tops_me.begin(), tops_me.end(), compPT);
-      if (ntops_me>0) flt_val["lead_pt_top"] = tops_me[0].Pt();
-      if (ntops_me>1) flt_val["sublead_pt_top"] = tops_me[1].Pt();
+      // sort(tops_me.begin(), tops_me.end(), compPT);
+      // msgsvc(msg::dbg, "Record top pTs ");
+      // flt_val["lead_pt_top"] = -1.*dblmax;
+      // flt_val["sublead_pt_top"] = -1.*dblmax;
+      // if (ntops_me>0) flt_val["lead_pt_top"] = tops_me[0].Pt();
+      // if (ntops_me>1) flt_val["sublead_pt_top"] = tops_me[1].Pt();
 
       // ------ Generator level pt of the ttbar/gg system and the isr - these should balance ----------
       if (ntops_me!=2){
@@ -486,27 +564,29 @@ int main(){
         flt_val["dphi_tt"] = tops_me[0].DeltaPhi(tops_me[1]);
       }
 
-      flt_val["pt_gg"] = dblmax;
-      if (isamp->name=="T1tttt1200" || isamp->name=="T1tttt1500"){
-        if (gluinos.size()==2){
-          TVector3 glu_pair = gluinos[0]+gluinos[1];
-          flt_val["pt_gg"] = glu_pair.Pt();
-        } else {
-          msgsvc(msg::err, "Bad truth record, number of gluinos found = " + TString::Format("%i",int(gluinos.size())));
-        }
-      } 
+      // flt_val["pt_gg"] = dblmax;
+      // if (isamp->name=="T1tttt1200" || isamp->name=="T1tttt1500"){
+      //   if (gluinos.size()==2){
+      //     TVector3 glu_pair = gluinos[0]+gluinos[1];
+      //     flt_val["pt_gg"] = glu_pair.Pt();
+      //   } else {
+      //     msgsvc(msg::err, "Bad truth record, number of gluinos found = " + TString::Format("%i",int(gluinos.size())));
+      //   }
+      // } 
 
-      flt_val["pt_isr"] = dblmax;
-      TVector3 isr_system;
-      for (size_t iisr(0); iisr<isr_me.size(); iisr++){
-        if (iisr==0) {
-          isr_system.SetPtEtaPhi(isr_me[iisr].Pt(),isr_me[iisr].Eta(), isr_me[iisr].Phi());
-        } else {
-          TVector3 v_iisr; v_iisr.SetPtEtaPhi(isr_me[iisr].Pt(),isr_me[iisr].Eta(), isr_me[iisr].Phi());
-          isr_system += v_iisr;
-        }
-      }
-      flt_val["pt_isr"] = isr_system.Pt();
+      // flt_val["pt_isr"] = dblmax;
+      // TVector3 isr_system;
+      // for (size_t iisr(0); iisr<isr_me.size(); iisr++){
+      //   if (iisr==0) {
+      //     isr_system.SetPtEtaPhi(isr_me[iisr].Pt(),isr_me[iisr].Eta(), isr_me[iisr].Phi());
+      //   } else {
+      //     TVector3 v_iisr; v_iisr.SetPtEtaPhi(isr_me[iisr].Pt(),isr_me[iisr].Eta(), isr_me[iisr].Phi());
+      //     isr_system += v_iisr;
+      //   }
+      // }
+      // flt_val["pt_isr"] = isr_system.Pt();
+
+      //------------------------- Try to deduce the FSR from looking at the diff of the top ME and top PS
 
       msgsvc(msg::dbg, "Beginning to fill histograms");
 

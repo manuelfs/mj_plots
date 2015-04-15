@@ -168,9 +168,9 @@ for seln in selndict.keys():
 
       can = TCanvas("can"+seln+var,"can",1000,1000)
       pad = make_pad()
+      pad.SetLogy()
       pad.Draw()
       pad.cd()
-      if (not shape): pad.SetLogy()
 
       hist = {}
       first_draw = True

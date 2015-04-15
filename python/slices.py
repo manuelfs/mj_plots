@@ -5,7 +5,9 @@ from slice_tools import *
 # from rootpy.interactive import wait
 
 doslices = True
+do2d = True
 datadir = os.getcwd()
+mctypes = ["nl0","nl1","nl2"]
 print "Looking for input in", datadir
 
 outdir = os.getcwd()
@@ -19,9 +21,7 @@ def make_pad():
   pad.SetLeftMargin(0.17)
   pad.SetRightMargin(0.05)
   pad.SetBottomMargin(0.15)
-  pad.SetTopMargin(0.02)
-
-  if (type(hist)==type(TH2D())): pad.SetRightMargin(0.1)
+  pad.SetTopMargin(0.05)
 
   return pad
 
@@ -100,11 +100,14 @@ gROOT.SetBatch(kTRUE)
 
 # ------------- SELECTIONS -------------
 selns = [
-  # "nl1-ht750-met250-mt150-nj6-nb2",
+  "nl1-ht750-met250-mt150-nj6-nb2",
   # "nl1-ht500-met200-mt150-nj0-nb0",
   # "nl1-ht500-met200-mt150-nj6-nb0",
   # "nl1-ht500-met200-mt0-nj6-nb0",
-  "nlna-ht500-met200-mt0-nj6-nb0",
+  # "nlna-ht500-met200-mt0-nj6-nb0",
+  # "nlna-ht0-met200-mt0-nj0-nb0",
+  # "nlna-ht0-met0to100-mt0-nj0-nb0",
+  # "nlna-ht500-met0-mt0-nj0-nb0"
   # "nlna-ht500-met200-mt0-nj6-nb0-mj300to450",
   # "nlna-ht500-met200-mt0-nj6-nb0-mj450to600",
   # "nlna-ht500-met200-mt0-nj6-nb0-mj600toInf"
@@ -115,8 +118,8 @@ sampldict = {}
 sampldict["ttbar"] = "t#bar{t}"
 # sampldict["qcd"] = ("QCD",kRed, 3017, "qcd")
 # sampldict["wjets"] = ("W+jets", kViolet, 3490, "w")
-sampldict["T1tttt1500"] = "T1tttt NC"
-sampldict["T1tttt1200"] = "T1tttt C"
+# sampldict["T1tttt1500"] = "T1tttt NC"
+# sampldict["T1tttt1200"] = "T1tttt C"
 
 # colors = [kRed+1, kOrange, kGreen+1, kBlue+1]
 colors = [kMagenta+2, kBlue+1, kGreen+1, kOrange-3, kRed+1]
@@ -126,26 +129,27 @@ colors = [kMagenta+2, kBlue+1, kGreen+1, kOrange-3, kRed+1]
 # --------- VARIABLES -------------
 edgelist = {}
 edgelist["mj"] = [300., 450., 600.,1500.]
+edgelist["fjm1"] = [0., 50.,100.,150.,200.,250.,300.,350.,400.,500.]
 edgelist["met"] = [200.,300., 400.,500.,1500.]
 edgelist["met_me"] = [200.,300., 400.,500.,1500.]
 edgelist["ptt"] = [0.,200., 400.,600.,1000.]
 edgelist["avetoppt"] = [0.,200., 400.,600.,1000.]
 edgelist["dphi_tt"] = [x/3.*3.14 for x in range(0,3)]
-print edgelist["dphi_tt"]
 edgelist["dphi_fjm1_fjm2"] = [x/3.*3.14 for x in range(0,3)]
 edgelist["ht"] = [500.,750.,1000.,1500., 2000.,4000.]
-edgelist["ht_isr_me"] = [0.,500.,1000.,1500.]
-edgelist["ht_fsr"] = [0.,500.,1000.,1500.]
+edgelist["ht_isr_me"] = [0.,100.,300.,500.,1000.,1500.]
+edgelist["ht_fsr"] = [1]
 edgelist["ht_part"] = [0.,500.,1000.,1500., 2500.]
 edgelist["njets"] = [4, 6, 8, 20]
 edgelist["npart"] = [0, 4, 6, 8, 20]
-edgelist["nisr_me"] = [0,1,2,3,4]
+edgelist["nisr_me"] = [-0.5,0.5,1.5,2.5,3.5]
 edgelist["nfsr"] = [0,1,2,3]
 edgelist["leadpttop"] = [0., 100., 200., 300., 400., 600.]
 
 # --------- VARIABLES -------------
 varlbl = {}
 varlbl["mj"] = "M_{J}"
+varlbl["fjm1"] = "m(J_{1})"
 varlbl["ptt"] = "p_{T}(t#bar{t})"
 varlbl["avetoppt"] = "p^{ave}_{T}(t)"
 varlbl["dphi_tt"] = "#Delta#phi(t,#bar{t})"
@@ -190,6 +194,8 @@ var_pairs = []
 
 # var_pairs.append(["npart","njets"])
 # var_pairs.append(["nisr_me","mj"])
+# var_pairs.append(["fjm1","nisr_me"])
+# var_pairs.append(["ht_fsr","mj"])
 # var_pairs.append(["nisr_me","ht_isr_me"])
 
 # var_pairs.append(["dphi_tt", "nisr_me"])
@@ -202,9 +208,9 @@ var_pairs = []
 # var_pairs.append(["ht_fsr","mj"])
 # var_pairs.append(["ht_part","mj"])
 
-var_pairs.append(["dphi_tt","ht_isr_me"])
+# var_pairs.append(["dphi_tt","ht_isr_me"])
 
-# var_pairs.append(["met","met_me"])
+var_pairs.append(["met","met_me"])
 
 # var_pairs.append(["pt_gg","pt_isr"])
 # var_pairs.append(["ptt","pt_isr"])
@@ -213,10 +219,31 @@ for samp in sampldict.keys():
   set_pallete(samp)
   flist = TFile(os.path.join(datadir,"mj_plots_"+samp+".root"),"READ")
   for seln in selns:
-    # if (samp=="ttbar"): mctypes = ["ll","lt","lh","hh"]
-    # if (samp=="ttbar"): mctypes = ["nl0","nl1","nl2"]
-    mctypes = [""]
     for mctype in mctypes:
+
+      # can = TCanvas("can"+samp+seln+mctype,"can",1000,1000)
+      # for var in varlbl:
+      #   pad = make_pad()
+      #   pad.Draw()
+      #   pad.cd()
+      #   pad.SetLogy()
+
+      #   # print "Get histogram: ", '_'.join([seln, var, samp, mctype])
+      #   if (mctype!=""): hist = flist.Get('_'.join([seln, var, samp, mctype])).Clone()
+      #   else: hist = flist.Get('_'.join([seln, var, samp])).Clone()
+      #   hist.SetDirectory(0)
+      #   hist.SetFillColor(colors[0])
+      #   hist.SetFillStyle(colors[0])
+      #   hist.SetLineColor(colors[0])
+      #   hist.SetLineWidth(4)
+      #   style_axis(hist)
+      #   hist.Draw("hist")
+        
+      #   can.Print(os.path.join(outdir, seln+"_"+var+".pdf"))
+
+
+      # ---------------------2D distributions -------------------------
+      if not do2d: continue
       for pair in var_pairs:
         print samp, seln, mctype, pair
         if (mctype!=""): hist = flist.Get('_'.join([seln, pair[0], pair[1], samp, mctype])).Clone()
@@ -235,15 +262,16 @@ for samp in sampldict.keys():
         style_axis(hist)
         hist.SetLineWidth(3)
         hist.SetLineColor(kRed+1)
-        hist.SetMarkerSize(2.5)
+        hist.SetMarkerSize(1)
         # hist.RebinX(2)
         if (pair[0]=="mj"): hist.RebinX(2)
         elif (pair[1]=="mj"): hist.RebinY(2)
         if (pair[0]=="ht_isr_me"): hist.RebinX(2)
         elif (pair[1]=="ht_isr_me"): hist.RebinY(2)
-        # hist.Draw("colz text")
-        hist.Draw("scat")
+        hist.Draw("colz text")
+        # hist.Draw("scat")
         # label(0.77,0.85,"#rho={:.2f}".format(hist.GetCorrelationFactor()),1,0.05)
+        can.SetLogy()
         can.Print(hist.GetName()+".pdf")
 
         if (doslices):
@@ -252,12 +280,13 @@ for samp in sampldict.keys():
             leg = make_legend()
             # leg.SetHeader(seln)
 
+            svar = pair[iaxis]
             ymax = 0
             for i,slice in enumerate(slices[axis]):
               if (ymax < 1.5*slice.GetMaximum()): 
                 ymax = 1.5*slice.GetMaximum()
                 slices[axis][0].GetYaxis().SetRangeUser(0.,ymax)
-              slice.SetLineColor(colors[i])
+              if (i<len(colors)): slice.SetLineColor(colors[i])
               slice.SetLineWidth(3)
               slice.SetLineStyle(len(slices[axis])-i)
               slice.SetYTitle("Events")
@@ -268,11 +297,10 @@ for samp in sampldict.keys():
               style_axis(slice)
               if (i==0): slice.Draw("hist")
               else: slice.Draw("hist same")
-              svar = pair[iaxis]
               if (svar == "dphi_tt"):
                 leg.AddEntry(slice, '{} {:.1f} - {:.1f} {} (#mu {:.1f}, RMS {:.1f})'.format(varlbl[svar], edgelist[svar][i], edgelist[svar][i+1], units(svar), slice.GetMean(), slice.GetRMS()), "L")
               elif (svar[0]=="n"):
-                leg.AddEntry(slice, '{} = {:.0f} {} (#mu {:.1f}, RMS {:.1f})'.format(varlbl[svar], edgelist[svar][i], units(svar), slice.GetMean(), slice.GetRMS()), "L")
+                leg.AddEntry(slice, '{} = {:.0f} {} (#mu {:.1f}, RMS {:.1f})'.format(varlbl[svar], edgelist[svar][i]+0.5, units(svar), slice.GetMean(), slice.GetRMS()), "L")
               else:
                 leg.AddEntry(slice, '{} {:.0f} - {:.0f} {} (#mu {:.1f}, RMS {:.1f})'.format(varlbl[svar], edgelist[svar][i], edgelist[svar][i+1], units(svar), slice.GetMean(), slice.GetRMS()), "L")
 
@@ -280,3 +308,8 @@ for samp in sampldict.keys():
             
             if (mctype!=""): can.Print(os.path.join(outdir, '_'.join([seln, pair[1-iaxis], "inSlices", svar, samp, mctype+".pdf"])))
             else: can.Print(os.path.join(outdir, '_'.join([seln, pair[1-iaxis], "inSlices", svar, samp+".pdf"])))
+
+            # can.SetLogy(1)
+            # if (mctype!=""): can.Print(os.path.join(outdir, '_'.join([seln, pair[1-iaxis], "inSlices", svar, samp, mctype+"_log.pdf"])))
+            # else: can.Print(os.path.join(outdir, '_'.join([seln, pair[1-iaxis], "inSlices", svar, samp+"_log.pdf"])))
+

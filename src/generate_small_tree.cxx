@@ -107,8 +107,19 @@ set<Variable> GetVariables(const string &file_name){
   return vars;
 }
 
-int main(){
-  vector<string> file_names = Tokenize(execute("ls txt/small_tree_cfg/"), "\n");
+int main(int argc, char *argv[]){
+  int c = 0;
+  bool do_event_handler = true;
+  while((c=getopt(argc, argv, "t"))!=-1){
+    switch(c){
+    case 't':
+      do_event_handler = false;
+      break;
+    default:
+      break;
+    }
+  }
+  vector<string> file_names = Tokenize(execute("ls txt/small_tree_cfg/ 2> /dev/null"), "\n");
 
   vector<pair<string, set<Variable> > > sep_vars(file_names.size());
   vector<string> fixed_names(file_names.size());
@@ -159,28 +170,30 @@ int main(){
     WriteSepSource(sep_vars.at(ifile));
   }
 
-  // vector<string> existing = Tokenize(execute("ls src/event_handler*"));
-  // set<string> to_generate;
-  // for(size_t iname = 0; iname < fixed_names.size(); ++iname){
-  //   bool found = false;
-  //   for(size_t iexist = 0; !found && iexist < existing.size(); ++iexist){
-  //     if(Contains(existing.at(iexist), fixed_names.at(iname))) found = true;
-  //   }
-  //   if(!found) to_generate.insert(fixed_names.at(iname));
-  // }
+  if(do_event_handler){
+    vector<string> existing = Tokenize(execute("ls src/event_handler* 2> /dev/null"));
+    set<string> to_generate;
+    for(size_t iname = 0; iname < fixed_names.size(); ++iname){
+      bool found = false;
+      for(size_t iexist = 0; !found && iexist < existing.size(); ++iexist){
+        if(Contains(existing.at(iexist), fixed_names.at(iname))) found = true;
+      }
+      if(!found) to_generate.insert(fixed_names.at(iname));
+    }
 
-  // GenerateEventHandlerBaseHeader();
-  // GenerateEventHandlerBaseSource();
+    GenerateEventHandlerBaseHeader();
+    GenerateEventHandlerBaseSource();
 
-  // for(set<string>::const_iterator name = to_generate.begin();
-  //     name != to_generate.end();
-  //     ++name){
-  //   GenerateEventHandlerHeader(*name);
-  //   GenerateEventHandlerSource(*name);
-  // }
+    for(set<string>::const_iterator name = to_generate.begin();
+        name != to_generate.end();
+        ++name){
+      GenerateEventHandlerHeader(*name);
+      GenerateEventHandlerSource(*name);
+    }
 
-  // GenerateEventHandlerMergeHeader(fixed_names);
-  // GenerateEventHandlerMergeSource(fixed_names);
+    GenerateEventHandlerMergeHeader(fixed_names);
+    GenerateEventHandlerMergeSource(fixed_names);
+  }
 }
 
 bool Contains(const string &text, const string &pattern){

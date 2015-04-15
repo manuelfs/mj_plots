@@ -8,7 +8,6 @@ def slice2DX(hist, edge_list, var):
   low, high = 0, 0
   for i in range(0,len(edge_list)-1):
     low = hist.GetXaxis().FindBin(edge_list[i]*1.0001)
-    print low, hist.GetXaxis().GetBinLowEdge(low+1), edge_list[i], edge_list[i+1]
     if (i>0 and low<=high):
       print "FATAL:: slice_tools: Slices overlap, i.e. edge_list contains values that do not correspond to a bin edge!"
       print low, high
@@ -23,7 +22,7 @@ def slice2DY(hist, edge_list, var):
   slices = []
   low, high = 0, 0
   for i in range(0,len(edge_list)-1):
-    low = hist.GetYaxis().FindBin(edge_list[i])
+    low = hist.GetYaxis().FindBin(edge_list[i]*1.0001)
     if (i>0 and low<=high):
       print "FATAL:: slice_tools: Slices overlap, i.e. edge_list contains values that do not correspond to a bin edge!"
       sys.exit(1)

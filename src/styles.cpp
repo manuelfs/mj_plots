@@ -38,6 +38,7 @@ void styles::setDefaultStyle() {
   gStyle->SetCanvasDefW(CanvasW);
   gStyle->SetCanvasDefH(CanvasH);
   gStyle->SetTextSize(TextSize);            // Set global text size
+  gStyle->SetTitleFontSize(TitleSize);    
   gStyle->SetTitleSize(TitleSize,"xyz");     // Set the 2 axes title size
   gStyle->SetLabelSize(LabelSize,"xyz");     // Set the 2 axes label size
 
