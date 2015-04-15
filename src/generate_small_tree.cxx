@@ -10,6 +10,8 @@
 #include <fstream>
 #include <set>
 
+#include <unistd.h>
+
 using namespace std;
 
 string ToCaps(string str){
