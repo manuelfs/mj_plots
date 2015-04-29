@@ -13,47 +13,11 @@
 
 #include "styles.hpp"
 #include "utilities.hpp"
+#include "utilities_macros.hpp"
 
 using namespace std;
 using std::cout;
 using std::endl;
-
-class hfeats {
-public:
-  hfeats(TString ivarname, int inbins, float iminx, float imaxx, vector<int> isamples,
-	 TString ititle="", TString icuts="1", float icut=-1){
-    varname = ivarname; nbins = inbins; minx = iminx; maxx = imaxx; title = ititle;
-    cuts = icuts; cut = icut; samples = isamples;
-    tag = ivarname+"_"+cuts; tag.ReplaceAll("_1",""); tag.ReplaceAll(".",""); 
-    tag.ReplaceAll("(",""); tag.ReplaceAll("$","");  tag.ReplaceAll(")",""); 
-    tag.ReplaceAll("[",""); tag.ReplaceAll("]",""); tag.ReplaceAll("||","_");
-    tag.ReplaceAll("/","_"); tag.ReplaceAll("*",""); tag.ReplaceAll("&&","_");
-    tag.ReplaceAll(">",""); tag.ReplaceAll("<",""); tag.ReplaceAll("=","");
-    tag.ReplaceAll("+",""); 
-    unit = "";
-    if(title.Contains("GeV)")) unit = "GeV";
-    if(title.Contains("phi")) unit = "rad";
-  }
-  TString title, varname, tag, cuts, unit;
-  int nbins;
-  float minx, maxx, cut;
-  vector<int> samples;
-};
-
-class sfeats {
-public:
-  sfeats(vector<TString> ifile, TString ilabel, int icolor, int istyle=1, TString icut="1"){
-    file = ifile; label = ilabel; cut = icut;
-    color = icolor; style = istyle;
-    isSig = ifile[0].Contains("T1tttt");// && ifile.Contains("1200");
-    factor = "1";
-    if(ifile[0].Contains("TTW")) factor = "0.36";
-  }
-  vector<TString> file;
-  TString label, cut, factor;
-  int color, style;
-  bool isSig;
-};
 
 int main(){ 
   styles style("LargeLabels"); style.setDefaultStyle();
@@ -105,34 +69,12 @@ int main(){
   vector<sfeats> Samples; 
   Samples.push_back(sfeats(s_tt, "t#bar{t} 2l, no ISR", 2,1,"((mc_type&0x0F00)/0x100+(mc_type&0x000F)-(mc_type&0x00F0)/0x10)>=2&&tru_tt_pt<1"));
   Samples.push_back(sfeats(s_tt, "t#bar{t} 1l, no ISR", 4,1,"((mc_type&0x0F00)/0x100+(mc_type&0x000F)-(mc_type&0x00F0)/0x10)<=1&&tru_tt_pt<1"));
-  //Samples.push_back(sfeats(s_tt, "t#bar{t} 2l, with ISR", 2,1,"((mc_type&0x0F00)/0x100+(mc_type&0x000F)-(mc_type&0x00F0)/0x10)>=2&&tru_tt_pt>1"));
-  //Samples.push_back(sfeats(s_tt, "t#bar{t} 1l, with ISR", 4,1,"((mc_type&0x0F00)/0x100+(mc_type&0x000F)-(mc_type&0x00F0)/0x10)<=1&&tru_tt_pt>1"));
+  Samples.push_back(sfeats(s_tt, "t#bar{t} 2l, with ISR", 2,1,"((mc_type&0x0F00)/0x100+(mc_type&0x000F)-(mc_type&0x00F0)/0x10)>=2&&tru_tt_pt>1"));
+  Samples.push_back(sfeats(s_tt, "t#bar{t} 1l, with ISR", 4,1,"((mc_type&0x0F00)/0x100+(mc_type&0x000F)-(mc_type&0x00F0)/0x10)<=1&&tru_tt_pt>1"));
 
-  Samples.push_back(sfeats(s_tt_noskim, "t#bar{t} p_{T}^{tt} > 0", 2,1,"tru_tt_pt>0"));
-  Samples.push_back(sfeats(s_tt_noskim, "t#bar{t} p_{T}^{tt} = 0", 4,1,"tru_tt_pt==0"));
   Samples.push_back(sfeats(s_t1t, "T1tttt(1500,100)", kGreen+1));
 
 
-  Samples.push_back(sfeats(s_zjets, "Z#rightarrow#nu#nu", kMagenta+2));
-  Samples.push_back(sfeats(s_qcd, "QCD", 28));
-  Samples.push_back(sfeats(s_tt, "t#bar{t}", 2));
-  Samples.push_back(sfeats(s_t1q, "T1qqqq(1400,100)", 8));
-  Samples.push_back(sfeats(s_t1t, "T1tttt(1500,100)", 4));
-  Samples.push_back(sfeats(s_t1qc, "T1qqqq(1000,800)", 8,2));
-  Samples.push_back(sfeats(s_t1tc, "T1tttt(1200,800)", 4,2));
-
-  // // Jack's colors
-  // Samples.push_back(sfeats(s_zjets, "Z#rightarrow#nu#nu", 1002));
-  // Samples.push_back(sfeats(s_qcd, "QCD", 1001));
-  // Samples.push_back(sfeats(s_tt, "t#bar{t}", 1000,1));
-  // Samples.push_back(sfeats(s_t1q, "T1qqqq(1400,100)", 4));
-  // Samples.push_back(sfeats(s_t1t, "T1tttt(1500,100)", 2));
-  // Samples.push_back(sfeats(s_t1qc, "T1qqqq(1000,800)", 4,2));
-  // Samples.push_back(sfeats(s_t1tc, "T1tttt(1200,800)", 2,2));
-
-  Samples.push_back(sfeats(s_ttv, "ttV", 1002));
-  Samples.push_back(sfeats(s_single, "Single top", 1005));
-  Samples.push_back(sfeats(s_wjets, "W + jets", 1004));
 
   for(unsigned sam(0); sam < Samples.size(); sam++){
     chain.push_back(new TChain("tree"));
@@ -140,32 +82,27 @@ int main(){
       chain[sam]->Add(Samples[sam].file[insam]);
   }
 
-  vector<int> mj_sam;
-  mj_sam.push_back(0);
-  mj_sam.push_back(1);
-  mj_sam.push_back(4);
+  vector<int> mj_noisr;
+  mj_noisr.push_back(0);
+  mj_noisr.push_back(1);
+  mj_noisr.push_back(4);
 
-  vector<int> mj_sam_noskim;
-  mj_sam_noskim.push_back(0);
-  mj_sam_noskim.push_back(1);
+  vector<int> mj_withisr;
+  mj_withisr.push_back(2);
+  mj_withisr.push_back(3);
+  mj_withisr.push_back(4);
 
-  //vars.push_back(hfeats("fjets_m[1]", 50,0,500, mj_sam, "m(J_{2}) [GeV]","ht>500&&met>100&&njets>=4&&(nmus+nels)==1"));
+  vars.push_back(hfeats("Max$(fjets_m)", 50,0,500, mj_noisr, "m(J_{1}) [GeV]","ht>500&&met>200",-1,"noisr"));
+  vars.push_back(hfeats("mj", 40,0,800, mj_noisr, "M_{J} [GeV]","ht>500&&met>200",-1,"noisr"));
+  vars.push_back(hfeats("ht", 50,500,2500, mj_noisr, "H_{T} [GeV]","ht>500&&met>200",-1,"noisr"));
 
-//   vars.push_back(hfeats("Max$(fjets_m)", 50,0,500, mj_sam, "m(J_{1}) [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==0"));
-   vars.push_back(hfeats("Max$(fjets_m)", 50,0,500, mj_sam, "m(J_{1}) [GeV]","ht>500&&met>200"));
-   vars.push_back(hfeats("mj", 80,0,800, mj_sam, "M_{J} [GeV]","ht>500&&met>200"));
-//   vars.push_back(hfeats("Max$(fjets_m)", 50,0,500, mj_sam_noskim, "m(J_{1}) [GeV]","ht>400&&met>100&&(nmus+nels)==2"));
-// 
-//   vars.push_back(hfeats("mj",40,0,800, mj_sam, "M_{J} [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==0"));
-//   vars.push_back(hfeats("mj",40,0,800, mj_sam, "M_{J} [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-//   vars.push_back(hfeats("gen_mj",40,0,800, mj_sam, "True M_{J} [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-//   vars.push_back(hfeats("mj", 40,0,800, mj_sam_noskim, "M_{J} [GeV]","ht>400&&met>100&&(nmus+nels)==2"));
-
-
+  vars.push_back(hfeats("Max$(fjets_m)", 50,0,500, mj_withisr, "m(J_{1}) [GeV]","ht>500&&met>200",-1,"withisr"));
+  vars.push_back(hfeats("mj", 40,0,800, mj_withisr, "M_{J} [GeV]","ht>500&&met>200",-1,"withisr"));
+  vars.push_back(hfeats("ht", 50,500,2500, mj_withisr, "H_{T} [GeV]","ht>500&&met>200",-1,"withisr"));
 
 
   TString luminosity="4";
-  float minLog = 0.04, maxLog = 10;
+  float minLog = 0.004, maxLog = 10;
   double legX = 0.45, legY = 0.86, legSingle = 0.075;
   double legW = 0.12, legH = legSingle*vars[0].samples.size();
   TLegend leg(legX, legY-legH, legX+legW, legY);
@@ -282,6 +219,7 @@ int main(){
       histo[0][var][firstplotted]->SetMinimum(0.2);
       histo[0][var][firstplotted]->SetMaximum(maxhisto*2);
     }
+    histo[0][var][firstplotted]->SetMinimum(minLog);
     if(vars[var].cut>0) line.DrawLine(vars[var].cut, 0, vars[var].cut, maxhisto*maxLog);
     can.SetLogy(1);
     pname = "plots/1d/log_lumi_"+vars[var].tag+".eps";
@@ -319,6 +257,8 @@ int main(){
     pname = "plots/1d/shapes_"+vars[var].tag+".eps";
     can.SaveAs(pname);
     histo[1][var][0]->SetMaximum(maxhisto*maxLog);
+    histo[1][var][0]->SetMaximum(160);
+    histo[1][var][0]->SetMinimum(minLog);
     can.SetLogy(1);
     pname = "plots/1d/log_shapes_"+vars[var].tag+".eps";
     can.SaveAs(pname);

@@ -13,46 +13,11 @@
 
 #include "styles.hpp"
 #include "utilities.hpp"
+#include "utilities_macros.hpp"
 
 using namespace std;
 using std::cout;
 using std::endl;
-
-class hfeats {
-public:
-  hfeats(TString ivarname, int inbins, float iminx, float imaxx, vector<int> isamples,
-	 TString ititle="", TString icuts="1", float icut=-1){
-    varname = ivarname; nbins = inbins; minx = iminx; maxx = imaxx; title = ititle;
-    cuts = icuts; cut = icut; samples = isamples;
-    tag = ivarname+"_"+cuts; tag.ReplaceAll("_1",""); tag.ReplaceAll(".",""); 
-    tag.ReplaceAll("(",""); tag.ReplaceAll("$","");  tag.ReplaceAll(")",""); 
-    tag.ReplaceAll("[",""); tag.ReplaceAll("]",""); tag.ReplaceAll("||","_");
-    tag.ReplaceAll("/","_"); tag.ReplaceAll("*",""); tag.ReplaceAll("&&","_");
-    tag.ReplaceAll(">",""); tag.ReplaceAll("<",""); tag.ReplaceAll("=","");
-    tag.ReplaceAll("+",""); 
-    unit = "";
-    if(title.Contains("GeV)")) unit = "GeV";
-    if(title.Contains("phi")) unit = "rad";
-  }
-  TString title, varname, tag, cuts, unit;
-  int nbins;
-  float minx, maxx, cut;
-  vector<int> samples;
-};
-
-class sfeats {
-public:
-  sfeats(vector<TString> ifile, TString ilabel, int icolor, int istyle=1, TString icut="1"){
-    file = ifile; label = ilabel; cut = icut;
-    color = icolor; style = istyle;
-    isSig = ifile[0].Contains("T1tttt");// && ifile.Contains("1200");
-    factor = "1";
-  }
-  vector<TString> file;
-  TString label, cut, factor;
-  int color, style;
-  bool isSig;
-};
 
 int main(){ 
   styles style("LargeLabels"); style.setDefaultStyle();

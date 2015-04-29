@@ -16,6 +16,7 @@
 #include "styles.hpp"
 #include "utilities.hpp"
 #include "plot_mj_bdt.hpp"
+#include "utilities_macros.hpp"
 
 using namespace std;
 
