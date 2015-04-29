@@ -47,6 +47,7 @@ public:
     color = icolor; style = istyle;
     isSig = ifile[0].Contains("T1tttt");// && ifile.Contains("1200");
     factor = "1";
+    if(ifile[0].Contains("TTW")) factor = "0.36";
   }
   vector<TString> file;
   TString label, cut, factor;
@@ -55,7 +56,7 @@ public:
 };
 
 int main(){ 
-  styles style("LargeLabels"); style.setDefaultStyle();
+  styles style("Paper"); style.setDefaultStyle();
   vector<hfeats> vars;
   TCanvas can;
 
@@ -70,7 +71,8 @@ int main(){
   TColor sig_gold(1008, 215/255.,162/255.,50/255.);
   TColor seal_brown(1010, 89/255.,38/255.,11/255.);
 
-  TString folder="archive/15-04-19/skim/";
+  //TString folder="archive/15-03-03/skim/";
+  TString folder="archive/15-01-30/skim/";
   vector<TString> s_tt;
   s_tt.push_back(folder+"*_TTJet*");
   vector<TString> s_wjets;
@@ -147,50 +149,12 @@ int main(){
   mj_sam_lep.push_back(6);
   mj_sam_lep.push_back(4);
 
-  // vars.push_back(hfeats("Max$(fjets_m)", 100,0,2000, mj_sam_lep, "m(J_{1}^{R=1.2}) [GeV]",
-  // 			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  // vars.push_back(hfeats("Max$(fjets15_m)", 100,0,2000, mj_sam_lep, "m(J_{1}^{R=1.5}) [GeV]",
-  // 			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  // vars.push_back(hfeats("Max$(fjets20_m)", 100,0,2000, mj_sam_lep, "m(J_{1}^{R=2.0}) [GeV]",
-  // 			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  // vars.push_back(hfeats("Max$(fjets30_m)", 100,0,2000, mj_sam_lep, "m(J_{1}^{R=3.0}) [GeV]",
-  // 			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-
-  // vars.push_back(hfeats("mj", 100,0,2000, mj_sam_lep, "M_{J}^{R=1.2} [GeV]",
-  // 			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  // vars.push_back(hfeats("mj15", 100,0,2000, mj_sam_lep, "M_{J}^{R=1.5} [GeV]",
-  // 			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  // vars.push_back(hfeats("mj20", 100,0,2000, mj_sam_lep, "M_{J}^{R=2.0} [GeV]",
-  // 			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  // vars.push_back(hfeats("mj30", 100,0,2000, mj_sam_lep, "M_{J}^{R=3.0} [GeV]",
-  // 			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-
-  vars.push_back(hfeats("mj", 80,0,800, mj_sam_lep, "M_{J}^{R=1.2} [GeV]",
-   			"ht>500&&met>200&&njets>=4&&mt>150&&(nmus+nels)==1"));
-  vars.push_back(hfeats("Max$(fjets_m)", 80,0,800, mj_sam_lep, "m(J_{1}^{R=1.2}) [GeV]",
-   			"ht>500&&met>200&&njets>=4&&mt>150&&(nmus+nels)==1"));
-  vars.push_back(hfeats("Max$(fjets_m)", 80,0,800, mj_sam_lep, "m(J_{1}^{R=1.2}) [GeV]",
-   			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  vars.push_back(hfeats("Max$(fjets_nl_m)", 80,0,800, mj_sam_lep, "m(J_{1}^{R=1.2, no lep}) [GeV]",
-			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  vars.push_back(hfeats("mj_nl", 80,0,800, mj_sam_lep, "M_{J}^{R=1.2, no lep} [GeV]",
-			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  vars.push_back(hfeats("Max$(fjets_nl_m)", 80,0,800, mj_sam_lep, "m(J_{1}^{R=1.2, no lep}) [GeV]",
-			"ht>500&&met>200&&njets>=4&&mt>150&&(nmus+nels)==1"));
-  vars.push_back(hfeats("mj_nl", 100,0,2000, mj_sam_lep, "M_{J}^{R=1.2, no lep} [GeV]",
-			"ht>500&&met>200&&njets>=4&&mt>150&&(nmus+nels)==1"));
-  vars.push_back(hfeats("Max$(fjets_nl_m)", 100,0,2000, mj_sam_lep, "m(J_{1}^{R=1.2, no lep}) [GeV]",
-			"ht>500&&met>200&&njets>=4&&(nmus+nels)==2"));
-  vars.push_back(hfeats("mj_nl", 100,0,2000, mj_sam_lep, "M_{J}^{R=1.2, no lep} [GeV]",
-			"ht>500&&met>200&&njets>=4&&(nmus+nels)==2"));
-
-
   // vars.push_back(hfeats("Max$(fjets_30_m)", 80,0,800, mj_sam_lep, "m(J_{1}^{30 GeV lep}) [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
   // vars.push_back(hfeats("Max$(fjets_nolep_30_m)", 80,0,800, mj_sam_lep, "m(J_{1}^{no lep}) [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
   // vars.push_back(hfeats("Max$(fjets_siglep_30_m)", 80,0,800, mj_sam_lep, "m(J_{1}^{20 GeV lep}) [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
 
-  // vars.push_back(hfeats("fjets_30_m", 40,0,400, mj_sam_lep, "m(J^{30 GeV lep}) [GeV]","Sum$(fjets_30_pt>50)==2&&ht>500&&met>200&&nbm>=2&&njets>=6&&(nmus+nels)==1"));
-  // vars.push_back(hfeats("fjets_nolep_30_m", 40,0,400, mj_sam_lep, "m(J^{no lep}) [GeV]","Sum$(fjets_nolep_30_pt>50)==2&&ht>500&&met>200&&nbm>=2&&njets>=6&&(nmus+nels)==1"));
+  vars.push_back(hfeats("fjets_30_m", 40,0,400, mj_sam_lep, "m(J^{30 GeV lep}) [GeV]","Sum$(fjets_30_pt>50)==2&&ht>500&&met>200&&nbm>=2&&njets>=6&&(nmus+nels)==1"));
+  vars.push_back(hfeats("fjets_nolep_30_m", 40,0,400, mj_sam_lep, "m(J^{no lep}) [GeV]","Sum$(fjets_nolep_30_pt>50)==2&&ht>500&&met>200&&nbm>=2&&njets>=6&&(nmus+nels)==1"));
   //  vars.push_back(hfeats("fjets_siglep_30_m", 40,0,400, mj_sam_lep, "m(J^{20 GeV lep}) [GeV]","Sum$(fjets_siglep_30_pt>50)==2&&ht>500&&met>200&&nbm>=2&&(nmus+nels)==1"));
 
 
@@ -312,7 +276,7 @@ int main(){
 	histo[0][var][sam]->SetLineStyle(Samples[isam].style);
 	histo[0][var][sam]->SetLineWidth(3);
       }
-      if(maxhisto < histo[0][var][sam]->GetMaximum() && !isSig) maxhisto = histo[0][var][sam]->GetMaximum();
+      if(maxhisto < histo[0][var][sam]->GetMaximum()) maxhisto = histo[0][var][sam]->GetMaximum();
     } // First loop over samples
     int firstplotted(-1);
     for(int sam(vars[var].samples.size()-1); sam >= 0; sam--){
@@ -343,12 +307,12 @@ int main(){
     }
     if(vars[var].cut>0) line.DrawLine(vars[var].cut, 0, vars[var].cut, maxhisto*maxLog);
     can.SetLogy(1);
-    pname = "plots/1d/log_lumi_"+vars[var].tag+".eps";
+    pname = "plots/1d/log_lumi_"+vars[var].tag+".pdf";
     can.SaveAs(pname);
     histo[0][var][firstplotted]->SetMinimum(0);
     histo[0][var][firstplotted]->SetMaximum(maxhisto*1.1);
     can.SetLogy(0);
-    pname = "plots/1d/lumi_"+vars[var].tag+".eps";
+    pname = "plots/1d/lumi_"+vars[var].tag+".pdf";
     can.SaveAs(pname);
 
     //////////// Plotting area-normalized distributions ////////////
@@ -359,8 +323,7 @@ int main(){
       histo[1][var][sam]->SetLineStyle(Samples[isam].style);
       histo[1][var][sam]->SetLineWidth(3);
       if(nentries[sam]) histo[1][var][sam]->Scale(100./nentries[sam]);
-      bool isSig = Samples[isam].isSig;
-      if(maxhisto < histo[1][var][sam]->GetMaximum() && !isSig) maxhisto = histo[1][var][sam]->GetMaximum();
+      if(maxhisto < histo[1][var][sam]->GetMaximum()) maxhisto = histo[1][var][sam]->GetMaximum();
       if(sam==0){
 	histo[1][var][sam]->SetXTitle(vars[var].title);
 	histo[1][var][sam]->SetYTitle("Entries (%)");
@@ -375,11 +338,11 @@ int main(){
     if(vars[var].cut>0) line.DrawLine(vars[var].cut, 0, vars[var].cut, maxhisto*1.1);
     histo[1][var][0]->SetMaximum(maxhisto*1.1);
     can.SetLogy(0);
-    pname = "plots/1d/shapes_"+vars[var].tag+".eps";
+    pname = "plots/1d/shapes_"+vars[var].tag+".pdf";
     can.SaveAs(pname);
     histo[1][var][0]->SetMaximum(maxhisto*maxLog);
     can.SetLogy(1);
-    pname = "plots/1d/log_shapes_"+vars[var].tag+".eps";
+    pname = "plots/1d/log_shapes_"+vars[var].tag+".pdf";
     can.SaveAs(pname);
   }// Loop over variables
 

@@ -1,4 +1,4 @@
-// plot_distribution: Macro that plots variables both lumi weighted and normalized to the same area.
+// plot_mj_isr: Macro that plots MJ and HT with and without ISR
 
 #include <iostream>
 #include <vector>
@@ -47,6 +47,7 @@ public:
     color = icolor; style = istyle;
     isSig = ifile[0].Contains("T1tttt");// && ifile.Contains("1200");
     factor = "1";
+    if(ifile[0].Contains("TTW")) factor = "0.36";
   }
   vector<TString> file;
   TString label, cut, factor;
@@ -70,9 +71,12 @@ int main(){
   TColor sig_gold(1008, 215/255.,162/255.,50/255.);
   TColor seal_brown(1010, 89/255.,38/255.,11/255.);
 
-  TString folder="archive/15-04-19/skim/";
+
+  TString folder="archive/15-04-07/skims/";
   vector<TString> s_tt;
   s_tt.push_back(folder+"*_TTJet*");
+  vector<TString> s_tt_noskim;
+  s_tt_noskim.push_back("archive/15-04-07/small_quick_TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola_Phys14DR-PU20bx25_PHYS14_25_V1-v1_MINIAODSIM_UCSB2290_v77_files50_batch*.root");
   vector<TString> s_wjets;
   s_wjets.push_back(folder+"*WJets*");
   vector<TString> s_zjets;
@@ -99,6 +103,16 @@ int main(){
   // Reading ntuples
   vector<TChain *> chain;
   vector<sfeats> Samples; 
+  Samples.push_back(sfeats(s_tt, "t#bar{t} 2l, no ISR", 2,1,"((mc_type&0x0F00)/0x100+(mc_type&0x000F)-(mc_type&0x00F0)/0x10)>=2&&tru_tt_pt<1"));
+  Samples.push_back(sfeats(s_tt, "t#bar{t} 1l, no ISR", 4,1,"((mc_type&0x0F00)/0x100+(mc_type&0x000F)-(mc_type&0x00F0)/0x10)<=1&&tru_tt_pt<1"));
+  //Samples.push_back(sfeats(s_tt, "t#bar{t} 2l, with ISR", 2,1,"((mc_type&0x0F00)/0x100+(mc_type&0x000F)-(mc_type&0x00F0)/0x10)>=2&&tru_tt_pt>1"));
+  //Samples.push_back(sfeats(s_tt, "t#bar{t} 1l, with ISR", 4,1,"((mc_type&0x0F00)/0x100+(mc_type&0x000F)-(mc_type&0x00F0)/0x10)<=1&&tru_tt_pt>1"));
+
+  Samples.push_back(sfeats(s_tt_noskim, "t#bar{t} p_{T}^{tt} > 0", 2,1,"tru_tt_pt>0"));
+  Samples.push_back(sfeats(s_tt_noskim, "t#bar{t} p_{T}^{tt} = 0", 4,1,"tru_tt_pt==0"));
+  Samples.push_back(sfeats(s_t1t, "T1tttt(1500,100)", kGreen+1));
+
+
   Samples.push_back(sfeats(s_zjets, "Z#rightarrow#nu#nu", kMagenta+2));
   Samples.push_back(sfeats(s_qcd, "QCD", 28));
   Samples.push_back(sfeats(s_tt, "t#bar{t}", 2));
@@ -129,105 +143,30 @@ int main(){
   vector<int> mj_sam;
   mj_sam.push_back(0);
   mj_sam.push_back(1);
-  mj_sam.push_back(2);
-  mj_sam.push_back(3);
   mj_sam.push_back(4);
 
-  vector<int> mj_sam_all;
-  mj_sam_all.push_back(0);
-  mj_sam_all.push_back(1);
-  mj_sam_all.push_back(2);
-  mj_sam_all.push_back(3);
-  mj_sam_all.push_back(5);
-  mj_sam_all.push_back(4);
-  mj_sam_all.push_back(6);
+  vector<int> mj_sam_noskim;
+  mj_sam_noskim.push_back(0);
+  mj_sam_noskim.push_back(1);
 
-  vector<int> mj_sam_lep;
-  mj_sam_lep.push_back(2);
-  mj_sam_lep.push_back(6);
-  mj_sam_lep.push_back(4);
+  //vars.push_back(hfeats("fjets_m[1]", 50,0,500, mj_sam, "m(J_{2}) [GeV]","ht>500&&met>100&&njets>=4&&(nmus+nels)==1"));
 
-  // vars.push_back(hfeats("Max$(fjets_m)", 100,0,2000, mj_sam_lep, "m(J_{1}^{R=1.2}) [GeV]",
-  // 			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  // vars.push_back(hfeats("Max$(fjets15_m)", 100,0,2000, mj_sam_lep, "m(J_{1}^{R=1.5}) [GeV]",
-  // 			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  // vars.push_back(hfeats("Max$(fjets20_m)", 100,0,2000, mj_sam_lep, "m(J_{1}^{R=2.0}) [GeV]",
-  // 			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  // vars.push_back(hfeats("Max$(fjets30_m)", 100,0,2000, mj_sam_lep, "m(J_{1}^{R=3.0}) [GeV]",
-  // 			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
+//   vars.push_back(hfeats("Max$(fjets_m)", 50,0,500, mj_sam, "m(J_{1}) [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==0"));
+   vars.push_back(hfeats("Max$(fjets_m)", 50,0,500, mj_sam, "m(J_{1}) [GeV]","ht>500&&met>200"));
+   vars.push_back(hfeats("mj", 80,0,800, mj_sam, "M_{J} [GeV]","ht>500&&met>200"));
+//   vars.push_back(hfeats("Max$(fjets_m)", 50,0,500, mj_sam_noskim, "m(J_{1}) [GeV]","ht>400&&met>100&&(nmus+nels)==2"));
+// 
+//   vars.push_back(hfeats("mj",40,0,800, mj_sam, "M_{J} [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==0"));
+//   vars.push_back(hfeats("mj",40,0,800, mj_sam, "M_{J} [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
+//   vars.push_back(hfeats("gen_mj",40,0,800, mj_sam, "True M_{J} [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
+//   vars.push_back(hfeats("mj", 40,0,800, mj_sam_noskim, "M_{J} [GeV]","ht>400&&met>100&&(nmus+nels)==2"));
 
-  // vars.push_back(hfeats("mj", 100,0,2000, mj_sam_lep, "M_{J}^{R=1.2} [GeV]",
-  // 			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  // vars.push_back(hfeats("mj15", 100,0,2000, mj_sam_lep, "M_{J}^{R=1.5} [GeV]",
-  // 			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  // vars.push_back(hfeats("mj20", 100,0,2000, mj_sam_lep, "M_{J}^{R=2.0} [GeV]",
-  // 			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  // vars.push_back(hfeats("mj30", 100,0,2000, mj_sam_lep, "M_{J}^{R=3.0} [GeV]",
-  // 			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-
-  vars.push_back(hfeats("mj", 80,0,800, mj_sam_lep, "M_{J}^{R=1.2} [GeV]",
-   			"ht>500&&met>200&&njets>=4&&mt>150&&(nmus+nels)==1"));
-  vars.push_back(hfeats("Max$(fjets_m)", 80,0,800, mj_sam_lep, "m(J_{1}^{R=1.2}) [GeV]",
-   			"ht>500&&met>200&&njets>=4&&mt>150&&(nmus+nels)==1"));
-  vars.push_back(hfeats("Max$(fjets_m)", 80,0,800, mj_sam_lep, "m(J_{1}^{R=1.2}) [GeV]",
-   			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  vars.push_back(hfeats("Max$(fjets_nl_m)", 80,0,800, mj_sam_lep, "m(J_{1}^{R=1.2, no lep}) [GeV]",
-			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  vars.push_back(hfeats("mj_nl", 80,0,800, mj_sam_lep, "M_{J}^{R=1.2, no lep} [GeV]",
-			"ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  vars.push_back(hfeats("Max$(fjets_nl_m)", 80,0,800, mj_sam_lep, "m(J_{1}^{R=1.2, no lep}) [GeV]",
-			"ht>500&&met>200&&njets>=4&&mt>150&&(nmus+nels)==1"));
-  vars.push_back(hfeats("mj_nl", 100,0,2000, mj_sam_lep, "M_{J}^{R=1.2, no lep} [GeV]",
-			"ht>500&&met>200&&njets>=4&&mt>150&&(nmus+nels)==1"));
-  vars.push_back(hfeats("Max$(fjets_nl_m)", 100,0,2000, mj_sam_lep, "m(J_{1}^{R=1.2, no lep}) [GeV]",
-			"ht>500&&met>200&&njets>=4&&(nmus+nels)==2"));
-  vars.push_back(hfeats("mj_nl", 100,0,2000, mj_sam_lep, "M_{J}^{R=1.2, no lep} [GeV]",
-			"ht>500&&met>200&&njets>=4&&(nmus+nels)==2"));
-
-
-  // vars.push_back(hfeats("Max$(fjets_30_m)", 80,0,800, mj_sam_lep, "m(J_{1}^{30 GeV lep}) [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  // vars.push_back(hfeats("Max$(fjets_nolep_30_m)", 80,0,800, mj_sam_lep, "m(J_{1}^{no lep}) [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-  // vars.push_back(hfeats("Max$(fjets_siglep_30_m)", 80,0,800, mj_sam_lep, "m(J_{1}^{20 GeV lep}) [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-
-  // vars.push_back(hfeats("fjets_30_m", 40,0,400, mj_sam_lep, "m(J^{30 GeV lep}) [GeV]","Sum$(fjets_30_pt>50)==2&&ht>500&&met>200&&nbm>=2&&njets>=6&&(nmus+nels)==1"));
-  // vars.push_back(hfeats("fjets_nolep_30_m", 40,0,400, mj_sam_lep, "m(J^{no lep}) [GeV]","Sum$(fjets_nolep_30_pt>50)==2&&ht>500&&met>200&&nbm>=2&&njets>=6&&(nmus+nels)==1"));
-  //  vars.push_back(hfeats("fjets_siglep_30_m", 40,0,400, mj_sam_lep, "m(J^{20 GeV lep}) [GeV]","Sum$(fjets_siglep_30_pt>50)==2&&ht>500&&met>200&&nbm>=2&&(nmus+nels)==1"));
-
-
-//  vars.push_back(hfeats("Sum$(fjets_30_pt>50)",14,-0.5,13.5, mj_sam_all, "Number of large-R jets (p_{T} > 50 GeV)","ht>500&&met>200&&njets30>=4&&(nmus+nels)==0"));
-//  vars.push_back(hfeats("fjets_30_m",40,0,400, mj_sam_all, "Mass of large-R jets [GeV]","fjets_30_pt>50&&ht>500&&met>200&&njets30>=4&&(nmus+nels)==0"));
-//
-//  vars.push_back(hfeats("Max$(fjets_cands_m)",80,0,800, mj_sam, "m(J_{1}^{cands}) [GeV]","ht>500&&met>200&&njets30>=4&&(nmus+nels)==0"));
-//  vars.push_back(hfeats("Max$(fjets_cands_trim_m)",80,0,800, mj_sam, "m(J_{1}^{cands,trim}) [GeV]","ht>500&&met>200&&njets30>=4&&(nmus+nels)==0"));
-//  vars.push_back(hfeats("Max$(fjets_10_m)", 80,0,800, mj_sam, "m(J_{1}^{10}) [GeV]","ht>500&&met>200&&njets30>=4&&(nmus+nels)==0"));
-//  vars.push_back(hfeats("Max$(fjets_30_m)", 80,0,800, mj_sam, "m(J_{1}^{30}) [GeV]","ht>500&&met>200&&njets30>=4&&(nmus+nels)==0"));
-//
-//  vars.push_back(hfeats("Max$(fjets_cands_m)",80,0,800, mj_sam_lep, "m(J_{1}^{cands}) [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-//  vars.push_back(hfeats("Max$(fjets_cands_trim_m)",80,0,800, mj_sam_lep, "m(J_{1}^{cands,trim}) [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-//  vars.push_back(hfeats("Max$(fjets_30_m)", 80,0,800, mj_sam_lep, "m(J_{1}^{AK4}) [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-//
-//  vars.push_back(hfeats("Max$(fjets_r08_m)",80,0,800, mj_sam_lep, "m(J_{1}^{R=0.8}) [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==2"));
-//  vars.push_back(hfeats("Max$(fjets_r10_m)",80,0,800, mj_sam_lep, "m(J_{1}^{R=1.0}) [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==2"));
-//  vars.push_back(hfeats("Max$(fjets_30_m)", 80,0,800, mj_sam_lep, "m(J_{1}^{R=1.2}) [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==2"));
-//  vars.push_back(hfeats("Max$(fjets_r14_m)",80,0,800, mj_sam_lep, "m(J_{1}^{R=1.4}) [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==2"));
-//
-//  vars.push_back(hfeats("Max$(fjets_r08_m)",80,0,800, mj_sam_lep, "m(J_{1}^{R=0.8}) [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-//  vars.push_back(hfeats("Max$(fjets_r10_m)",80,0,800, mj_sam_lep, "m(J_{1}^{R=1.0}) [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-//  vars.push_back(hfeats("Max$(fjets_30_m)", 80,0,800, mj_sam_lep, "m(J_{1}^{R=1.2}) [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-//  vars.push_back(hfeats("Max$(fjets_r14_m)",80,0,800, mj_sam_lep, "m(J_{1}^{R=1.4}) [GeV]","ht>500&&met>200&&njets>=4&&(nmus+nels)==1"));
-//
-//  vars.push_back(hfeats("Max$(fjets_r08_m)",80,0,800, mj_sam, "m(J_{1}^{R=0.8}) [GeV]","ht>500&&met>200&&njets30>=4&&nvmus10==0&&nvels10==0"));
-//  vars.push_back(hfeats("Max$(fjets_r10_m)",80,0,800, mj_sam, "m(J_{1}^{R=1.0}) [GeV]","ht>500&&met>200&&njets30>=4&&nvmus10==0&&nvels10==0"));
-//  vars.push_back(hfeats("Max$(fjets_30_m)", 80,0,800, mj_sam, "m(J_{1}^{R=1.2}) [GeV]","ht>500&&met>200&&njets30>=4&&nvmus10==0&&nvels10==0"));
-//  vars.push_back(hfeats("Max$(fjets_r14_m)",80,0,800, mj_sam, "m(J_{1}^{R=1.4}) [GeV]","ht>500&&met>200&&njets30>=4&&nvmus10==0&&nvels10==0"));
-//
-//  vars.push_back(hfeats("mj_30",40,0,2200, mj_sam, "M_{J} [GeV]","ht>500&&met>200&&njets30>=4&&nvmus10==0&&nvels10==0"));
 
 
 
   TString luminosity="4";
   float minLog = 0.04, maxLog = 10;
-  double legX = 0.48, legY = 0.89, legSingle = 0.067;
+  double legX = 0.45, legY = 0.86, legSingle = 0.075;
   double legW = 0.12, legH = legSingle*vars[0].samples.size();
   TLegend leg(legX, legY-legH, legX+legW, legY);
   leg.SetTextSize(0.057); leg.SetFillColor(0); leg.SetFillStyle(0); leg.SetBorderSize(0);
@@ -243,6 +182,7 @@ int main(){
     // Generating vector of histograms
     title = vars[var].cuts; if(title=="1") title = "";
     title.ReplaceAll("nvmus==1&&nmus==1&&nvels==0","1 #mu");
+    title.ReplaceAll("tru_tt_pt","p_{T}^{tt}");
     title.ReplaceAll("Sum$(fjets_30_pt>50)","n_{J}");
     title.ReplaceAll("Sum$(fjets_nolep_30_pt>50)","n_{J}");
     title.ReplaceAll("Sum$(fjets_siglep_30_pt>50)","n_{J}");
@@ -253,7 +193,8 @@ int main(){
     title.ReplaceAll("mus_reliso","RelIso"); title.ReplaceAll("els_reliso","RelIso");
     title.ReplaceAll("mus_miniso_tr15","MiniIso"); title.ReplaceAll("els_miniso_tr15","MiniIso");
     title.ReplaceAll("njets","n_{jets}");title.ReplaceAll("abs(lep_id)==13&&","");
-    title.ReplaceAll(">=", " #geq "); title.ReplaceAll(">", " > "); title.ReplaceAll("&&", ", "); 
+    title.ReplaceAll(">=", " #geq "); title.ReplaceAll(">", " > "); 
+    title.ReplaceAll("<", " < "); title.ReplaceAll("&&", ", "); 
     title.ReplaceAll("met", "MET"); title.ReplaceAll("ht", "H_{T}");  title.ReplaceAll("mt", "m_{T}"); 
     title.ReplaceAll("nleps==1", "1 lepton");  title.ReplaceAll("nbm","n_{b}"); title.ReplaceAll("==", " = "); 
     title.ReplaceAll("nbl[1]","n_{b,l}");
@@ -312,7 +253,7 @@ int main(){
 	histo[0][var][sam]->SetLineStyle(Samples[isam].style);
 	histo[0][var][sam]->SetLineWidth(3);
       }
-      if(maxhisto < histo[0][var][sam]->GetMaximum() && !isSig) maxhisto = histo[0][var][sam]->GetMaximum();
+      if(maxhisto < histo[0][var][sam]->GetMaximum()) maxhisto = histo[0][var][sam]->GetMaximum();
     } // First loop over samples
     int firstplotted(-1);
     for(int sam(vars[var].samples.size()-1); sam >= 0; sam--){
@@ -359,8 +300,8 @@ int main(){
       histo[1][var][sam]->SetLineStyle(Samples[isam].style);
       histo[1][var][sam]->SetLineWidth(3);
       if(nentries[sam]) histo[1][var][sam]->Scale(100./nentries[sam]);
-      bool isSig = Samples[isam].isSig;
-      if(maxhisto < histo[1][var][sam]->GetMaximum() && !isSig) maxhisto = histo[1][var][sam]->GetMaximum();
+      if(maxhisto < histo[1][var][sam]->GetMaximum() && !(Samples[isam].isSig)) maxhisto = histo[1][var][sam]->GetMaximum();
+      //if(maxhisto < histo[1][var][sam]->GetMaximum()) maxhisto = histo[1][var][sam]->GetMaximum();
       if(sam==0){
 	histo[1][var][sam]->SetXTitle(vars[var].title);
 	histo[1][var][sam]->SetYTitle("Entries (%)");

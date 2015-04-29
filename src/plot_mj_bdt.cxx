@@ -85,7 +85,7 @@ int main(){
 
   ///////////////////// Markers for each ROC /////////////////////
   int ht_col(2);
-  int mj_style(8); float mj_size(2);
+  int mj_style(8); float mj_size(2.5);
   vector<marker_class> mj_points, ht_points, nj_points;
   mj_points.push_back(marker_class(200,  mj_size, 4, mj_style));
   mj_points.push_back(marker_class(400,  mj_size, 4, mj_style));
@@ -107,25 +107,25 @@ int main(){
   mj_t1t_tt.push_back(var_class(t1t_tt_htmj_30, "ht",4000,0,"H_{T}",ht_col,1,ht_points));
   mj_t1t_tt.push_back(var_class(t1t_tt_htmj_30, "njets30",15,0,"n_{jets}^{30}",28,1,nj_points));
   mj_t1t_tt.push_back(var_class(t1t_tt_htmj_30, "mj_30",2000,0,"M_{J}",4,1,mj_points));
-  mj_t1t_tt.push_back(var_class(t1t_tt_htmj_30, "BDT",0.22, -0.5,"BDT[H_{T}, M_{J}]",8,2));
-  mj_t1t_tt.push_back(var_class(t1t_tt_htnjets30, "BDT",0.3, -0.5,"BDT[H_{T}, n_{jets}^{30}]",1,2));
-  mj_t1t_tt.push_back(var_class(t1t_tt_njets30mj_30, "BDT",0.32, -0.5,"BDT[M_{J}, n_{jets}^{30}]",kMagenta+1,2));
+  // mj_t1t_tt.push_back(var_class(t1t_tt_htmj_30, "BDT",0.22, -0.5,"BDT[H_{T}, M_{J}]",kMagenta+1,7));
+  // mj_t1t_tt.push_back(var_class(t1t_tt_htnjets30, "BDT",0.3, -0.5,"BDT[H_{T}, n_{jets}^{30}]",1,2));
+  // mj_t1t_tt.push_back(var_class(t1t_tt_njets30mj_30, "BDT",0.32, -0.5,"BDT[M_{J}, n_{jets}^{30}]",kGreen+2,2));
 
   vector<var_class> mj_t1tc_tt;
   mj_t1tc_tt.push_back(var_class(t1tc_tt_htmj_30, "ht",4000,0,"H_{T}",ht_col,1,ht_points));
   mj_t1tc_tt.push_back(var_class(t1tc_tt_htmj_30, "njets30",15,0,"n_{jets}^{30}",28,1,nj_points));
   mj_t1tc_tt.push_back(var_class(t1tc_tt_htmj_30, "mj_30",2000,0,"M_{J}",4,1,mj_points));
-  mj_t1tc_tt.push_back(var_class(t1tc_tt_htmj_30, "BDT",0.22, -0.5,"BDT[H_{T}, M_{J}]",8,2));
+  mj_t1tc_tt.push_back(var_class(t1tc_tt_htmj_30, "BDT",0.22, -0.5,"BDT[H_{T}, M_{J}]",kMagenta+1,7));
   mj_t1tc_tt.push_back(var_class(t1tc_tt_htnjets30, "BDT",0.3, -0.5,"BDT[H_{T}, n_{jets}^{30}]",1,2));
-  mj_t1tc_tt.push_back(var_class(t1tc_tt_njets30mj_30, "BDT",0.32, -0.5,"BDT[M_{J}, n_{jets}^{30}]",kMagenta+1,2));
+  mj_t1tc_tt.push_back(var_class(t1tc_tt_njets30mj_30, "BDT",0.32, -0.5,"BDT[M_{J}, n_{jets}^{30}]",kGreen+2,2));
 
   vector<var_class> mj_t1q_tt;
   mj_t1q_tt.push_back(var_class(t1q_tt_htmj_30, "ht",4000,0,"H_{T}",ht_col,1,ht_points));
   mj_t1q_tt.push_back(var_class(t1q_tt_htmj_30, "njets30",15,0,"n_{jets}^{30}",28,1,nj_points));
   mj_t1q_tt.push_back(var_class(t1q_tt_htmj_30, "mj_30",2000,0,"M_{J}",4,1,mj_points));
-  mj_t1q_tt.push_back(var_class(t1q_tt_htmj_30, "BDT",0.22, -0.5,"BDT[H_{T}, M_{J}]",8,2));
+  mj_t1q_tt.push_back(var_class(t1q_tt_htmj_30, "BDT",0.22, -0.5,"BDT[H_{T}, M_{J}]",kMagenta+1,7));
   mj_t1q_tt.push_back(var_class(t1q_tt_htnjets30, "BDT",0.3, -0.5,"BDT[H_{T}, n_{jets}^{30}]",1,2));
-  mj_t1q_tt.push_back(var_class(t1q_tt_njets30mj_30, "BDT",0.32, -0.5,"BDT[M_{J}, n_{jets}^{30}]",kMagenta+1,2));
+  mj_t1q_tt.push_back(var_class(t1q_tt_njets30mj_30, "BDT",0.32, -0.5,"BDT[M_{J}, n_{jets}^{30}]",kGreen+2,2));
 
   vector<TString> vs_sam;
   vector<vector<var_class> > v_mj;
@@ -140,7 +140,7 @@ int main(){
 
   for(unsigned icut(0); icut<v_cuts.size(); icut++){
     for(unsigned isam(0); isam<vs_sam.size(); isam++){
-      DrawROC(v_mj[isam], v_cuts[icut], "mj_"+vs_sam[isam]);
+      DrawROC(v_mj[isam], v_cuts[icut], "mj_nobdt_"+vs_sam[isam]);
     } // Loop over samples
   } // Loop over cuts
 
@@ -217,7 +217,8 @@ void DrawROC(vector<var_class> vars, TString cuts, TString tag){
     graphs[var] = MakeROC(histos[0][var], histos[1][var], vars[var].minx < vars[var].maxx, vars[var].cuts);
     graphs[var].SetLineColor(vars[var].color);
     graphs[var].SetLineStyle(vars[var].style);
-    graphs[var].SetLineWidth(4);
+    if(vars[var].style==1) graphs[var].SetLineWidth(5);
+    else  graphs[var].SetLineWidth(8);
     leg.AddEntry(&(graphs[var]), vars[var].title, "l");
     graphs[var].Draw("lsame");
   } // Loop over variables

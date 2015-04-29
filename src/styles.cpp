@@ -38,7 +38,7 @@ void styles::setDefaultStyle() {
   gStyle->SetCanvasDefW(CanvasW);
   gStyle->SetCanvasDefH(CanvasH);
   gStyle->SetTextSize(TextSize);            // Set global text size
-  gStyle->SetTitleFontSize(TitleSize);    
+  gStyle->SetTitleFontSize(TitleSize);      // Set top title size
   gStyle->SetTitleSize(TitleSize,"xyz");     // Set the 2 axes title size
   gStyle->SetLabelSize(LabelSize,"xyz");     // Set the 2 axes label size
 
@@ -72,8 +72,8 @@ void styles::setHistoStyle(TH1 *h) {
 void styles::setGlobalStyle() {
   gStyle->SetPalette(1);              // Decent colors for 2D plots
   gStyle->SetOptStat(0);              // No Stats box
-  gStyle->SetPadTickX(0);             // No ticks at the right
-  gStyle->SetPadTickY(0);             // No ticks at the top
+  gStyle->SetPadTickX(1);             // No ticks at the right
+  gStyle->SetPadTickY(1);             // No ticks at the top
 }
 
 void styles::setGroup(TString group){
