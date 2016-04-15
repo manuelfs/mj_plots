@@ -22,8 +22,8 @@ int main(){
   styles style("LargeLabels"); style.setDefaultStyle();
   gStyle->SetPadTickX(1); // Tickmarks on the top
   gStyle->SetPadTickY(1); // Tickmarks on the right
-  TString folder="archive/15-04-19/skim/";
-  //TString folder="archive/15-03-17/skims/";
+  //TString folder="/net/cms5/cms5r0/ald77/archive/2015_04_19/skim/"; // MJs with R > 1.2
+  TString folder="/net/cms5/cms5r0/manuelf/root/archive/15-01-30/skim/";
 
   // NTUPLES
   vector<TString> v_t1t;
@@ -101,13 +101,13 @@ int main(){
 
 
   ///////////////////// VARIABLES for each ROC /////////////////////
-  int ht_col(2);
+  int ht_col(1);
   int mj_style(8); float mj_size(2.5);
   vector<marker_class> mj_points, ht_points, met_points, nj_points;
   mj_points.push_back(marker_class(200,  mj_size, 4, mj_style));
-  mj_points.push_back(marker_class(400,  mj_size, 4, mj_style));
-  mj_points.push_back(marker_class(600,  4, 4, 29));
-  //mj_points.push_back(marker_class(600,  mj_size, 4, mj_style));
+  //mj_points.push_back(marker_class(400,  mj_size, 4, mj_style));
+  mj_points.push_back(marker_class(400,  4, 4, 29));
+  mj_points.push_back(marker_class(600,  mj_size, 4, mj_style));
   mj_points.push_back(marker_class(800,  mj_size, 4, mj_style));
   mj_points.push_back(marker_class(1000,  mj_size, 4, mj_style));
   ht_points.push_back(marker_class(1000,  mj_size, ht_col, mj_style));
@@ -123,28 +123,28 @@ int main(){
   nj_points.push_back(marker_class(12,  mj_size, 28, mj_style));
 
   vector<var_class> mj_general;
-  mj_general.push_back(var_class("ht",4000,0,"H_{T}",ht_col,1,ht_points));
-  mj_general.push_back(var_class("met",1500,0,"MET",1,1,met_points));
+  mj_general.push_back(var_class("ht",4000,0,"H_{T}",ht_col,2,ht_points));
+  mj_general.push_back(var_class("met",1500,0,"MET",2,1,met_points));
   mj_general.push_back(var_class("njets30",15,0,"n_{jets}^{30}",28,1,nj_points));
   mj_general.push_back(var_class("mj_30",2000,0,"M_{J}",4,1,mj_points));
   mj_general.push_back(var_class("met+mj_30",2000,0,"MET + M_{J}",kMagenta+2,1));
 
   vector<var_class> mj_cands;
-  //mj_cands.push_back(var_class("ht",4000,0,"H_{T}^{40}",2,1));
+  mj_cands.push_back(var_class("ht",4000,0,"H_{T}^{40}",1,2));
   mj_cands.push_back(var_class("mj_cands",2200,0,"M_{J} pfcands",2,1));
   mj_cands.push_back(var_class("mj_cands_trim",2200,0,"M_{J} pfcands trimmed",28,1));
   mj_cands.push_back(var_class("mj_10",2200,0,"M_{J} 10 GeV jets",kMagenta+2,1));
   mj_cands.push_back(var_class("mj_30", 2200,0,"M_{J} 30 GeV jets",4,1,mj_points));
 
   vector<var_class> mj_sizes;
-  //mj_sizes.push_back(var_class("ht",4000,0,"H_{T}^{40}",2,1));
+  mj_sizes.push_back(var_class("ht",4000,0,"H_{T}^{40}",1,2));
   mj_sizes.push_back(var_class("mj_r08",2200,0,"M_{J} R=0.8",2,1));
   mj_sizes.push_back(var_class("mj_r10",2200,0,"M_{J} R=1.0",28,1));
   mj_sizes.push_back(var_class("mj_30", 2200,0,"M_{J} R=1.2",4,1,mj_points));
   mj_sizes.push_back(var_class("mj_r14",2200,0,"M_{J} R=1.4",kMagenta+2,1));
 
   vector<var_class> mj_pt;
-  //mj_pt.push_back(var_class("ht",4000,0,"H_{T}^{40}",2,1));
+  mj_pt.push_back(var_class("ht",4000,0,"H_{T}^{40}",1,2));
   mj_pt.push_back(var_class("mj_10",2200,0,"M_{J} 10 GeV jets, |#eta| < 5",2,1));
   mj_pt.push_back(var_class("mj_20",2200,0,"M_{J} 20 GeV jets, |#eta| < 5",28,1));
   mj_pt.push_back(var_class("mj_30", 2200,0,"M_{J} 30 GeV jets, |#eta| < 5",4,1,mj_points));
@@ -152,23 +152,23 @@ int main(){
   mj_pt.push_back(var_class("mj_40",2200,0,"M_{J} 40 GeV jets, |#eta| < 5",kMagenta+2,1));
 
   vector<var_class> mj_ptfat;
-  //mj_ptfat.push_back(var_class("ht",4000,0,"H_{T}^{40}",2,1));
+  mj_ptfat.push_back(var_class("ht",4000,0,"H_{T}^{40}",1,2));
   mj_ptfat.push_back(var_class("Sum$(fjets_30_m*(fjets_30_pt>=30))",2200,0,"M_{J} from p_{T}#geq30 GeV large-R jets",2,1));
   mj_ptfat.push_back(var_class("mj_30", 2200,0,"M_{J} from p_{T}#geq50 GeV large-R jets",4,1,mj_points));
   mj_ptfat.push_back(var_class("Sum$(fjets_30_m*(fjets_30_pt>=80))",2200,0,"M_{J} from p_{T}#geq80 GeV large-R jets",28,1));
   mj_ptfat.push_back(var_class("Sum$(fjets_30_m*(fjets_30_pt>=120))",2200,0,"M_{J} from p_{T}#geq120 GeV large-R jets",kMagenta+2,1));
 
   vector<var_class> mj_lep;
-  //mj_lep.push_back(var_class("ht",4000,0,"H_{T}^{40}",2,1));
+  mj_lep.push_back(var_class("ht",4000,0,"H_{T}^{40}",1,2));
   mj_lep.push_back(var_class("mj_nolep_30",2200,0,"M_{J} without leptons",2,1));
   mj_lep.push_back(var_class("mj_siglep_30",2200,0,"M_{J} with 20 GeV leptons",28,1));
   mj_lep.push_back(var_class("mj_30", 2200,0,"M_{J} with 30 GeV leptons",4,1,mj_points));
 
   vector<var_class> mj_m;
-  mj_m.push_back(var_class("fjets_m[0]",2200,0,"Leading m_{j}",28,1));
-  mj_m.push_back(var_class("Sum$(fjets_m*(fjets_m>100&&fjets_pt>50))",2200,0,"M_{J} (jets with m_{j} > 100 GeV)",1,1));
-  mj_m.push_back(var_class("Sum$(fjets_m*(fjets_m>50&&fjets_pt>50))",2200,0,"M_{J} (jets with m_{j} > 50 GeV)",2,1));
-  mj_m.push_back(var_class("mj", 2200,0,"M_{J} (all jets)",4,1,mj_points));
+  mj_m.push_back(var_class("fjets_30_m[0]",2200,0,"Leading m_{j}",28,1));
+  mj_m.push_back(var_class("Sum$(fjets_30_m*(fjets_30_m>100&&fjets_30_pt>50))",2200,0,"M_{J} (jets with m_{j} > 100 GeV)",1,1));
+  mj_m.push_back(var_class("Sum$(fjets_30_m*(fjets_30_m>50&&fjets_30_pt>50))",2200,0,"M_{J} (jets with m_{j} > 50 GeV)",2,1));
+  mj_m.push_back(var_class("mj_30", 2200,0,"M_{J} (all jets)",4,1,mj_points));
 
   vector<var_class> mj_sizes2;
   mj_sizes2.push_back(var_class("mj", 2200,0,"M_{J} R=1.2",4,1,mj_points));
@@ -197,13 +197,13 @@ int main(){
   // v_sam.push_back(&zjets_t1qc); vs_sam.push_back("zjets_t1qc");
 
   vector<vector<var_class>*> v_vars;
-  //v_vars.push_back(&mj_general); vs_vars.push_back("general");
-  //v_vars.push_back(&mj_cands); vs_vars.push_back("cands");
-  //v_vars.push_back(&mj_m); vs_vars.push_back("m");
-  //v_vars.push_back(&mj_sizes); vs_vars.push_back("size");
-  //v_vars.push_back(&mj_pt); vs_vars.push_back("pt");
-  //v_vars.push_back(&mj_ptfat); vs_vars.push_back("ptfat"); 
-  v_vars.push_back(&mj_sizes2); vs_vars.push_back("size");
+  v_vars.push_back(&mj_general); vs_vars.push_back("general");
+  v_vars.push_back(&mj_cands); vs_vars.push_back("cands");
+  v_vars.push_back(&mj_m); vs_vars.push_back("m");
+  v_vars.push_back(&mj_sizes); vs_vars.push_back("size");
+  v_vars.push_back(&mj_pt); vs_vars.push_back("pt");
+  v_vars.push_back(&mj_ptfat); vs_vars.push_back("ptfat"); 
+  // v_vars.push_back(&mj_sizes2); vs_vars.push_back("size2"); // Requires the 2015_04_19 ntuples
 
   vector<TString> v_cuts;
   v_cuts.push_back("ht>500&&met>200&&njets30>=4&&nvmus10==0&&nvels10==0");
@@ -214,7 +214,7 @@ int main(){
   for(unsigned ivar(0); ivar<v_vars.size(); ivar++){
     for(unsigned icut(0); icut<v_cuts.size(); icut++){
       for(unsigned isam(0); isam<v_sam.size(); isam++){
-  	//DrawROC(*(v_sam[isam]), *(v_vars[ivar]), v_cuts[icut], "mj_"+vs_sam[isam]+"_"+vs_vars[ivar]);
+  	DrawROC(*(v_sam[isam]), *(v_vars[ivar]), v_cuts[icut], "mj_"+vs_sam[isam]+"_"+vs_vars[ivar]);
       } // Loop over samples
     } // Loop over cuts
   } // Loop over variables
@@ -223,7 +223,7 @@ int main(){
   v_sam.push_back(&tt_t1t); vs_sam.push_back("tt_t1t");
   v_sam.push_back(&tt_t1tc); vs_sam.push_back("tt_t1tc");
 
-  v_vars.push_back(&mj_lep2); vs_vars.push_back("lep"); 
+  // v_vars.push_back(&mj_lep2); vs_vars.push_back("lep");  // Requires the 2015_04_19 ntuples
 
   v_cuts.clear();
   v_cuts.push_back("ht>500&&met>200&&njets>=4&&(nmus+nels)==1");
@@ -323,7 +323,7 @@ void DrawROC(vector<sample_class> samples, vector<var_class> vars, TString cuts,
   cuts.ReplaceAll(">=","ge"); cuts.ReplaceAll("<=","se"); 
   cuts.ReplaceAll(">","g"); cuts.ReplaceAll("<","s"); cuts.ReplaceAll("=","");
   cuts.ReplaceAll("+",""); 
-  TString pname("plots/roc_"+tag+"_"+cuts+".eps");  
+  TString pname("plots/roc_"+tag+"_"+cuts+".pdf");  
   can.Print(pname);
   can.SetLogx(1);
   can.SetLogy(1);

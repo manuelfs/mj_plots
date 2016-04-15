@@ -312,12 +312,12 @@ int main(){
       vector<TVector3> fsr; 
       TVector3 met_me; 
       if (msglvl == msg::truth) cout<<"==================== Event: "<<tree.event()<<" ======================="<<endl;
-      int ancestor_id = intmax;
-      for (size_t i(0); i<tree.mc_id().size(); i++){
-        if (isamp->name=="ttbar"){
-          if (abs(tree.mc_id()[i])==6 && tree.mc_status()[i]==22) ancestor_id = tree.mc_mom()[i];
-        } 
-      }
+      // int ancestor_id = intmax;
+      // for (size_t i(0); i<tree.mc_id().size(); i++){
+      //   if (isamp->name=="ttbar"){
+      //     if (abs(tree.mc_id()[i])==6 && tree.mc_status()[i]==22) ancestor_id = tree.mc_mom()[i];
+      //   } 
+      // }
 
       unsigned nleps = 0;
       unsigned ntaus = 0;
@@ -672,9 +672,9 @@ bool passSelection(const small_tree &tree, const seln &iseln){
 
   if (iseln.nleps==1) {
     msgsvc(msg::dbg, "Calculating mT");
-    double mt = 0;
-    if (sigels_index.size()>0) mt = sqrt(2*tree.els_pt()[sigels_index[0]]*tree.met()*(1-cos(tree.met_phi()-tree.els_phi()[sigels_index[0]])));
-    else if (sigmus_index.size()>0) mt = sqrt(2*tree.mus_pt()[sigmus_index[0]]*tree.met()*(1-cos(tree.met_phi()-tree.mus_phi()[sigmus_index[0]])));
+    // double mt = 0;
+    // if (sigels_index.size()>0) mt = sqrt(2*tree.els_pt()[sigels_index[0]]*tree.met()*(1-cos(tree.met_phi()-tree.els_phi()[sigels_index[0]])));
+    // else if (sigmus_index.size()>0) mt = sqrt(2*tree.mus_pt()[sigmus_index[0]]*tree.met()*(1-cos(tree.met_phi()-tree.mus_phi()[sigmus_index[0]])));
     if (tree.mt() <= iseln.mt_min || tree.mt() > iseln.mt_max) return false;
   }
 
