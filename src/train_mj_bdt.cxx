@@ -52,7 +52,14 @@ bdt_class::bdt_class(vector<var_class> ivars, TString isignal, TString ibkg):
 int main(){
 
   TString nTrain("20000"), nTest("0");
-  TString ntuplefolder("archive/15-01-30/skim/"), rootfolder("root/");
+  TString bfolder("");
+  string hostname = execute("echo $HOSTNAME");
+  if(Contains(hostname, "cms") || Contains(hostname, "compute-"))  
+    bfolder = "/net/cms2"; // In laptops, you can't create a /net folder
+  
+  TString ntuplefolder=bfolder+"/cms2r0/babymaker/babies/2015_01_30/small_tree/skim_ht500met200/";
+
+  TString rootfolder(bfolder+"/cms2r0/babymaker/babies/2015_01_30/small_tree/bdt/");
   gSystem->mkdir(rootfolder, kTRUE);
 
   vector<var_class> v_htmj;
@@ -76,21 +83,21 @@ int main(){
   vector<TString> v_signal;
   v_signal.push_back("*T1tttt*1500*");
   v_signal.push_back("*T1tttt*1200*");
-  v_signal.push_back("*T1qqqq*1400*");
-  v_signal.push_back("*T1qqqq*1000*");
+  // v_signal.push_back("*T1qqqq*1400*");
+  // v_signal.push_back("*T1qqqq*1000*");
 		      
   vector<TString> v_bkg;
-  v_bkg.push_back("*QCD_Pt*");
+  // v_bkg.push_back("*QCD_Pt*");
   v_bkg.push_back("*TTJet*");
   //v_bkg.push_back("*ZJetsToNuNu*");
 
   vector<bdt_class> bdts;
   for(unsigned isig(0); isig < v_signal.size(); isig++){
     for(unsigned ibkg(0); ibkg < v_bkg.size(); ibkg++){
-      //bdts.push_back(bdt_class(v_htmj, v_signal[isig], v_bkg[ibkg]));
-      //bdts.push_back(bdt_class(v_htnjets, v_signal[isig], v_bkg[ibkg]));
-      //bdts.push_back(bdt_class(v_njetsmj, v_signal[isig], v_bkg[ibkg]));
-      bdts.push_back(bdt_class(v_njetsmjhtmet, v_signal[isig], v_bkg[ibkg]));
+      bdts.push_back(bdt_class(v_htmj, v_signal[isig], v_bkg[ibkg]));
+      bdts.push_back(bdt_class(v_htnjets, v_signal[isig], v_bkg[ibkg]));
+      bdts.push_back(bdt_class(v_njetsmj, v_signal[isig], v_bkg[ibkg]));
+      //bdts.push_back(bdt_class(v_njetsmjhtmet, v_signal[isig], v_bkg[ibkg]));
     }
   }
 
@@ -112,6 +119,8 @@ int main(){
     factory->AddSpectator("mj_30 := mj_30", "M_{J}", "GeV", 'F');
     factory->AddSpectator("nvmus10 := nvmus10", "Number of veto muons", "", 'I');
     factory->AddSpectator("nvels10 := nvels10", "Number of veto electrons", "", 'I');
+    factory->AddSpectator("nmus := nmus", "Number of muons", "", 'I');
+    factory->AddSpectator("nels := nels", "Number of electrons", "", 'I');
     factory->AddSpectator("njets30 := njets30", "Number of 30 GeV jets", "", 'I');
     factory->AddSignalTree    (&signal, 1.);
     factory->AddBackgroundTree(&ttbar, 1.);

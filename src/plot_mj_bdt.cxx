@@ -24,7 +24,13 @@ int main(){
   styles style("Paper"); style.setDefaultStyle();
   gStyle->SetPadTickX(1); // Tickmarks on the top
   gStyle->SetPadTickY(1); // Tickmarks on the right
-  TString folder="root/";
+
+  TString bfolder("");
+  string hostname = execute("echo $HOSTNAME");
+  if(Contains(hostname, "cms") || Contains(hostname, "compute-"))  
+    bfolder = "/net/cms2"; // In laptops, you can't create a /net folder
+  
+  TString folder=bfolder+"/cms2r0/babymaker/babies/2015_01_30/small_tree/bdt/";
 
   ////////////////////////// SAMPLES for the axes /////////////////////////
   vector<TString> v_t1t_tt_htmj_30;
@@ -108,9 +114,9 @@ int main(){
   mj_t1t_tt.push_back(var_class(t1t_tt_htmj_30, "ht",4000,0,"H_{T}",ht_col,1,ht_points));
   mj_t1t_tt.push_back(var_class(t1t_tt_htmj_30, "njets30",15,0,"n_{jets}^{30}",28,1,nj_points));
   mj_t1t_tt.push_back(var_class(t1t_tt_htmj_30, "mj_30",2000,0,"M_{J}",4,1,mj_points));
-  // mj_t1t_tt.push_back(var_class(t1t_tt_htmj_30, "BDT",0.22, -0.5,"BDT[H_{T}, M_{J}]",kMagenta+1,7));
-  // mj_t1t_tt.push_back(var_class(t1t_tt_htnjets30, "BDT",0.3, -0.5,"BDT[H_{T}, n_{jets}^{30}]",1,2));
-  // mj_t1t_tt.push_back(var_class(t1t_tt_njets30mj_30, "BDT",0.32, -0.5,"BDT[M_{J}, n_{jets}^{30}]",kGreen+2,2));
+  mj_t1t_tt.push_back(var_class(t1t_tt_htmj_30, "BDT",0.22, -0.5,"BDT[H_{T}, M_{J}]",kMagenta+1,7));
+  mj_t1t_tt.push_back(var_class(t1t_tt_htnjets30, "BDT",0.3, -0.5,"BDT[H_{T}, n_{jets}^{30}]",1,2));
+  mj_t1t_tt.push_back(var_class(t1t_tt_njets30mj_30, "BDT",0.32, -0.5,"BDT[M_{J}, n_{jets}^{30}]",kGreen+2,2));
 
   vector<var_class> mj_t1tc_tt;
   mj_t1tc_tt.push_back(var_class(t1tc_tt_htmj_30, "ht",4000,0,"H_{T}",ht_col,1,ht_points));
@@ -132,16 +138,17 @@ int main(){
   vector<vector<var_class> > v_mj;
   v_mj.push_back(mj_t1t_tt);   vs_sam.push_back("t1t_tt");
   v_mj.push_back(mj_t1tc_tt);  vs_sam.push_back("t1tc_tt");
-  v_mj.push_back(mj_t1q_tt);   vs_sam.push_back("t1q_tt");
+  //v_mj.push_back(mj_t1q_tt);   vs_sam.push_back("t1q_tt");
 
   vector<TString> v_cuts;
-  v_cuts.push_back("ht>500&&met>200&&njets30>=4&&nvmus10==0&&nvels10==0");
+  v_cuts.push_back("ht>500&&met>200&&(nmus+nels)==1");
+  //v_cuts.push_back("ht>500&&met>200&&njets30>=4&&nvmus10==0&&nvels10==0");
   //v_cuts.push_back("ht>500&&met>200&&met<=400&&njets30>=4&&nvmus10==0&&nvels10==0");
   //v_cuts.push_back("ht>500&&met>400&&njets30>=4&&nvmus10==0&&nvels10==0");
 
   for(unsigned icut(0); icut<v_cuts.size(); icut++){
     for(unsigned isam(0); isam<vs_sam.size(); isam++){
-      DrawROC(v_mj[isam], v_cuts[icut], "mj_nobdt_"+vs_sam[isam]);
+      DrawROC(v_mj[isam], v_cuts[icut], "mj_bdt_"+vs_sam[isam]);
     } // Loop over samples
   } // Loop over cuts
 
